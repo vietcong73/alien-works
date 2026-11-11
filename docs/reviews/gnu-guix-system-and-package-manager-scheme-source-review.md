@@ -258,10 +258,3 @@ The existence of multiple Guix executable paths and generations in the local exp
 The most instructive source modules remain **`guix/gexp.scm`** and **`gnu/services.scm`**. The first explains staged, dependency-aware computation; the second explains compositional configuration at OS scale.
 
 **Final disposition:** `ARCHITECTURAL_SOURCE_REVIEW_COMPLETE / SOURCE-BASED LIMITATIONS DOCUMENTED / DYNAMIC_VERIFICATION_OUTSTANDING`.
-
-### Audit limitations
-
-- Inspection was limited to relevant Scheme modules and source call paths; it is not a full line-by-line review of all Guix code.
-- No reproduction of the Guix Home on-change defect is claimed here because Home is outside the requested two-component scope.
-- No Guix source, Linux system configuration, package manifest or channel was edited.
-- No command was executed on the user's machine.
