@@ -20,7 +20,7 @@
 3. Do not copy/propose copying Naughty Dog proprietary code or infer its undisclosed source layout.
 4. Do not treat a project README or a diagram as a source-level audit.
 5. Do not admit Gerbil MCP or Gerbil Shell (code inaccessible in earlier reviews) as audited implementations. Exclude microGPT explicitly per owner direction.
-6. Do not mutate the preservation fork or another remote repository, or modify existing audit conclusions.
+6. Do not change preservation-fork source code, another remote repository, or existing audit conclusions. Publication of this report is a separate, explicitly owner-approved documentation action.
 
 ## 1. Search and evidence protocol
 
@@ -233,4 +233,4 @@ The earlier pairing of AW and Uncharted is not assumed superior to simpler solut
 - Gerbil/Gambit: [Gerbil FFI guide](https://gerbil.scheme.org/guide/ffi.html); [Gerbil actors](https://gerbil.scheme.org/reference/std/actor.html); [Gerbil build guide](https://gerbil.scheme.org/reference/dev/build); [Gambit manual](https://gambitscheme.org/4.2.3/gambit.pdf); [Gerbil SDL2](https://github.com/nymacro/gerbil-sdl2/tree/ed03678de77807146718d4d23397ec12fd593cc0); [Gambit Raylib](https://github.com/georgjz/raylib-gambit-scheme/tree/df7ea6db54a3196d13c66dac4909c64cea6e5a88).
 - Capability comparator: [Spritely Goblins](https://spritely.institute/goblins/); [Spritely whitepaper HTML](https://files.spritely.institute/papers/spritely-core.html).
 
-**Publication status:** This report is a generated local research artifact only. No GitHub push, no branch modification, no source modifications, and no concept implementation.
+**Publication status:** Published on 12 November 2026 with owner approval to `vietcong73/alien-works`, branch `audit/lisp-foundation-reserve`, under `docs/reviews/systematic/`. This publication changes documentation only; no upstream source, existing audits, concept, or implementation was changed.
