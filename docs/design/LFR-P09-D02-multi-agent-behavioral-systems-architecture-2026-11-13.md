@@ -102,7 +102,7 @@ The **behavior layer** selects proposals from available information. The **coord
 
 A policy may be deterministic, randomized, planning-based, symbolic or learned. Policy sharing never entails shared private observations, shared mutable memory, equal action spaces, synchronized episode endpoints or a common reward. A team can coordinate under distinct policies; competitive agents may temporarily share a communication protocol.
 
-### 2.2 Dependency is an interface, not an import cascade
+### 2.2 Dependency as an interface
 
 - **K0:** small, exact, versioned identity/effect/authority/result envelopes. K0 cannot schedule turns or enforce permissions by itself.
 - **K1:** opt-in M03/M04/M05/M06/M07/M08/M12/M14/M15/M16 when independently qualified. None required as one bundled runtime.
@@ -113,7 +113,7 @@ A policy may be deterministic, randomized, planning-based, symbolic or learned. 
 
 ## 3. Typed scenario, observation and membership contracts
 
-The following schemas are **normative field semantics**, not a claim of compilable Gerbil types.
+The following schemas are **normative field semantics**.
 
 ```text
 MultiAgentScenarioSpec {
@@ -284,7 +284,7 @@ TeamTaskAllocation {team_ref, goal_revision, task_refs[], candidate_agent_refs[]
 | Learned heterogeneous continuous actions | Fixed decentralized control | MAPPO/MASAC/MADDPG under supported spaces | Continuous action bounds, centralized training info, shared-policy compatibility |
 | External autonomous systems | Pure mock only | D03 authority/supervision adapter later | No live actuator or tool authority inherited from planner successes |
 
-**No single algorithm must win all jobs.** For each tour, define a task-specific short list, the feasible algorithm versions and stop criteria before running expensive benchmarks. Accept algorithm-family rejection when observed mismatch is real; do not reject a working algorithm for an unrelated academic criterion. A missing oracle yields `UNRESOLVED`, not retroactive success or blanket rejection.
+For each tour, define a task-specific short list, the feasible algorithm versions and stop criteria before running expensive benchmarks. Accept algorithm-family rejection when observed mismatch is real; do not reject a working algorithm for an unrelated academic criterion. A missing oracle yields `UNRESOLVED`, not retroactive success or blanket rejection.
 
 ### 7.1 MARL boundary
 
@@ -392,8 +392,6 @@ A meaningful negative result is retained. A task may succeed under an FSM or gre
 ## 11. Security, authority and failure handling
 
 **Trust domains:** user-authored trusted scenario configuration; untrusted perception/messages; learner-produced proposals; privileged host truth/effects; evaluation-only truth; third-party native/service outputs. A schema validator rejects malformed data; an authority service admits effects. These mechanisms are distinct.
-
-**No autonomy escalation:** an agent's goal, successful plan, policy reward or cross-agent vote never grants file-system, network, financial, robot-actuator or P08 world-write permission. External actions require a distinct host permit bound to effect, actor, target state and version. D02 creates no live trading executor or robot motor driver.
 
 **Failures:** invalid schema; stale frame; non-ready agent; dead generation; missing action; contradictory resource claims; unavailable policy; plan timeout; BT interruption failure; corrupted blackboard; communication scope denial; RNG/profile drift; host reject; ambiguous unknown host status; evaluation leakage; nondeterministic backend discrepancy. Each yields a typed status and retained trace, not silent rescheduling.
 
