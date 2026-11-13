@@ -1,6 +1,6 @@
 # LFR-P09-D04 | Distributed Systems & Coordination Architecture
 
-**Document class:** Source-grounded specialist detailed-design proposal  
+**Document class:** Source-grounded specialist detailed-design proposal, architecture revision v2  
 **Date:** 14 November 2026  
 **Programme:** Lisp Foundation Reserve (LFR-C02)  
 **Domain track:** `ADAPTIVE SYSTEMS` — Adaptive Intelligence & Autonomous Systems  
@@ -8,22 +8,22 @@
 **Design slice:** D04 — Distributed Systems & Coordination  
 **Primary design language:** Gerbil Scheme for message contracts, bounded simulation, actor coordination and reference algorithms; measured and qualified external backends for stronger durability, consensus and scale  
 **Repository context:** `vietcong73/alien-works`, branch `audit/lisp-foundation-reserve`; path `docs/design/LFR-P09-D04-distributed-systems-coordination-architecture-2026-11-14.md`  
-**Status:** `SOURCE_GROUNDED_DESIGN_PROPOSED / 80_FUTURE_TESTS / 12_FUTURE_GATES / UNIMPLEMENTED / RUNTIME_UNQUALIFIED / DOCUMENT_PUBLISHED_TO_GITHUB`  
-**Publication:** Owner-approved publication of this design document to `docs/design/` on `audit/lisp-foundation-reserve`. Runtime implementation, external service installation, credentials and deployment require separate approval.
+**Status:** `ARCHITECTURE_REVISION_V2_PROPOSED / 80_FUTURE_TESTS / 12_FUTURE_GATES / UNIMPLEMENTED / RUNTIME_UNQUALIFIED / DOCUMENT_PUBLISHED_TO_GITHUB`  
+**Publication:** Owner-approved v2 architecture revision published to `docs/design/` on `audit/lisp-foundation-reserve`, replacing the prior v1 document. Implementation, installation, credentials and deployment require separate authorization.
 
-> **Design decision:** P09-D04 defines versioned distributed message exchange, coordination state, failure-aware workflow progress and evidence of remote effects. It starts with a finite, fault-injectable Gerbil reference and a testable single-owner task ledger. Transport, broker persistence, consensus, effect admission and application authority are selected as independently qualified interfaces. Reliability claims bind to precise scopes, fault assumptions and backend revisions.
+> **Design decision:** P09-D04 is a standalone distributed coordination subsystem. Its Gerbil reference defines messaging, bounded work ownership, delivery evidence and recovery semantics on local ports. Transport, durable storage, consensus and host effects attach through separately qualified capability adapters. K0 supplies the shared contract vocabulary; K1 mechanisms and specialist integrations attach when selected. Reliability claims bind to the tested backend, topology, fault assumptions and authority host.
 
 ## 0. Objectives, first product and boundaries
 
 **Research question:** How can Gerbil-centered applications coordinate actors, services, workers and autonomous components across process and network failures while making message delivery, state consistency, scheduling, durability, retry, ordering and authority independently testable?
 
-**First useful product:** `PartitionedWorkLedger`, a deterministic two-worker/two-host simulation that injects partition, delayed acknowledgement, duplicate delivery, leader/lease turnover, stale-worker completion, crash and recovery. Its oracle checks committed operations, task ownership, fencing and unresolved effects over bounded event schedules. The initial implementation can run on one machine without a broker or remote service.
+**First useful product:** `PartitionedWorkLedger`, a deterministic two-worker, one-authoritative-ledger reference with simulated client links. It injects partition, delayed acknowledgement, duplicate delivery, grant turnover, stale-worker completion, crash and recovery. Its oracle checks committed operations, task ownership, fencing and unresolved effects over bounded schedules on one machine. Selected multi-host implementations follow only after backend qualification.
 
 **In scope:** actor identities and generations; protocol/schema negotiation; command/event envelopes; bounded mailboxes and credit-based backpressure; asynchronous ordering; delivery and deduplication; membership and liveness; coordinator epochs; leases and fencing; compare-and-swap state; optional durable queue/log/outbox/inbox; saga/workflow progress; network partitions; retries and recovery; consistency profiles; authenticated endpoints; end-to-end receipts; distributed qualification and benchmark tours.
 
-**System ownership:** the application or domain host owns state truth and the meaning of effects. D04 owns coordination semantics and provides an explicit remote-effect boundary. K0 supplies portable identity/validation/effect/result vocabulary. Qualified K1 mechanisms are optional; D04 defines concrete distributed behavior and corresponding evidence.
+**Ownership:** D04 owns coordination state, message-delivery contracts, work leases, retry/reconciliation protocols and its internal recovery records. An integrating application owns domain facts, agent objectives, policy decisions and effects. The effect host decides admission and records actual commits. K0 supplies portable identity, validation and receipt vocabulary; K1 supplies selected reusable mechanisms.
 
-**Ports into adjacent designs:** P09-D01 can supply frozen policies and evaluation tasks; P09-D02 supplies agent proposals, team roles and joint-action decisions; P09-D03 supplies time-bounded control intents and device-host acknowledgements. P05 owns domain memory/evidence policy and P06 owns historical branching/reconstruction. P02 owns local service/process supervision. P04 owns operational permission decisions. D04 defines delivery, remote reconciliation and coordination between those owners.
+**Integration surface:** optional integrations may include P09-D01 (learning jobs), P09-D02 (agent interaction), P09-D03 (controller commands), P08 (world events), P02 (process health), P04 (effect policy), P05 (durable evidence), P06 (history) or unrelated applications. Each adapter translates an application-specific request into the D04 protocol and back. The core reference runs with zero specialist integration adapters.
 
 **Deployment classes:** `FINITE_MODEL`, `LOCAL_ACTOR`, `REMOTE_TRANSPORT`, `DURABLE_WORKFLOW`, `QUORUM_COORDINATION`, and `HOST_EFFECT_INTEGRATION`. Each class has an independent qualification boundary. Live external financial, robot, operating-system or network changes require their own host authorization.
 
@@ -36,7 +36,7 @@
 | `TRANSPORT_QUALIFIED` | Actual send/ack/drop/delay/reconnect tests on pinned adapter | Transport and topology under test |
 | `DURABILITY_QUALIFIED` | Crash/restart, persistent storage, checksum/replay, retention and recovery evidence | Named store and failure model |
 | `COORDINATION_QUALIFIED` | CAS/lease/epoch/fencing safety and quorum fault tests | Selected consistency domain |
-| `HOST_EFFECT_ADMISSIBLE` | Separate host approval, operation IDs, dedup/receipt and unknown-outcome reconciliation | Named host/effect profile |
+| `HOST_EFFECT_INTEGRATION_CONFORMANT` | Host approval interface, operation IDs, dedup/receipt and unknown-outcome reconciliation | Named adapter and host/effect profile; admission claim belongs to host |
 
 **Default classification:** `DESIGN_PROPOSED`. No method or backend below has been executed or performance-qualified for LFR.
 
@@ -64,62 +64,99 @@ Sources distinguish documented API behavior from proposed LFR semantics. `DOC` i
 
 **Source qualification for later implementation:** pin source commit/tag, licensed components, protocol version, topology, server and client releases, config, persistence/fsync semantics, TLS/mTLS configuration, fault model, load profile and test harness. Compare actual execution results with the declared oracle.
 
-## 2. Architecture and responsibility contracts
+## 2. Architecture, dependency closure and authority
 
 ```text
-           Application / task owner
-                   |
-       CommandIntent / Event / WorkSpec
-                   |
-            Admission adapter <---- K0 + P04 authority (when effects)
-                   |
-          Protocol gateway / schema
-                   |
-    +------- D04 COORDINATION PLANE --------+
-    | Routing + membership + epochs         |
-    | Mailboxes + backpressure + deadlines  |
-    | Delivery + ACK + dedup + retries      |
-    | CAS / lease / fencing / reservation   |
-    | Outbox/inbox + workflow reconciliation|
-    +-------+----------------+--------------+
-            |                |
-       Local actors     Qualified external adapter
-        (:std/actor)    NATS / RabbitMQ / Kafka / etcd / Temporal
-            |                |
-            +--------+-------+
-                     |
-         Host receives bounded proposal
-                     |
-         Host admit -> effect -> receipt
-                     |
-         Trace + independent evaluator
+  Application / domain owner
+        |  typed WorkSpec / Event / CommandIntent             P08, P09, P02...
+        v
+  +---------------- D04 PUBLIC PORT -----------------+
+  | validate -> submit -> route -> claim -> reconcile|
+  +-----------------------+--------------------------+
+                          v
+  +---------------- D04 GERBIL CORE -----------------+
+  | identity / message / protocol / bounded mailbox |
+  | delivery states / attempts / backpressure       |
+  | task-ledger / CAS / lease / epoch / fencing      |
+  | local workflow progress / receipt reconciliation|
+  | finite fault scheduler / independent oracle     |
+  +-----------------------+--------------------------+
+                          | capability ports
+       +----------+--------+---------+----------+
+       |          |                  |          |
+    ClockPort TransportPort     StateStorePort  HostEffectPort
+       |          |                  |          |
+  virtual /   local actor /      in-memory /    mock host /
+  qualified   NATS / RabbitMQ    transactional   authorized real
+  clock       / Kafka            store / etcd   host adapter
+                          |
+                   Trace / qualification
+
+  K0 contract vocabulary: shared foundation
+  K1 mechanisms: selected, qualified extensions
 ```
 
-**Control plane versus data plane:** the control plane handles schema registries, membership, leases, routing profiles and admission configurations. The data plane carries work messages, streamed records, delivery receipts and effect status. Persistent state is delegated to a declared storage owner; mock storage is sufficient for model qualification, not durability claims.
+**Dependency direction:** the D04 core directly uses only the versioned K0 contract vocabulary and its own Gerbil reference implementations. K1 mechanisms, adjacent specialists, brokers, consensus services and external workflow products enter through declared ports. Profile A uses local reference ports. Profile B or C replaces selected ports after a capability/semantic qualification; an integration choice does not rewrite the public D04 messages.
 
-### 2.1 Owners and integration ports
+### 2.1 Dependency classes and independent startup
 
-| Owner | D04 receives | D04 returns |
-|---|---|---|
-| K0 | Identity/version, validation, authority and effect envelopes | Typed transport/coordination receipts |
-| K1 (selected) | M05 time, M09 lifetime, M10 effects, M11 reconciliation, M12 checkpoint, M13 interop, M16 provenance | Profile-bound mechanism evidence |
-| P09-D01 | Policy/dataset/experiment work requests and version locks | Delivery/scheduling receipts, run provenance |
-| P09-D02 | Agent/team proposals, group membership and joint-work requests | Message/coordination status, ordered observations and conflict outcomes |
-| P09-D03 | Controller work deadlines, frozen command intents, host interface identity | Fresh/stale/unknown remote-execution evidence |
-| P02/P05/P06 | Local process health, durable storage/history adapters | Remote failure/commit metadata; storage/history ownership unchanged |
-| P04 | Authorized effect descriptor for a specific host and scope | Execution reconciliation, never an inferred permission |
-| P08 | World adapter event/region/task requests | Delivery semantics; P08 maintains world truth |
+| Class | Component | Required for the finite D04 reference | Binding contract |
+|---|---|---|---|
+| Shared foundation | K0 identity/schema/effect/result envelope | Yes: agreed semantics and version lock | Exact identity, validation, version and receipts |
+| D04-owned core | Message, mailbox, local scheduler, task ledger, CAS, finite oracle, trace | Yes | Local deterministic reference and versioned state |
+| Capability provider | `ClockPort`, `TransportPort`, `StateStorePort`, `HostEffectPort` | Yes as interfaces; local mocks are sufficient | Separate clocks, retries, atomicity and effect truth |
+| Qualified extension | K1 M05/M09/M10/M11/M12/M13/M16 | No | Explicit import and independent qualification per mechanism |
+| Optional integration | P09-D01/D02/D03, P02/P04/P05/P06/P08, independent apps | No | Translate application requests/receipts while preserving domain ownership |
+| Optional infrastructure | NATS, RabbitMQ, Kafka, etcd, Temporal, native libraries | No | Selected configuration and observed capability/claim ceiling |
 
-**Coordinator identity:** `WorkerId` names a logical participant, `WorkerGeneration` an incarnation, `ClusterMembershipRevision` a membership change, `CoordinatorEpoch` the current lease/fencing generation, and `PolicyRef` an application decision function. Equality of these fields is never inferred from matching display names or network addresses.
+**Standalone acceptance:** the finite `PartitionedWorkLedger` must compile and execute its model tests with zero imports from P02–P09 specialist packages, zero K1 runtime mechanism imports, zero network access and zero external broker. It still uses the shared K0 contract surface. Failing this test is an architectural coupling defect even if every integration test passes.
 
-### 2.2 Timing, ordering and truth
+**Control plane:** D04 owns routing tables, its coordinator membership and lease/epoch state. **Data plane:** D04 owns typed message movement and the evidence of delivery. **Coordination persistence:** D04 defines its own ledger/outbox/inbox/recovery formats and depends on the selected `StateStorePort` for actual persistence guarantees. An application's domain database or P05 evidence repository can integrate as a separate store provider under an explicit atomicity/transaction claim.
 
-- `logical_step` is a test-harness event order or a domain-owned step ID.
-- `message_sequence` is scoped to a sender/channel/partition and does not establish a global order.
-- `causal_parent_refs` records declared event antecedents; observed order alone cannot establish all causality.
-- `clock_time` is a source-labelled timestamp with offset/accuracy bound; remote timestamps need uncertainty accounting.
-- `deadline` is evaluated by the responsible host against its designated clock and validity profile.
-- `commit_revision` is assigned by the authoritative store or host; it is not a broker sequence number by default.
+### 2.2 Capability ports
+
+```text
+ClockPort.now(clock_domain) -> TimeObservation | Unknown
+ClockPort.deadline_verdict(deadline_ref, clock_profile) -> Valid | Expired | Unknown
+TransportPort.send(envelope, delivery_profile) -> SendReceipt | Unknown
+TransportPort.receive(consumer_ref, budget) -> DeliveryAttempt | Empty | Error
+StateStorePort.cas(key, expected_revision, mutation, atomicity_profile)
+  -> StoreCommitReceipt | RevisionConflict | Unknown
+StateStorePort.snapshot(anchor_spec) -> SnapshotReceipt | Unavailable
+HostEffectPort.admit_and_apply(operation, auth_context, expected_revision)
+  -> AuthoritativeEffectReceipt | Rejected | Unknown
+HostEffectPort.query(host_ref, operation_id) -> AuthoritativeEffectReceipt | Unknown
+```
+
+Each capability record carries a provider identity, revision, scope, expiry and qualification evidence. `StateStorePort` explicitly distinguishes ephemeral, single-host transactional and quorum-linearizable stores; `HostEffectPort` declares deduplication atomicity and query capability. A local mock proves the finite-model contract, while a real provider's claims require fault injection against that provider.
+
+A `HostEffectPort` controls admission and effects. If an integration selects P04, its policy decision becomes one input to the host; otherwise the host may use its own qualified admission system. D04 transports the result without gaining the host's authority.
+
+### 2.3 Integration boundaries and ownership
+
+| Integration | Its authoritative decision | D04 responsibility | Evidence handoff |
+|---|---|---|---|
+| P09-D01 | Policy identity, learning lifecycle and experiment evaluation | Deliver version-locked training/evaluation work | Scheduling, delivery and transport trace |
+| P09-D02 | Agent goals, joint-action arbitration, domain resource conflict | Deliver proposals and coordinate infrastructure task ownership | Delivery, stale claim and reservation receipts |
+| P09-D03 | Control feasibility, supervision, command validity | Route deadline-bound command to selected host | Fresh/late/unknown delivery and host receipts |
+| P08 | World truth, causal admission and generation | Route world-domain events or work | Message/host-effect evidence only |
+| P02/P04/P05/P06 | Local process supervision / permission / evidence / historical state respectively | Adapt to lifecycle, authority, storage or event interfaces when chosen | Scoped compatibility witnesses |
+| Independent application | Domain truth and authorization | Standard work/task/message coordination | Same D04 protocol and test gates |
+
+**Conflict distinction:** an infrastructure `LEASE_CONFLICT`, `STALE_EPOCH` or `CAS_CONFLICT` describes task ownership and store revision. A domain `JOINT_ACTION_REJECTED` or disputed NPC resource belongs to the P09-D02 host and returns as an opaque domain outcome. D04 carries that outcome, without re-running behavioral arbitration.
+
+**Coordinator identity:** `WorkerId` names a logical participant, `WorkerGeneration` its incarnation, `ClusterMembershipRevision` a configuration change, `CoordinatorEpoch` a grant/fencing revision, and `PolicyRef` an external decision-function reference. Equal display names or addresses never establish identity equality.
+
+### 2.4 Time, ordering and source of truth
+
+- `logical_step`: finite-model event order or declared application-owned step.
+- `message_sequence`: sender/channel/partition ordering profile.
+- `causal_parent_refs`: explicit event antecedents, with separate correlation identity.
+- `clock_time`: source-labelled timestamp and uncertainty/accuracy bound.
+- `deadline`: checked in the responsible host's declared clock domain.
+- `commit_revision`: assigned by the authoritative state store or effect host.
+
+A transport acknowledgement establishes only its declared delivery milestone. A valid domain effect requires a host admission and authoritative effect receipt. Simulated time, broker sequence and host commit order remain separately identified.
 
 ## 3. Message, event and receipt contracts
 
@@ -150,6 +187,8 @@ EffectReceipt {
   reconciliation_ref_optional, evidence_ref
 }
 ```
+
+**Port binding:** each `WireEnvelope` carries `delivery_profile_ref` and a destination scope. A dispatched command also carries an exact `HostEffectPort` binding in the destination application profile, including host revision, authorization scheme and idempotency guarantee. The binding is resolved and revalidated at the host; the wire representation cannot mint an effect permission.
 
 **Message identity:** a replayed message retains `message_id` and `payload_digest`. A new semantically distinct message receives a new identity. A logical operation may generate multiple delivery attempts, each with distinct `attempt_no`; semantic dedup keys are `(host, operation_id)` or a declared equivalent, rather than an unscoped UUID alone.
 
@@ -212,9 +251,9 @@ FencedWriteRequest {
 }
 ```
 
-**Fencing rule:** for a serialized resource, the authoritative host stores `last_accepted_epoch` and atomically validates `candidate_epoch >= last_accepted_epoch`, expected state revision and semantic operation ID. For exclusive leadership, accept writes from exactly the currently granted owner/epoch, and reject all superseded epochs. A stale client with a still-running process has no implicit authority after lease turnover.
+**Fencing rule:** the authoritative ledger/host validates `(resource, owner, worker_generation, coordinator_epoch)` against the *current granted tuple* in the same atomic operation as the target state transition and operation-id deduplication. It validates the expected state revision and the grant validity at the relevant host clock. Mere comparison against `last_accepted_epoch` is insufficient if the host has not observed a newer grant. A real multi-host profile must show a transactional grant/commit boundary or a qualified host-side fencing protocol whose new-grant visibility precedes writes under the stated consistency assumptions.
 
-**Lease rule:** a lease is evidence of coordination service liveness during its validity window. A delayed process may continue after lease expiry; effect hosts enforce the epoch. TTL and clock uncertainty belong to the grantor and host contract, not the worker's wall clock estimate.
+**Lease rule:** a grant records owner generation, epoch, scope, grantor revision and clock domain. Expiration and regrant update the authoritative grant state. The host checks the currently granted tuple before accepting a serialized mutation; when that authority cannot be established, the outcome is `UNKNOWN` or `QUORUM_UNAVAILABLE` under the selected profile. Lease TTL, clock uncertainty and fencing are separately tested.
 
 **Election/consensus:** candidate choices include etcd-backed leases/election for a small control plane and an independently qualified replicated-log service for stronger state machine replication. If a quorum is unavailable, the `QUORUM_COORDINATION` profile refuses writes that require linearizability. Disconnected read-only observations may continue under an explicitly stale-read profile.
 
@@ -237,7 +276,7 @@ FencedWriteRequest {
 
 ## 6. Durable queues, outbox/inbox and recovery
 
-**Atomic publication contract:** when a domain event is generated by a committed domain-state change, store the state mutation and `OutboxRecord` in one qualified transaction if atomic event publication is required. A publisher relays pending outbox records; a consumer writes an `InboxRecord` and domain effect in one atomic unit when that storage model permits. Cross-store pipelines retain explicit `UNKNOWN` and reconciliation semantics.
+**Atomic publication contract:** D04 owns its coordination ledger and outbox/inbox schema. When a domain event is generated by a committed domain-state change, store the state mutation and `OutboxRecord` in one qualified transaction if atomic event publication is required. A publisher relays pending outbox records; a consumer writes an `InboxRecord` and domain effect in one atomic unit when that storage model permits. Cross-store pipelines retain explicit `UNKNOWN` and reconciliation semantics.
 
 ```text
 OutboxRecord {
@@ -279,33 +318,43 @@ RecoveryAnchor {
 
 ### 8.1 Linearizable task-ledger oracle
 
-The initial oracle uses a single authoritative state machine. Its abstract state is `S = (rev, next_epoch, current_owner, tasks, applied_ops, pending, trace)` with typed event transitions.
+The reference oracle is a single authoritative state machine used by two simulated workers. Its state is `S = (rev, next_epoch, grants, tasks, applied_ops, pending, trace, clock)`; `applied_ops` is keyed by `(host_ref, operation_id)`. Each transition is atomic within the model and records the exact source of any clock or delivery fact.
 
 ```text
-claim(worker, task, expected_rev):
+claim(worker, generation, host, task, expected_rev):
   if expected_rev != rev: return STALE_REVISION
-  if task.claimed && lease_valid: return CONFLICT
+  if tasks[task] is terminal: return TASK_TERMINAL
+  if grants[task] is currently valid: return CONFLICT
   epoch := next_epoch + 1
   next_epoch := epoch
-  current_owner[task] := (worker, generation, epoch)
+  grants[task] := current_grant(worker, generation, host, epoch, expiry)
   rev := rev + 1
-  return GRANT(task, epoch, rev)
+  return GRANT(task, worker, generation, epoch, rev, expiry)
 
-commit(worker, task, epoch, op_id, effect_digest, expected_rev):
-  if applied_ops contains op_id:
-     if matching effect_digest: return prior_receipt
+commit(host, worker, generation, task, epoch, op_id, digest, expected_rev):
+  key := (host, op_id)
+  if applied_ops contains key:
+     if applied_ops[key].digest == digest: return prior_receipt
      else: return OPERATION_CONFLICT
+  if profile requires quorum && quorum_unavailable: return QUORUM_UNAVAILABLE
   if expected_rev != rev: return STALE_REVISION
-  if owner[task] != (worker, generation, epoch): return FENCED
+  if tasks[task] is terminal: return TASK_TERMINAL
+  if grants[task] != current_grant(worker, generation, host, epoch): return FENCED
+  if grant_expired_at_authoritative_clock(grants[task]): return FENCED
   rev := rev + 1
   tasks[task] := COMMITTED
-  applied_ops[op_id] := (effect_digest, rev)
-  return APPLIED(op_id, rev)
+  applied_ops[key] := (digest, rev, task, terminal_receipt)
+  return APPLIED(host, op_id, rev)
+
+expire_and_regrant(task, new_worker, new_generation):
+  verify expiry against authoritative grantor clock
+  atomically invalidate old grant and install epoch := next_epoch + 1
+  advance rev; return new current grant
 ```
 
-**Oracle conditions:** these transitions are atomic *inside the test model*. A real adapter must implement the same effect-commit atomicity using a qualified host/store operation, otherwise the claim ceiling is lower. A separate action `expire_and_regrant` advances the epoch under the authoritative grantor's clock and creates a new owner generation.
+**Oracle and implementation boundary:** operation deduplication, current-grant validation and effect commit are one atomic state transition in the finite model. A production host must establish equivalent atomicity or publish a narrower claim. An external effect that cannot share this atomic boundary requires host-side idempotency/reconciliation and cannot inherit the oracle's at-most-once commit guarantee. Multi-node fencing qualification additionally checks that a superseding grant is visible to the enforcing host before it accepts subsequent writes.
 
-**Required safety properties:** `S1` an operation ID commits with one immutable digest; `S2` a stale epoch cannot commit; `S3` a task terminal state is committed at most once; `S4` revision increases on accepted mutations; `S5` different active owners never commit the same exclusive task; `S6` unmatched ACK cannot prove host effect; `S7` leaked private payload is rejected by scope validation; `S8` bounded queues respect limits; `S9` replay preserves committed state in the declared durable model; `S10` no quorum-backed write succeeds during loss of quorum.
+**Required safety properties:** `S1` a host-scoped operation ID commits with one immutable digest; `S2` an outdated or expired grant cannot commit; `S3` a task terminal state is committed at most once; `S4` revision increases on accepted mutations; `S5` different active owners never commit the same exclusive task; `S6` unmatched ACK cannot prove host effect; `S7` leaked private payload is rejected by scope validation; `S8` bounded queues respect limits; `S9` replay preserves committed state in the declared durable model; `S10` no quorum-backed write succeeds during loss of quorum.
 
 **Liveness properties, conditional:** `L1` an eligible queued task eventually completes under healthy workers, sufficient retries and eventually available owner; `L2` an unresolved operation eventually transitions to known if the authoritative host becomes queryable; `L3` a backpressured request eventually progresses if consumers drain and its deadline remains valid. These are verified only under matching fairness and retention assumptions.
 
@@ -344,7 +393,9 @@ lfr/p09/distributed/
   actors/{mailbox,router,worker,supervisor,local-transport}.ss
   coordination/{cas,lease,fencing,allocation,read-profile}.ss
   recovery/{outbox,inbox,checkpoint,reconcile,workflow}.ss
+  ports/{clock,transport,state-store,host-effect,trace}.ss
   adapters/{nats,rabbitmq,kafka,etcd,temporal,remote-host}.ss
+  integrations/{p08,p09-d01,p09-d02,p09-d03,p02,p04,p05,p06}.ss
   evaluation/{trace,invariants,benchmark,qualification}.ss
   tests/{protocol,delivery,ordering,fencing,crash,security,parity}.ss
 ```
@@ -364,7 +415,7 @@ snapshot(cluster) -> SnapshotRef + Digest
 check_invariants(cluster, oracle_spec) -> OracleReport
 ```
 
-The reference API is a design-level contract. Actual Gerbil standard-library forms, OS integration and serialized representation must be compiled and checked against a pinned Gerbil/Gambit toolchain. `:std/actor` is a concrete documented candidate for local messaging and remote actor research, not a substitute for durable storage.
+The reference API uses D04-owned contracts and in-memory capability-port implementations. Actual Gerbil API forms, OS integration and serialization are qualified against a pinned toolchain. `:std/actor` is the first actor candidate, with queue bounds and failure semantics established by execution. External brokers and integration adapters ship as separate packages.
 
 ## 10. Algorithm and backend-to-job qualification
 
@@ -421,8 +472,8 @@ The reference API is a design-level contract. Actual Gerbil standard-library for
 23. **I23 Workflow:** workflow progress tracks definition version and completed activity evidence.
 24. **I24 Unknown effect:** timeout without a host receipt remains unknown.
 25. **I25 Compensation:** compensating action is a new forward effect with independent evidence.
-26. **I26 Role:** D02 joint proposals are transported without changing arbitration semantics.
-27. **I27 Control:** D03 deadlines and host authority survive transport boundaries.
+26. **I26 Domain isolation:** an integrating application's domain outcome is carried unchanged through transport and recovery; infrastructure claim conflicts retain their own namespace.
+27. **I27 Host truth:** only the bound authoritative host reports applied effects; deadlines are enforced by the selected host clock.
 28. **I28 Tenant:** cross-namespace processing requires explicit host authorization.
 29. **I29 Resource:** retries and retention cannot exceed declared resource policy.
 30. **I30 Claim scope:** evidence reports identify tested model, topology, fault profile and runtime.
@@ -441,7 +492,7 @@ Each result records the relevant authoritative reference, correlation, revision,
 
 | Gate | Condition | Evidence requirement |
 |---|---|---|
-| **Q0 — Source closure** | Dependencies, licensing, versions and runtime pinned | Source digest, toolchain manifest, ABI/protocol version |
+| **Q0 — Source closure** | Core dependencies and optional adapters are classified and pinned | Source digest, K0/Gerbil locks, zero-specialist-import build and adapter manifest |
 | **Q1 — Schema and identity** | Wire semantics, trust scoping and dedup identities validated | Golden vectors, malformed payload rejection, collision traces |
 | **Q2 — Finite-model safety** | Bounded event enumerator checks S1-S10 | State-hash coverage, counterexamples, model configuration |
 | **Q3 — Ordering and delivery** | Declared send/ACK/duplicate/reorder properties pass | Broker-independent simulator and chosen adapter traces |
@@ -451,8 +502,10 @@ Each result records the relevant authoritative reference, correlation, revision,
 | **Q7 — Workflow reconciliation** | Duplicate/timeout/compensation paths preserve truth | Event history, activity IDs, external-host response cases |
 | **Q8 — Remote backend parity** | Candidate adapter implements its claimed semantics | Cross-process tests and exact configuration/version locks |
 | **Q9 — Security and isolation** | Auth, tenant scoping, schema and payload boundaries validated | Negative replay/forgery tests and security configuration |
-| **Q10 — Cross-domain integration** | D01/D02/D03 and P04/P05 ports preserve scope | Frozen policies, host-controlled effects, independent oracle |
+| **Q10 — Integration port qualification** | Selected integration/effect adapters preserve owner decisions and their host scope | Per-adapter fixtures and host evidence; `NOT_APPLICABLE` for a core-only release |
 | **Q11 — Independent audit and release** | Claim level matches observed evidence and budgets | Reproducible report, artifact hashes, reviewer disposition |
+
+**Dependency-closure gate:** T73 is mandatory for every D04 core release. T74–T78 are selectively mandatory only for the integration profile to which they apply. A core-only result cannot be rejected for lack of an unselected learner, game, controller, evidence store or historical engine. Conversely, an integrated claim must pass its selected adapter's exact negative fixtures.
 
 ### 13.2 Test register
 
@@ -502,8 +555,8 @@ Each result records the relevant authoritative reference, correlation, revision,
 
 | ID | Fixture / injection | Required observation |
 |---|---|---|
-| **P09-D04-T25** | Two workers contend for task | One authoritative owner per epoch |
-| **P09-D04-T26** | Partitioned owner replaced | Stale owner fenced after regrant |
+| **P09-D04-T25** | Two workers contend for task | One current grant tuple, atomic owner revision |
+| **P09-D04-T26** | Partitioned owner replaced | Superseded grant rejected by authoritative host |
 | **P09-D04-T27** | Lease renewed before expiry | Same owner generation remains valid |
 | **P09-D04-T28** | Lease expires during delayed write | Host rejects stale epoch |
 | **P09-D04-T29** | Membership revision changes | Old configuration cannot silently write |
@@ -586,12 +639,12 @@ Each result records the relevant authoritative reference, correlation, revision,
 
 | ID | Fixture / injection | Required observation |
 |---|---|---|
-| **P09-D04-T73** | P09-D01 frozen policy dispatch | Policy revision unchanged in flight |
-| **P09-D04-T74** | P09-D02 joint-action transport | Coordination decision preserved |
-| **P09-D04-T75** | P09-D03 stale remote control command | Deadline/admission checked by host |
-| **P09-D04-T76** | P04 authorization revocation | Revoked authority rejected at effect host |
-| **P09-D04-T77** | P05 durable evidence store port | Receipt durability uses explicit adapter |
-| **P09-D04-T78** | P06 history event handoff | No implicit change to ancestry semantics |
+| **P09-D04-T73** | D04 core built with only K0 and Gerbil | No specialist, K1 or external-service runtime imports |
+| **P09-D04-T74** | Optional P09-D02 joint-action adapter | Domain arbitration and D04 lease conflict remain distinct |
+| **P09-D04-T75** | Optional P09-D03 control adapter | Deadline/admission checked by host clock and authority |
+| **P09-D04-T76** | HostEffectPort with or without P04 | Host enforces declared authority; P04 adapter optional |
+| **P09-D04-T77** | D04 ledger with standalone store port | Recovery works without P05; optional P05 store separately scoped |
+| **P09-D04-T78** | D04 recovery with no P06 history engine | Message replay reconstructs ledger without P06 imports |
 | **P09-D04-T79** | Independent model checker rerun | Same fixtures reproduce state hashes |
 | **P09-D04-T80** | Release matrix claim audit | Only qualified classes marked accepted |
 
@@ -606,9 +659,9 @@ Each result records the relevant authoritative reference, correlation, revision,
 | Broker messaging | Q0/Q1/Q3/Q4/Q8/Q9/Q11 | `TRANSPORT_QUALIFIED` for specified broker, topology and delivery mode |
 | Durable work pipeline | Q0/Q1/Q2/Q3/Q4/Q6/Q7/Q8/Q9/Q11 | `DURABILITY_QUALIFIED` for pinned store/failure model |
 | Distributed exclusive ownership | Q0/Q1/Q2/Q5/Q8/Q9/Q11 | `COORDINATION_QUALIFIED` with host fencing and quorum assumptions |
-| Cross-domain remote effects | Matching prior gates + Q10 + host-specific independent gate | `HOST_EFFECT_ADMISSIBLE` within approved host scope |
+| Selected integrations/host effects | Matching prior gates + applicable Q10 and independent host gate | `HOST_EFFECT_INTEGRATION_CONFORMANT` for tested adapter; host retains admission authority |
 
-Qualification is modular: the registered 80 cases form a **total design register**, while each release claim declares and passes its applicable subset and all mandatory gates. Coverage, unresolved tests and excluded workloads are published explicitly. A profile that passes an exact finite model does not inherit distributed runtime qualification.
+Qualification is modular: the registered 80 cases form a **total design register**. Every core profile includes the zero-specialist-import fixture T73. Q10 applies only when an integration or real-effect adapter is selected; an unselected adapter is `NOT_APPLICABLE`, rather than a failure. A claim requires its applicable tests and all corresponding gates, with unresolved and excluded workloads published explicitly. Model evidence remains scoped to the finite model.
 
 ## 14. Implementation sequencing post separate authorization
 
@@ -618,7 +671,7 @@ Qualification is modular: the registered 80 cases form a **total design register
 4. **D04-03 — Gerbil local-actor adapter:** implement fixed-capacity mailbox, event/ACK trace, supervision and shutdown; compare against reference schedules.
 5. **D04-04 — Durable store integration:** choose transactional outbox/inbox/ledger storage, test crash cuts and replay closure before claiming crash recovery.
 6. **D04-05 — Backend candidate tour:** select per job among NATS/RabbitMQ/Kafka/etcd/Temporal, inspect actual maintained client APIs, toolchain feasibility and license, then run matching parity and failure fixtures.
-7. **D04-06 — D01/D02/D03 interoperability:** execute frozen-policy task, joint action and stale-control deadline fixtures with host-owned admission.
+7. **D04-06 — Selected integration conformance:** first run T73 with no specialist imports, then qualify only the selected application/host adapters against their own source-of-truth and effect contracts.
 8. **D04-07 — Independent qualification:** audit Q0-Q11, publish evidence/claim matrix and maintain unresolved cases without expanding claim ceilings.
 
 ## 15. Open engineering decisions
@@ -640,7 +693,7 @@ Qualification is modular: the registered 80 cases form a **total design register
 
 ## 16. Final design verdict
 
-**Design maturity:** source-grounded architecture with a finite reference oracle, explicit message and effect receipts, actor/broker/consensus/workflow implementation profiles, ten fault schedules, thirty invariants, eighty proposed tests and twelve qualification gates. No Gerbil code, external service, consensus runtime, durability benchmark or security claim has been qualified in this document.
+**Design maturity:** v2 architecture review with a standalone Gerbil core, classified dependencies, explicit capability ports, a corrected host-grant fencing oracle, ten fault schedules, thirty invariants, eighty proposed tests and twelve qualification gates. Design publication is not implementation or runtime qualification.
 
 ```text
 P09_D04_DISTRIBUTED_SYSTEMS_COORDINATION_DESIGN_PROPOSED /
@@ -650,10 +703,10 @@ DELIVERY_ACK_HOST_APPLY_DISTINCT / BOUNDED_BACKPRESSURE /
 PARTITION_DUPLICATE_REORDER_CRASH_FAULT_PROFILES /
 LEASE_CAS_FENCING / QUORUM_SCOPED_CONSISTENCY /
 OUTBOX_INBOX_REPLAY_AND_WORKFLOW_RECONCILIATION /
-P09_D01_LEARNER_P09_D02_AGENT_P09_D03_CONTROL_SEPARATE /
+OPTIONAL_INTEGRATION_ADAPTERS / STANDALONE_CORE_K0_DEPENDENCY /
 A_B_C_IMPLEMENTATION_PROFILES_SELECTED_PER_JOB /
 80_FUTURE_TESTS / Q0_TO_Q11 / NO_RUNTIME_EVIDENCE /
 NO_BENCHMARK_PASS / UNIMPLEMENTED / DOCUMENT_PUBLISHED
 ```
 
-> **Closing principle:** Distributed correctness is established at the boundary where responsibility changes hands. A message can arrive twice, a worker can outlive its lease, a quorum can disappear and an acknowledgement can be lost. Reliable systems preserve ownership, identity and evidence through those events, then make the next decision from what the authoritative host can actually establish.
+> **Closing principle:** D04 coordinates the movement and ownership of work; each domain owner defines its own decisions and each host establishes real effects. A reliable implementation connects those contracts through verifiable receipts, current grants and explicit failure outcomes.
