@@ -13,9 +13,7 @@
 
 > **Design decision:** P08-D03 supplies a **versioned procedural-content pipeline** capable of representing and, once separately implemented, generating world regions without owning world causality or authoritative scene/entity state. A **pure Gerbil implementation (A)**, **Gerbil-governed native execution (B)**, and **Gerbil-coordinated external generation service (C)** are equally legitimate profiles. Select per workload using verified semantic parity and measured end-to-end performance. Never force a single language across all generation stages.
 
-## 0. Naming correction, objectives and boundaries
-
-The earlier programme reserved **P09-D01** for procedural generation. The owner has now selected **P08-D03** as the design identity for this scope. This is a *design identity correction*, not a silent edit of committed P08-D01/D02 or automatic deletion/reassignment of all future P09 work. The older P08-D01/D02 documents still contain the provisional label `P09` at their materialization port; **D03 retains the same port semantics** and proposes an explicit reference correction in those documents upon separate approval. The integration contract must not fork simply because the design number changed.
+## 0. Objectives and boundaries
 
 **Research question:** Can independently specified world-generation algorithms and a reproducible content pipeline be implemented in Gerbil Scheme where practical, while retaining a strict, low-overhead route to native code or external generation services when demonstrated workloads demand it? In particular, can the architecture support large, progressively materialized game worlds inspired by the **documented techniques** used in *No Man's Sky*, without copying undocumented proprietary engine implementations?
 
@@ -107,7 +105,7 @@ No generated *representation* can silently promote itself into a canonical world
 
 ## 3. Public contract parity with P08-D01 and P08-D02
 
-The earlier D01 and D02 both name a materialization interface, originally targeted at `P09`. **D03 adopts that contract unchanged as the public compatibility floor**. The prior documents should receive a later approved reference-only correction from `P09` to `P08-D03`, not an unreviewed rewrite of their semantics.
+P08-D03 adopts the materialization request/response contract defined by P08-D01 and consumed by P08-D02 as its public compatibility floor. The contract's field meanings, revision locks, admissibility and receipt semantics must remain consistent across all three designs.
 
 ### 3.1 Input and output records
 
@@ -452,7 +450,7 @@ Sample workloads: (1) small `64x64` 2D field; (2) medium `512x512` mixed biome+p
 20. **I20 — Observer isolation:** generated hidden-region artifacts are not automatically public observations.
 21. **I21 — Independent qualification:** Gerbil, native and service variants each require exact profile-specific execution evidence.
 22. **I22 — No invented NMS source:** public NMS talk/patch features cannot be marketed as recovered proprietary engine kernels.
-23. **I23 — No implicit P09:** D03 is the approved design identifier; older P09 references are compatibility pointers pending separate doc correction.
+23. **I23 — Public port compatibility:** D03's materialization adapter must preserve D01/D02 request and response semantics, including version locks, result validation and the boundary between generated representations and authoritative world state.
 24. **I24 — No false maturity:** proposed tests and sources are not runtime or performance qualification.
 
 ### 13.2 Failures and uncertainty
@@ -640,7 +638,7 @@ Every verdict binds an exact `GeneratorManifest`, backend implementation, output
 5. **D03-04 — Fair algorithm tour:** identify actual hotspots and compare A versus available B with equal outputs, both kernel-level and end-to-end, using the same fixtures. No native port mandated.
 6. **D03-05 — Optional 3D/planet profiles:** density, meshing, LOD/seams, chart transforms and planetary variety only after independent correctness/budget evidence.
 7. **D03-06 — C only if justified:** remote generation and failure/ack reconciliation if real workload scale requires it. Do not create a service for a tiny single-host game.
-8. **D03-07 — Independent audit + docs alignment:** execute relevant Q0–Q11; audit naming compatibility. Under a **separate approved documentation change**, correct provisional P09 mentions in D01/D02 to P08-D03 without changing public port semantics.
+8. **D03-07 — Independent audit + interface conformance:** execute relevant Q0–Q11; verify D01/D02 materialization port compatibility, version locks, negative cases and evidence scope.
 
 ### 15.2 Open issues
 
@@ -654,11 +652,11 @@ Every verdict binds an exact `GeneratorManifest`, backend implementation, output
 | Native code languages | Open: Rust/C/C++/Zig or selected GPU backend | ABI, licensing, parity, platform and end-to-end data |
 | Remote service | Unnecessary unless measured scale justifies it | Availability, budget, auth and retry qualification |
 | Algorithm source choice | Independently specified first; lawful open source when useful | Code provenance/license and semantic parity |
-| Design numbering | **P08-D03**, no P09 artifact by implication | Later approved reference correction for D01/D02 |
+| D01/D02 port conformance | Preserve the existing materialization contract | Cross-design request/response compatibility and negative adapter tests |
 | Shared cross-domain value | Only separately qualified portable mechanisms | Non-game consumer fixture and invariant test |
 
 ## 16. Final design verdict
 
-`P08_D03_GAME_WORLD_PROCEDURAL_GENERATION_DESIGN_PROPOSED / GAMING_TRACK / PREVIOUS_P09_SLOT_REASSIGNED_TO_P08_D03 / PUBLIC_NMS_PIPELINE_NOT_PROPRIETARY_PORT / P08_D01_DECISION_SEPARATE / P08_D02_CANONICAL_WORLD_SEPARATE / P06_HISTORY_SEPARATE / THREE_PER_JOB_BACKEND_PROFILES_A_B_C / PURE_GERBIL_FIRST_NOT_GERBIL_ONLY / REGION_SEED_AND_GENERATOR_VERSION_LOCKS / 2D_TO_3D_AND_COSMOS_INCREMENTAL / NO_FALSE_CROSS_BACKEND_PARITY / EIGHTY_PROPOSED_TESTS / Q0_TO_Q11 / NO_RUNTIME_PROOF / NO_BENCHMARK_PASS / NO_IMPLEMENTATION / DOCUMENT_PUBLISHED`
+`P08_D03_GAME_WORLD_PROCEDURAL_GENERATION_DESIGN_PROPOSED / GAMING_TRACK / PUBLIC_NMS_PIPELINE_NOT_PROPRIETARY_PORT / P08_D01_DECISION_SEPARATE / P08_D02_CANONICAL_WORLD_SEPARATE / P06_HISTORY_SEPARATE / THREE_PER_JOB_BACKEND_PROFILES_A_B_C / PURE_GERBIL_FIRST_NOT_GERBIL_ONLY / REGION_SEED_AND_GENERATOR_VERSION_LOCKS / 2D_TO_3D_AND_COSMOS_INCREMENTAL / NO_FALSE_CROSS_BACKEND_PARITY / EIGHTY_PROPOSED_TESTS / Q0_TO_Q11 / NO_RUNTIME_PROOF / NO_BENCHMARK_PASS / NO_IMPLEMENTATION / DOCUMENT_PUBLISHED`
 
 > **Closing principle:** A world generator may invent mountains, forests, caves and distant planets, but it does not get to rewrite the world's causal decisions or erase a player's past. Gerbil owns the generation semantics and public contracts; the chosen backend earns its right to compute through evidence, not language preference. Large worlds are made accessible by stable addressing, lazy work, versioned recipes and honesty about what has actually been generated.
