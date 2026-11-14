@@ -1,22 +1,22 @@
-# LFR-P08-D02 | Game World & Scene Architecture
+# LFR-P05-D02 | Symbolic Computation & Interactive Worlds / Game World & Scene Architecture
 
 **Document class:** Source-grounded detailed design proposal, one specialist design slice  
 **Date:** 13 November 2026  
 **Programme:** Lisp Foundation Reserve (LFR-C02)  
 **Domain track:** `GAMING` — Gaming & Interactive Worlds  
-**Edition:** P08 — World, Scene & Spacetime Decision Systems  
+**Edition:** P05 — Symbolic Computation & Interactive Worlds  
 **Design slice:** D02 — Game World & Scene Architecture  
 **Primary implementation target:** Independent Gerbil Scheme semantic/reference world substrate  
-**Primary dependency:** P08-D01, *Game World Spacetime Decision & Causal Consequence Architecture* (committed, design-only)  
-**Repository context:** `vietcong73/alien-works`, branch `audit/lisp-foundation-reserve`; path `docs/design/LFR-P08-D02-game-world-scene-architecture-2026-11-13.md`  
+**Primary dependency:** P05-D01, *Game World Spacetime Decision & Causal Consequence Architecture* (committed, design-only)  
+**Repository context:** `vietcong73/alien-works`, branch `audit/lisp-foundation-reserve`; path `docs/design/LFR-P05-D02-game-world-scene-architecture-2026-11-13.md`  
 **Status:** `DETAILED_DESIGN_PROPOSED / GAMING / SOURCE_GROUNDED / UNIMPLEMENTED / RUNTIME_UNQUALIFIED / DOCUMENT_PUBLISHED_TO_GITHUB`  
 **Publication:** Owner-approved publication of this design document to `docs/design/` on `audit/lisp-foundation-reserve`. This publication does not authorize code implementation, installation, source porting, or deployment.
 
-> **Design decision:** P08-D02 owns **the representation, structural consistency, lifecycle, accessibility, and publication of a game world's spatial and scene state**. P08-D01 owns **what decisions mean and which world consequences are admissible**. P09 owns **how procedural content is generated**. P06 owns **historical lineage and synthesis**. A world can be implemented as sparse immutable regions with a small Gerbil reference store without adopting an ECS, renderer, physics engine, procedural generator, RL runtime, or scene toolkit.
+> **Design decision:** P05-D02 owns **the representation, structural consistency, lifecycle, accessibility, and publication of a game world's spatial and scene state**. P05-D01 owns **what decisions mean and which world consequences are admissible**. P05-D03 owns **how procedural content is generated**. P03-D02 owns **historical lineage and synthesis**. A world can be implemented as sparse immutable regions with a small Gerbil reference store without adopting an ECS, renderer, physics engine, procedural generator, RL runtime, or scene toolkit.
 
 ## 0. Problem, deliverable, and correctness boundary
 
-A decision system is not a usable world substrate unless an application can answer, consistently and with bounded resources: *Which world? Which region? Which entity generation? Which scene representation? Which revision? Which observer is permitted to see it? Which materialization is current?* P08-D02 supplies those answers **without redefining the rules that caused the world to change**.
+A decision system is not a usable world substrate unless an application can answer, consistently and with bounded resources: *Which world? Which region? Which entity generation? Which scene representation? Which revision? Which observer is permitted to see it? Which materialization is current?* P05-D02 supplies those answers **without redefining the rules that caused the world to change**.
 
 ### 0.1 In scope
 
@@ -25,28 +25,28 @@ A decision system is not a usable world substrate unless an application can answ
 3. World snapshots, structural manifests, sparse region data, generation counters and conservative dependency boundaries.
 4. Explicit scene composition, instancing, visibility and observer-relative projection; scene structure does not define causal truth.
 5. Region load/materialize/activate/suspend/evict lifecycle, budgets, asynchronous request identity, stale-response rejection and bounded streaming policies.
-6. Generation/overlay version locks and a P09 materialization port, **not** a procedural algorithm implementation.
+6. Generation/overlay version locks and a P05-D03 materialization port, **not** a procedural algorithm implementation.
 7. Single-writer, in-memory world-state reference store with version-checked publication and optional persistence adapters.
-8. Explicit integration contract with P08-D01 for state reads, delta validation, successor admission and observation receipts.
+8. Explicit integration contract with P05-D01 for state reads, delta validation, successor admission and observation receipts.
 9. Negative tests for entity ABA reuse, spatial misidentification, forgotten effects after eviction, partial region state, future/branch confusion, stale generation, data leakage and unsupported consistency claims.
 
 ### 0.2 Out of scope
 
-- P08-D01 causal-rule authoring, intervention logic, outcome selection or prediction; P06 branch DAG, time-travel laws, counterfactual semantics or N-ary historical synthesis.
-- P09 noise, terrain, voxels, planetary generation, NMS proprietary algorithms, biome synthesis and backend optimization.
+- P05-D01 causal-rule authoring, intervention logic, outcome selection or prediction; P03-D02 branch DAG, time-travel laws, counterfactual semantics or N-ary historical synthesis.
+- P05-D03 noise, terrain, voxels, planetary generation, NMS proprietary algorithms, biome synthesis and backend optimization.
 - Rendering, animation, audio, GPU, shader/material, physics/collision solving, pathfinding/navigation, ECS job scheduling, networking, distributed consensus, game/editor UI, RL agent or trainer.
 - Global universal unit system; mandatory x/y/z coordinates; automatic real-world durability; semantic equivalence of unrelated game engine frameworks.
 
-**Non-overlap principle:** P08-D02 may validate structural well-formedness and identity before committing a state, but **cannot declare a D01 intervention causally admissible** by merely accepting its shape. A successful streaming request is neither a world action nor a historical commit.
+**Non-overlap principle:** P05-D02 may validate structural well-formedness and identity before committing a state, but **cannot declare a D01 intervention causally admissible** by merely accepting its shape. A successful streaming request is neither a world action nor a historical commit.
 
 ## 1. Evidence ledger and what actually transfers
 
-Evidence classes: **SOURCE** = directly inspectable original source; **DOC** = public official engine/language documentation; **DESIGN** = existing LFR design; **PROPOSED** = P08-D02 requirement. A documented API does not prove a new Gerbil implementation is correct or fast.
+Evidence classes: **SOURCE** = directly inspectable original source; **DOC** = public official engine/language documentation; **DESIGN** = existing LFR design; **PROPOSED** = P05-D02 requirement. A documented API does not prove a new Gerbil implementation is correct or fast.
 
-| Source/evidence | Mechanism or lesson | Transfer to P08-D02 | Explicit non-transfer |
+| Source/evidence | Mechanism or lesson | Transfer to P05-D02 | Explicit non-transfer |
 |---|---|---|---|
-| P08-D01 (DESIGN, committed) | `WorldAnchor`, `SpaceScope`, world decisions, CAS publication and observer separation | D02 implements the world-state read/validate/publish port and preserves exact revision locks | D02 must not choose the consequence of an intervention |
-| P06-D01 (DESIGN, committed) | Immutable historical identity, ancestry, reconstruction and branch references | Optional history reference/version in world anchors and separate history port | No duplicate causal DAG, history merge or time travel in D02 |
+| P05-D01 (DESIGN, committed) | `WorldAnchor`, `SpaceScope`, world decisions, CAS publication and observer separation | D02 implements the world-state read/validate/publish port and preserves exact revision locks | D02 must not choose the consequence of an intervention |
+| P03-D02 (DESIGN, committed) | Immutable historical identity, ancestry, reconstruction and branch references | Optional history reference/version in world anchors and separate history port | No duplicate causal DAG, history merge or time travel in D02 |
 | K0-D01 (DESIGN, committed) | `IdentityRef`, `VersionRef`, validation, lease, result and receipt | Stable typed refs and explicit status/uncertainty | No security, backend durability or effectful authorization inferred from a K0 record |
 | K1-D01 (DESIGN, committed) | Graph, observation, bounded operations, snapshot and numeric profiles | Optional qualified mechanism use where an invariant truly matches | No mandated all-in-one K1 runtime or global ECS ontology |
 | Godot `SceneTree`, `Node`, `PackedScene` (DOC) | Runtime node hierarchy, scene instantiation, owner-dependent packing and lifecycle | Distinguish parent, scene owner, persistence owner and runtime instance; scene activation lifecycle | Godot's tree, main loop, node notifications and exact packing semantics are not adopted wholesale |
@@ -55,13 +55,13 @@ Evidence classes: **SOURCE** = directly inspectable original source; **DOC** = p
 | OpenUSD introduction (SOURCE/DOC) | Hierarchical scene description; non-destructive layer opinions; reference/payload composition | Keep asset definition, scene instance, layer override and deferred materialization separate | No USD format reader or implicit USD composition strength ordering in Gerbil |
 | Godot large-world coordinates (DOC) | Floating-point precision loss away from origin | Coordinate-frame IDs, units, bounds, validity and optional local-origin transformations | No promised precision or physical stability for arbitrary planetary scales |
 | Alien-Works review / native resource sources (SOURCE/DESIGN) | Native resource/callback lifetimes and affinity hazards | Treat renderer/native/asset handles as owned adapter resources with separate generations | No Alien-Works import, unqualified FFI or native renderer inside D02 |
-| No Man's Sky public generation talks (PRESENTATION) | Large procedural worlds require a distinct generation/content pipeline | P09 requests must be revision-pinned, lazy and backend-neutral | No claimed access to NMS private generation source or direct port |
+| No Man's Sky public generation talks (PRESENTATION) | Large procedural worlds require a distinct generation/content pipeline | P05-D03 requests must be revision-pinned, lazy and backend-neutral | No claimed access to NMS private generation source or direct port |
 | Gerbil official documentation (DOC) | Modules, structs, macros, interface layers, test/build tooling | Plain Gerbil records + pure validation first; limited trusted authoring forms | No API signature is claimed compiled without an exact pinned toolchain probe |
 
 ### 1.1 Primary anchors for review
 
-- P08-D01: `docs/design/LFR-P08-D01-spacetime-decision-causal-consequence-design-2026-11-13.md` in `vietcong73/alien-works@audit/lisp-foundation-reserve` (commit `03d729d1d7d84b10789c9e90135ca66f1d695ffc`).
-- P06-D01: `docs/design/LFR-P06-D01-branching-causal-reversibility-design-2026-11-13.md` (same branch).
+- P05-D01: `docs/design/LFR-P05-D01-spacetime-decision-causal-consequence-design-2026-11-13.md` in `vietcong73/alien-works@audit/lisp-foundation-reserve` (commit `03d729d1d7d84b10789c9e90135ca66f1d695ffc`).
+- P03-D02: `docs/design/LFR-P03-D02-branching-causal-reversibility-design-2026-11-13.md` (same branch).
 - K0-D01: `docs/design/LFR-K0-D01-gerbil-meta-foundation-minimal-contract-kernel-2026-11-13.md` (same branch).
 - K1-D01: `docs/design/LFR-K1-D01-opt-in-generalized-mechanisms-detailed-design-2026-11-13.md` (same branch).
 - [Godot SceneTree](https://docs.godotengine.org/en/stable/classes/class_scenetree.html), [Godot PackedScene](https://docs.godotengine.org/en/stable/classes/class_packedscene.html), [Godot Node](https://docs.godotengine.org/en/stable/classes/class_node.html), [large-world coordinates](https://docs.godotengine.org/en/stable/tutorials/physics/large_world_coordinates.html).
@@ -79,11 +79,11 @@ Evidence classes: **SOURCE** = directly inspectable original source; **DOC** = p
                                    |
           +------------------------+----------------------+
           |                                               |
-  P08-D01 decision semantics                      Scene/view consumers
+  P05-D01 decision semantics                      Scene/view consumers
   (admissibility, consequences)                  (render, editor, UI)
           |                                               |
           v                                               v
-   D02 WorldStatePort <---- P08-D02 WORLD SUBSTRATE ----> ProjectionPort
+   D02 WorldStatePort <---- P05-D02 WORLD SUBSTRATE ----> ProjectionPort
           |                  world manifest                |
           |                  entity/scene registry          |
           |                  region working set             |
@@ -92,7 +92,7 @@ Evidence classes: **SOURCE** = directly inspectable original source; **DOC** = p
           |                                               |
           +----------- optional interfaces ---------------+
                       |                |                  |
-                  P09 materialize    P06 history      host native/render
+                  P05-D03 materialize    P03-D02 history      host native/render
                   A/B/C backend      separate DAG     and persistence
 
      D02 + pure mocks require K0 vocabulary, Gerbil and no other edition.
@@ -103,13 +103,13 @@ Evidence classes: **SOURCE** = directly inspectable original source; **DOC** = p
 
 | Responsibility | Owner | D02 must never claim |
 |---|---|---|
-| World-specific decision law and causal propagation | P08-D01 | That structural validation proves causal legality |
-| Canonical world/scene/entity/region state and structural lifecycle | P08-D02 | That active scene = whole world |
-| Procedural algorithm and backend A/B/C choice | P09 | That a correct seed alone ensures content parity |
-| Historical branch topology / reconciliation / synthesis | P06 | That changing a scene path creates a historical branch |
-| Event/director semantics | P03 | That region activation is a global game-loop scheduler |
-| Native handles and FFI lifetime | P01 / selected host adapter | That Gerbil GC automatically releases GPU/physics handles |
-| Durable authoritative store (when selected) | qualified consumer/P05 adapter | That a successful in-memory CAS survives a power failure |
+| World-specific decision law and causal propagation | P05-D01 | That structural validation proves causal legality |
+| Canonical world/scene/entity/region state and structural lifecycle | P05-D02 | That active scene = whole world |
+| Procedural algorithm and backend A/B/C choice | P05-D03 | That a correct seed alone ensures content parity |
+| Historical branch topology / reconciliation / synthesis | P03-D02 | That changing a scene path creates a historical branch |
+| Event/director semantics | P03-D01 | That region activation is a global game-loop scheduler |
+| Native handles and FFI lifetime | P01-D01 / selected host adapter | That Gerbil GC automatically releases GPU/physics handles |
+| Durable authoritative store (when selected) | qualified consumer/P04-D01 adapter | That a successful in-memory CAS survives a power failure |
 | Renderer, physics, assets, networking | game host / qualified adapters | That spatial structure implies pixel or physics correctness |
 
 **Default reference profile:** one in-memory world, one writer, immutable snapshot values, generational IDs, sparse regions, pure structural checks, mock materializer and explicit observer projection. No OS files or graphics.
@@ -141,7 +141,7 @@ WorldManifest {
   retention_policy_ref, manifest_version
 }
 WorldSnapshot {
-  anchor: P08-D01.WorldAnchor, manifest_ref,
+  anchor: P05-D01.WorldAnchor, manifest_ref,
   region_state_index_ref, entity_state_index_ref,
   structural_relation_index_ref, authoring_layer_stack_ref,
   causal_overlay_ref, materialization_index_ref,
@@ -187,7 +187,7 @@ RegionRecord {
 
 - Two worlds may have byte-identical region payloads but distinct `world_ref`, model locks or causal overlays.
 - Two scene instances may share one asset/definition but have different placement, ownership and overrides.
-- A branch history ref is **optional** and, when present, is only a typed link to P06. D02 does not interpret historical DAG edges.
+- A branch history ref is **optional** and, when present, is only a typed link to P03-D02. D02 does not interpret historical DAG edges.
 - World publication order, authored scene revision, fictional world time and materialization completion timestamp are **four different axes**.
 - An unmaterialized region may still have authoritative semantic state: `NOT_MATERIALIZED` is not `DOES_NOT_EXIST`.
 
@@ -286,7 +286,7 @@ The two axes are independent. A merchant who has moved to an unloaded city can r
 
 Canonical entity values live in a **versioned world-entity state store** with explicit field ownership. An optional ECS view can project selected attributes into components. Its cache or render-only transforms cannot independently mutate canonical fields. Conversely, a qualified host may propose state changes, but must pass through the selected world mutation/admission boundary and exact world generation.
 
-A structurally valid `spawn` is not necessarily a causally legal gameplay spawn; a structurally valid `move` is not automatically an admissible fictional teleport. Authoring/build mode may create initial world fixtures under separate authoring authority, while live gameplay uses P08-D01. The two modes have different receipts and cannot be silently confused.
+A structurally valid `spawn` is not necessarily a causally legal gameplay spawn; a structurally valid `move` is not automatically an admissible fictional teleport. Authoring/build mode may create initial world fixtures under separate authoring authority, while live gameplay uses P05-D01. The two modes have different receipts and cannot be silently confused.
 
 ### 6.3 Cross-region movement
 
@@ -369,7 +369,7 @@ Eviction removes **resident/materialized representation**, subject to retention 
 
 On revisit, the region must be reconstructed from an admissible canonical anchor, generator+overlay revision locks and independently qualified retrieval/replay capability. If a necessary source revision was discarded, return `RECONSTRUCTION_UNAVAILABLE` and do not reconstruct an invented equivalent using the newest generator.
 
-## 8. Materialization pipeline and P09 boundary
+## 8. Materialization pipeline and P05-D03 boundary
 
 ### 8.1 Meaning of materialization
 
@@ -387,25 +387,25 @@ D02 RegionDemand + canonical WorldAnchor
   -> expose observer-scoped view to qualified game host
 ```
 
-There is a **semantic firewall** between a generated *region representation* and authoritative *world-state mutations*. If a procedural output needs to affect resource quantities, entity properties, newly admissible passages or causal laws, P08-D01 (or a separately qualified authoring admission mode) must govern that change.
+There is a **semantic firewall** between a generated *region representation* and authoritative *world-state mutations*. If a procedural output needs to affect resource quantities, entity properties, newly admissible passages or causal laws, P05-D01 (or a separately qualified authoring admission mode) must govern that change.
 
 ### 8.2 Revision-locked request/response
 
-D02 uses the **P08-D01 materialization contract**, not an incompatible duplicate. The handoff binds `world_ref`, `world_model_ref`, `branch_ref_optional`, `generator_profile_ref`, `generator_revision`, `seed_or_input_ref`, `space_scope`, `world_time_ref`, `causal_overlay_revision`, `desired_detail`, `budget_ref`, and `expected_world_generation`.
+D02 uses the **P05-D01 materialization contract**, not an incompatible duplicate. The handoff binds `world_ref`, `world_model_ref`, `branch_ref_optional`, `generator_profile_ref`, `generator_revision`, `seed_or_input_ref`, `space_scope`, `world_time_ref`, `causal_overlay_revision`, `desired_detail`, `budget_ref`, and `expected_world_generation`.
 
-P09 returns `region_ref`, `generated_artifact_ref`, `input_locks[]`, `semantic_validation_result`, `world_generation`, `uncertainty_or_failure`, and `provenance_receipt`. D02 adds a **local demand/request generation** for cancellation/replacement/ABA protection when associating the response with a specific outstanding request.
+P05-D03 returns `region_ref`, `generated_artifact_ref`, `input_locks[]`, `semantic_validation_result`, `world_generation`, `uncertainty_or_failure`, and `provenance_receipt`. D02 adds a **local demand/request generation** for cancellation/replacement/ABA protection when associating the response with a specific outstanding request.
 
-D02 validates the exact response contract, pinned generation and viewer permission; it cannot assert generated geometric quality, flora realism, noise statistics or optimal performance. Those are P09's algorithm-specific claims.
+D02 validates the exact response contract, pinned generation and viewer permission; it cannot assert generated geometric quality, flora realism, noise statistics or optimal performance. Those are P05-D03's algorithm-specific claims.
 
 ### 8.3 Three backend choices, without bias
 
-| Profile | Selected by P09 when | D02 requirement |
+| Profile | Selected by P05-D03 when | D02 requirement |
 |---|---|---|
 | **A — Pure Gerbil** | A reference or target algorithm meets exact correctness/performance limits | Same typed request and receipt; no special code path privileges |
 | **B — Gerbil + native acceleration** | Measured hot paths justify FFI/native/GPU with qualified ABI and ownership | Explicit batch/region boundary, resource leases, affinity and verified release |
 | **C — Gerbil + external service** | Solver, distributed computation or scale justifies remote processing | Request identity, bounded outstanding jobs, timeouts, ambiguous acknowledgment and version locks |
 
-**No performance inference:** A/B/C selection and comparative benchmarks belong to P09-D01. The D02 **reference test uses a fake materializer**, so neither Gerbil-native voxel throughput nor remote scaling is claimed qualified. A backend can support only some purposes/detail levels; D02 must refuse unsupported profile combinations instead of guessing fallback semantics.
+**No performance inference:** A/B/C selection and comparative benchmarks belong to P05-D03. The D02 **reference test uses a fake materializer**, so neither Gerbil-native voxel throughput nor remote scaling is claimed qualified. A backend can support only some purposes/detail levels; D02 must refuse unsupported profile combinations instead of guessing fallback semantics.
 
 ### 8.4 Layer and generator revisions
 
@@ -428,7 +428,7 @@ A view-only change in LOD must not alter region identity or semantic state; any 
 
 ## 9. World-state publication, consistency and persistence
 
-### 9.1 WorldStatePort fidelity to P08-D01
+### 9.1 WorldStatePort fidelity to P05-D01
 
 ```text
 WorldStatePort {
@@ -472,7 +472,7 @@ RegionDataStatus = AUTHORITATIVE_COMPLETE | AUTHORITATIVE_PARTIAL |
 
 The in-memory baseline can expose `snapshot_export` and `snapshot_import` as **pure canonical value operations**. It does not expose a claimed save-game file driver. A saved-world profile requires format/version migration, world+asset+generator+overlay closure, atomic commit/durability/backup evidence as supported by a selected backend, and a reader that does not execute serialized Scheme.
 
-A retained future branch, historical event or alternative world must **not** be faked by one global world pointer. P06 owns its history model, while D02 may bind one or more selected `WorldAnchor` views through an explicit optional adapter. Retention of P06 history does not automatically retain all D02 region/artifact/materialization files, so dependency-closure checks are mandatory for reconstruction claims.
+A retained future branch, historical event or alternative world must **not** be faked by one global world pointer. P03-D02 owns its history model, while D02 may bind one or more selected `WorldAnchor` views through an explicit optional adapter. Retention of P03-D02 history does not automatically retain all D02 region/artifact/materialization files, so dependency-closure checks are mandatory for reconstruction claims.
 
 ## 10. Observer access, visibility and derived world views
 
@@ -532,7 +532,7 @@ The tree is an **implementation proposal**. No package or executable has been cr
 - Use documented immutable/simple record types, maps, vectors and pure functions initially; copy-on-write or persistent data structures may be selected after profiling, not assumed to be efficient.
 - Trusted authoring macros may lower into validated inert `SceneIR`/`WorldIR`. Untrusted input remains data, cannot call `eval`, choose arbitrary FFI, override trust roots, or inject generated operations.
 - An optional ECS adapter can translate canonical world snapshots to an ECS-specific storage format. The adapter owns field/writeback declarations and independently qualifies coherence.
-- In-memory mock is the first conformance target; P01 FFI/native lifetime, P09 generation and P05 durability are separate qualification profiles.
+- In-memory mock is the first conformance target; P01-D01 FFI/native lifetime, P05-D03 generation and P04-D01 durability are separate qualification profiles.
 - Dependence on external hashes, binary formats and native codecs must carry algorithm/encoding/version locks. Do not assume object identity from a hash alone.
 
 ### 11.3 Illustrative authoring DSL
@@ -555,7 +555,7 @@ The example illustrates *semantic data*: it is **not** a claim that `define-game
 
 ### F1 — Tiny frontier, zero renderer
 
-Two disjoint cells `A` and `B`, one merchant entity, one bridge scene definition instantiated twice, one rule-governed world snapshot. A P08-D01 admitted decision moves the merchant from A to B. D02 checks the entity's generation, removes authoritative membership from A, inserts it into B, and publishes one new immutable world snapshot. Both the old and new structural references remain inspectable, but only the new world generation is authoritative. **No renderer, P09, P06 or P03 runtime is required.**
+Two disjoint cells `A` and `B`, one merchant entity, one bridge scene definition instantiated twice, one rule-governed world snapshot. A P05-D01 admitted decision moves the merchant from A to B. D02 checks the entity's generation, removes authoritative membership from A, inserts it into B, and publishes one new immutable world snapshot. Both the old and new structural references remain inspectable, but only the new world generation is authoritative. **No renderer, P05-D03, P03-D02 or P03-D01 runtime is required.**
 
 **Falsification:** unloading A must not delete the merchant in B; reloading A must not resurrect its old canonical owner; repeating the stale move must fail with `STALE_ANCHOR`.
 
@@ -577,11 +577,11 @@ A request for region R under world generation 41, generator revision g1, overlay
 
 **Falsification:** late completion cannot overwrite current world state; a canceled request ID reused with a new generation must not accept the old result.
 
-### F5 — Fictional history without duplicate P06
+### F5 — Fictional history without duplicate P03-D02
 
-Two distinct historical heads refer to apparently identical visual towns. D02 may expose a typed world-view anchor for each via an optional P06 adapter, but it must not infer they are the same historical world. The P06 backend remains authoritative for lineage, and D02 never writes history edges or performs synthesis. Without P06, a forward-only world still loads its own local snapshot.
+Two distinct historical heads refer to apparently identical visual towns. D02 may expose a typed world-view anchor for each via an optional P03-D02 adapter, but it must not infer they are the same historical world. The P03-D02 backend remains authoritative for lineage, and D02 never writes history edges or performs synthesis. Without P03-D02, a forward-only world still loads its own local snapshot.
 
-**Falsification:** equality of rendered meshes/asset lists cannot erase branch identity; absence of P06 cannot block normal D02 world-store qualification.
+**Falsification:** equality of rendered meshes/asset lists cannot erase branch identity; absence of P03-D02 cannot block normal D02 world-store qualification.
 
 ### F6 — Nonlocal causal influence and unloaded data
 
@@ -593,7 +593,7 @@ A locally charted planetary tile at large conceptual coordinates receives a clos
 
 ### F8 — Scene composition cycle
 
-Scene definition D refers to asset E, which refers to D via a nested definition. Under strict structural recursion bounds, D02 refuses an unbounded instantiation cycle before materialization. A legal authored scene DAG may have reusable references without creating two canonical world entities by accident. The scene graph's admissible cycles are defined independently from causal dependency cycles and P06 ancestry.
+Scene definition D refers to asset E, which refers to D via a nested definition. Under strict structural recursion bounds, D02 refuses an unbounded instantiation cycle before materialization. A legal authored scene DAG may have reusable references without creating two canonical world entities by accident. The scene graph's admissible cycles are defined independently from causal dependency cycles and P03-D02 ancestry.
 
 ## 13. Core invariants and typed failures
 
@@ -603,7 +603,7 @@ Scene definition D refers to asset E, which refers to D via a nested definition.
 2. **I02 — Generation lock.** A stale world, entity, region, scene-instance or materialization-request generation cannot mutate a newer instance.
 3. **I03 — World-state primacy.** Canonical entity/region state is not inferred from active scene nodes, loaded visuals or render proxies.
 4. **I04 — Decision ownership.** D01 decides interventions and consequences; D02 publishes structurally valid admitted state but never declares causal legality by itself.
-5. **I05 — Historical non-ownership.** D02 stores optional P06 references but cannot publish its own P06 history graph edges or synthesis.
+5. **I05 — Historical non-ownership.** D02 stores optional P03-D02 references but cannot publish its own P03-D02 history graph edges or synthesis.
 6. **I06 — Generator non-ownership.** Materializer output describes representation; semantic changes require separately admitted world mutation.
 7. **I07 — Scope-aware topology.** Spatial comparisons, adjacency, transforms and region ownership require an explicit qualified spatial profile.
 8. **I08 — No implicit metric.** Scene hierarchy, graph adjacency and coordinate proximity are different relations.
@@ -622,7 +622,7 @@ Scene definition D refers to asset E, which refers to D via a nested definition.
 21. **I21 — Atomic reference publication.** An accepted single-writer world successor becomes visible as one immutable snapshot under expected-generation checking.
 22. **I22 — Safe eviction.** Evicting a resident representation cannot discard uncommitted authoritative deltas, necessary retention pins or unverified native leases.
 23. **I23 — Replay and revision honesty.** Region reconstruction needs the exact admitted versions/input closure and reports incompatibility or unknown instead of silently regenerating under new rules.
-24. **I24 — Source and runtime independence.** Pure D02 builds/tests with mock ports without P06, P09, Bevy, Godot, Unreal, OpenUSD, a renderer, native driver, network service or database.
+24. **I24 — Source and runtime independence.** Pure D02 builds/tests with mock ports without P03-D02, P05-D03, Bevy, Godot, Unreal, OpenUSD, a renderer, native driver, network service or database.
 
 ### 13.2 Failure taxonomy
 
@@ -653,129 +653,129 @@ Scene definition D refers to asset E, which refers to D via a nested definition.
 | **Q3 — Scene composition** | Tree/DAG checks, owner-vs-parent, instances, layers, overrides and asset pinning | Selected scene schema only |
 | **Q4 — Entity and world state** | Existence/residency, moved entities, field ownership and canonical state invariants | Pure/reference state model |
 | **Q5 — Region working sets** | Loads, cancellations, stale results, bounded demand, eviction and release uncertainty | Fake driver or exact driver tested |
-| **Q6 — P09 materialization contract** | Typed A/B/C-neutral fake adapter, revision/key exactness, negative compatibility cases | Port only, no generation quality/speed |
+| **Q6 — P05-D03 materialization contract** | Typed A/B/C-neutral fake adapter, revision/key exactness, negative compatibility cases | Port only, no generation quality/speed |
 | **Q7 — D01 publication parity** | Same read/validate/CAS port as D01; admitted vs invalid mutation; stale world races | One-writer in-memory atomicity |
 | **Q8 — Observation and layer isolation** | Actor/view masking, completeness, LOD truth separation, no privileged view leaks | Explicit data flow; not timing-side-channel proof |
 | **Q9 — Reconstruction/retention** | Pin preservation, stale generator, canonical export/import, durability refusal | In-memory reconstruction if qualified |
-| **Q10 — Optional integrations** | Opt-in P06/scene engine/materializer adapters and independent capabilities; no core import leakage | Only individually tested adapters |
+| **Q10 — Optional integrations** | Opt-in P03-D02/scene engine/materializer adapters and independent capabilities; no core import leakage | Only individually tested adapters |
 | **Q11 — Independent audit** | Property/reference oracles, mutation testing, fault injection, performance budgets, negative controls and evidence report | Selected fixed fixture/revision |
 
 ### 14.2 Test register — identity and ontology (T01–T08)
 
 | ID | Fixture / challenge | Required outcome |
 |---|---|---|
-| **P08-D02-T01** | World and entity share the same human label | Typed refs are never equal |
-| **P08-D02-T02** | Two worlds have byte-identical terrain/scene content | Independent world and model identities preserved |
-| **P08-D02-T03** | Entity slot reused after tombstone | Old generational ref rejected |
-| **P08-D02-T04** | Scene definition instantiated twice | Independent instance identity and mutable state |
-| **P08-D02-T05** | Asset digest matches a canonical entity-state digest | No cross-kind identity inference |
-| **P08-D02-T06** | Unknown required schema field/version | Typed refusal; no implicit default |
-| **P08-D02-T07** | World anchor references missing region generation | Refusal before publication |
-| **P08-D02-T08** | History ref optional and P06 absent | Forward-only world runs normally |
+| **P05-D02-T01** | World and entity share the same human label | Typed refs are never equal |
+| **P05-D02-T02** | Two worlds have byte-identical terrain/scene content | Independent world and model identities preserved |
+| **P05-D02-T03** | Entity slot reused after tombstone | Old generational ref rejected |
+| **P05-D02-T04** | Scene definition instantiated twice | Independent instance identity and mutable state |
+| **P05-D02-T05** | Asset digest matches a canonical entity-state digest | No cross-kind identity inference |
+| **P05-D02-T06** | Unknown required schema field/version | Typed refusal; no implicit default |
+| **P05-D02-T07** | World anchor references missing region generation | Refusal before publication |
+| **P05-D02-T08** | History ref optional and P03-D02 absent | Forward-only world runs normally |
 
 ### 14.3 Test register — space and partitions (T09–T16)
 
 | ID | Fixture / challenge | Required outcome |
 |---|---|---|
-| **P08-D02-T09** | Graph-only world without Cartesian coordinates | Valid region query and adjacency |
-| **P08-D02-T10** | 2D integer grid edges and signed coordinates | Deterministic cell ownership |
-| **P08-D02-T11** | Two exclusive partitions claim one field owner | Reject `REGION_OWNER_CONFLICT` |
-| **P08-D02-T12** | Same coordinate tuple in two frames | No implicit spatial equivalence |
-| **P08-D02-T13** | Unsupported/inexact frame transformation | Typed failure or bounded precision statement |
-| **P08-D02-T14** | NaN/Infinity/out-of-range spatial input | Reject before index or state mutation |
-| **P08-D02-T15** | Region across partition revision boundary | Explicit migration/refusal, not alias |
-| **P08-D02-T16** | Extreme-distance local-origin view | Canonical region identity unchanged by render rounding |
+| **P05-D02-T09** | Graph-only world without Cartesian coordinates | Valid region query and adjacency |
+| **P05-D02-T10** | 2D integer grid edges and signed coordinates | Deterministic cell ownership |
+| **P05-D02-T11** | Two exclusive partitions claim one field owner | Reject `REGION_OWNER_CONFLICT` |
+| **P05-D02-T12** | Same coordinate tuple in two frames | No implicit spatial equivalence |
+| **P05-D02-T13** | Unsupported/inexact frame transformation | Typed failure or bounded precision statement |
+| **P05-D02-T14** | NaN/Infinity/out-of-range spatial input | Reject before index or state mutation |
+| **P05-D02-T15** | Region across partition revision boundary | Explicit migration/refusal, not alias |
+| **P05-D02-T16** | Extreme-distance local-origin view | Canonical region identity unchanged by render rounding |
 
 ### 14.4 Test register — scene/layer composition (T17–T24)
 
 | ID | Fixture / challenge | Required outcome |
 |---|---|---|
-| **P08-D02-T17** | Scene graph cycle under strict-tree profile | `SCENE_CYCLE` before instantiation |
-| **P08-D02-T18** | Scene child is not owned for serialization | Not silently included in packed definition |
-| **P08-D02-T19** | Shared asset, two differently overridden instances | Independent resolved views and field provenance |
-| **P08-D02-T20** | Two conflicting layer opinions without precedence policy | Explicit `LAYER_PRECEDENCE_CONFLICT` |
-| **P08-D02-T21** | Visual override attempts to change canonical resource count | Block world-state mutation |
-| **P08-D02-T22** | Referenced asset deleted between validation and instantiation | Stale/missing asset refusal |
-| **P08-D02-T23** | Live instance bound to definition revision n; n+1 published | No silent instance migration |
-| **P08-D02-T24** | Scene composition traversal under recursion/size quota | Typed bounded termination |
+| **P05-D02-T17** | Scene graph cycle under strict-tree profile | `SCENE_CYCLE` before instantiation |
+| **P05-D02-T18** | Scene child is not owned for serialization | Not silently included in packed definition |
+| **P05-D02-T19** | Shared asset, two differently overridden instances | Independent resolved views and field provenance |
+| **P05-D02-T20** | Two conflicting layer opinions without precedence policy | Explicit `LAYER_PRECEDENCE_CONFLICT` |
+| **P05-D02-T21** | Visual override attempts to change canonical resource count | Block world-state mutation |
+| **P05-D02-T22** | Referenced asset deleted between validation and instantiation | Stale/missing asset refusal |
+| **P05-D02-T23** | Live instance bound to definition revision n; n+1 published | No silent instance migration |
+| **P05-D02-T24** | Scene composition traversal under recursion/size quota | Typed bounded termination |
 
 ### 14.5 Test register — entity lifecycle (T25–T32)
 
 | ID | Fixture / challenge | Required outcome |
 |---|---|---|
-| **P08-D02-T25** | Unload resident region containing extant merchant | Merchant remains canonical `PRESENT` |
-| **P08-D02-T26** | Entity tombstoned; visual proxy still cached | Proxy not treated as live entity |
-| **P08-D02-T27** | Same entity displayed in two scenes | One authoritative state, two view instances |
-| **P08-D02-T28** | ECS adapter tries direct canonical health write | Refused without admitted mutation protocol |
-| **P08-D02-T29** | Move A-to-B in one world CAS | No half-owner state observed |
-| **P08-D02-T30** | Nonatomic backend requested for atomic move | Fail closed or explicit supported weaker semantics |
-| **P08-D02-T31** | Replayed old movement on new world generation | `STALE_ANCHOR`; no duplicate move |
-| **P08-D02-T32** | Structural authoring mode used as live gameplay bypass | Admission/authority separation enforced |
+| **P05-D02-T25** | Unload resident region containing extant merchant | Merchant remains canonical `PRESENT` |
+| **P05-D02-T26** | Entity tombstoned; visual proxy still cached | Proxy not treated as live entity |
+| **P05-D02-T27** | Same entity displayed in two scenes | One authoritative state, two view instances |
+| **P05-D02-T28** | ECS adapter tries direct canonical health write | Refused without admitted mutation protocol |
+| **P05-D02-T29** | Move A-to-B in one world CAS | No half-owner state observed |
+| **P05-D02-T30** | Nonatomic backend requested for atomic move | Fail closed or explicit supported weaker semantics |
+| **P05-D02-T31** | Replayed old movement on new world generation | `STALE_ANCHOR`; no duplicate move |
+| **P05-D02-T32** | Structural authoring mode used as live gameplay bypass | Admission/authority separation enforced |
 
 ### 14.6 Test register — region working set (T33–T40)
 
 | ID | Fixture / challenge | Required outcome |
 |---|---|---|
-| **P08-D02-T33** | Request one valid region from metadata-only state | Exact request generation and typed stages |
-| **P08-D02-T34** | Two observers have incompatible visibility scope | No unsafe shared unfiltered resident view |
-| **P08-D02-T35** | Region demand exceeds resident-byte cap | Backpressure with honest usage receipt |
-| **P08-D02-T36** | Cancel during backend fetch | `CANCEL_REQUESTED` not false `CANCELLED_RELEASED` |
-| **P08-D02-T37** | Native lease release confirmation missing | Conservative pinned/unknown resource state |
-| **P08-D02-T38** | Eviction with uncommitted authoritative delta | Eviction refused, canonical delta preserved |
-| **P08-D02-T39** | Prefetched region fails to materialize | Existing world truth unchanged |
-| **P08-D02-T40** | High-priority stream requests starve others | Declared fairness policy observable or starvation explicitly reported |
+| **P05-D02-T33** | Request one valid region from metadata-only state | Exact request generation and typed stages |
+| **P05-D02-T34** | Two observers have incompatible visibility scope | No unsafe shared unfiltered resident view |
+| **P05-D02-T35** | Region demand exceeds resident-byte cap | Backpressure with honest usage receipt |
+| **P05-D02-T36** | Cancel during backend fetch | `CANCEL_REQUESTED` not false `CANCELLED_RELEASED` |
+| **P05-D02-T37** | Native lease release confirmation missing | Conservative pinned/unknown resource state |
+| **P05-D02-T38** | Eviction with uncommitted authoritative delta | Eviction refused, canonical delta preserved |
+| **P05-D02-T39** | Prefetched region fails to materialize | Existing world truth unchanged |
+| **P05-D02-T40** | High-priority stream requests starve others | Declared fairness policy observable or starvation explicitly reported |
 
 ### 14.7 Test register — materialization and revision locks (T41–T48)
 
 | ID | Fixture / challenge | Required outcome |
 |---|---|---|
-| **P08-D02-T41** | Fake materializer with complete input/revision closure | Accepted resident representation |
-| **P08-D02-T42** | Response from stale world generation | Rejected before activation |
-| **P08-D02-T43** | Same request ID recycled, old response arrives | Request-generation ABA rejection |
-| **P08-D02-T44** | Generator revision g2 offered for g1-locked region | Mismatch refusal or qualified migration |
-| **P08-D02-T45** | Same seed but changed causal overlay | Cache cannot misrepresent current world |
-| **P08-D02-T46** | LOD proxy contains different resource number | Proxy has no authority to change gameplay truth |
-| **P08-D02-T47** | A/B/C materializer mocks implement same wire contract | Version/receipt conformance without performance claim |
-| **P08-D02-T48** | Generator output changes a causal passage without D01 | Rejected as unadmitted world mutation |
+| **P05-D02-T41** | Fake materializer with complete input/revision closure | Accepted resident representation |
+| **P05-D02-T42** | Response from stale world generation | Rejected before activation |
+| **P05-D02-T43** | Same request ID recycled, old response arrives | Request-generation ABA rejection |
+| **P05-D02-T44** | Generator revision g2 offered for g1-locked region | Mismatch refusal or qualified migration |
+| **P05-D02-T45** | Same seed but changed causal overlay | Cache cannot misrepresent current world |
+| **P05-D02-T46** | LOD proxy contains different resource number | Proxy has no authority to change gameplay truth |
+| **P05-D02-T47** | A/B/C materializer mocks implement same wire contract | Version/receipt conformance without performance claim |
+| **P05-D02-T48** | Generator output changes a causal passage without D01 | Rejected as unadmitted world mutation |
 
 ### 14.8 Test register — publication and persistence (T49–T56)
 
 | ID | Fixture / challenge | Required outcome |
 |---|---|---|
-| **P08-D02-T49** | Valid D01 admitted candidate and matching expected anchor | One atomic in-memory successor and receipt |
-| **P08-D02-T50** | Structurally well-formed but D01-unadmitted candidate | Publication refused |
-| **P08-D02-T51** | Two writes start from one expected world revision | Exactly one CAS wins; other conflicts |
-| **P08-D02-T52** | Multiple region edits inside one snapshot CAS | No exposed intermediate state |
-| **P08-D02-T53** | Stale actor or model revision at publication | Refused, no stale side effect |
-| **P08-D02-T54** | In-memory snapshot exported then canonical reimported | Exact schema/revision/scoped state parity |
-| **P08-D02-T55** | In-memory commit requested to be crash durable | `DURABILITY_NOT_ESTABLISHED` |
-| **P08-D02-T56** | Observer notification fails after in-memory CAS | Commit remains true; notification marked failed |
+| **P05-D02-T49** | Valid D01 admitted candidate and matching expected anchor | One atomic in-memory successor and receipt |
+| **P05-D02-T50** | Structurally well-formed but D01-unadmitted candidate | Publication refused |
+| **P05-D02-T51** | Two writes start from one expected world revision | Exactly one CAS wins; other conflicts |
+| **P05-D02-T52** | Multiple region edits inside one snapshot CAS | No exposed intermediate state |
+| **P05-D02-T53** | Stale actor or model revision at publication | Refused, no stale side effect |
+| **P05-D02-T54** | In-memory snapshot exported then canonical reimported | Exact schema/revision/scoped state parity |
+| **P05-D02-T55** | In-memory commit requested to be crash durable | `DURABILITY_NOT_ESTABLISHED` |
+| **P05-D02-T56** | Observer notification fails after in-memory CAS | Commit remains true; notification marked failed |
 
 ### 14.9 Test register — observer, retention, and epistemics (T57–T64)
 
 | ID | Fixture / challenge | Required outcome |
 |---|---|---|
-| **P08-D02-T57** | Player queries hidden entity in private region | No secret fields, no false completeness |
-| **P08-D02-T58** | Debug observer and ordinary player share cache namespace | Privileged data cannot leak to player |
-| **P08-D02-T59** | View stale after a new world revision | Staleness flagged, not labeled current |
-| **P08-D02-T60** | Region unmaterialized but canonical state exists | Not reported nonexistent |
-| **P08-D02-T61** | Unloaded region has nonlocal D01 causal edge | Not classified causally unaffected |
-| **P08-D02-T62** | Required generator revision pruned after eviction | `RECONSTRUCTION_UNAVAILABLE` |
-| **P08-D02-T63** | P06 history retained but D02 region anchor unavailable | Honest recovery failure, no invented world |
-| **P08-D02-T64** | Display proxy differs from high-detail rendering | Stable gameplay/world identity and semantic state |
+| **P05-D02-T57** | Player queries hidden entity in private region | No secret fields, no false completeness |
+| **P05-D02-T58** | Debug observer and ordinary player share cache namespace | Privileged data cannot leak to player |
+| **P05-D02-T59** | View stale after a new world revision | Staleness flagged, not labeled current |
+| **P05-D02-T60** | Region unmaterialized but canonical state exists | Not reported nonexistent |
+| **P05-D02-T61** | Unloaded region has nonlocal D01 causal edge | Not classified causally unaffected |
+| **P05-D02-T62** | Required generator revision pruned after eviction | `RECONSTRUCTION_UNAVAILABLE` |
+| **P05-D02-T63** | P03-D02 history retained but D02 region anchor unavailable | Honest recovery failure, no invented world |
+| **P05-D02-T64** | Display proxy differs from high-detail rendering | Stable gameplay/world identity and semantic state |
 
 ### 14.10 Test register — integrations and independent falsification (T65–T72)
 
 | ID | Fixture / challenge | Required outcome |
 |---|---|---|
-| **P08-D02-T65** | Pure Gerbil test with no P06/P09/graphics imports | Core compiles and reference behavior passes |
-| **P08-D02-T66** | P06 optional adapter with distinct but visually equal branches | Branch identity preserved, no copied history DAG |
-| **P08-D02-T67** | P09 port lacks required detail/capability | Explicit unsupported profile |
-| **P08-D02-T68** | Scene engine adapter reports success but canonical anchor stale | Reject current-view publication |
-| **P08-D02-T69** | Mutate region owner checker to accept duplicates | Independent oracle catches mutation |
-| **P08-D02-T70** | Inject fault between candidate construction and CAS | No partial live world snapshot |
-| **P08-D02-T71** | Run tiny town and independent sparse scientific scene fixture | Shared structural contracts with domain-specific semantics intact |
-| **P08-D02-T72** | Independent examiner reviews exact toolchain, fixtures, failures and report | Scoped qualification only; no unearned engine/performance claim |
+| **P05-D02-T65** | Pure Gerbil test with no P03-D02/P05-D03/graphics imports | Core compiles and reference behavior passes |
+| **P05-D02-T66** | P03-D02 optional adapter with distinct but visually equal branches | Branch identity preserved, no copied history DAG |
+| **P05-D02-T67** | P05-D03 port lacks required detail/capability | Explicit unsupported profile |
+| **P05-D02-T68** | Scene engine adapter reports success but canonical anchor stale | Reject current-view publication |
+| **P05-D02-T69** | Mutate region owner checker to accept duplicates | Independent oracle catches mutation |
+| **P05-D02-T70** | Inject fault between candidate construction and CAS | No partial live world snapshot |
+| **P05-D02-T71** | Run tiny town and independent sparse scientific scene fixture | Shared structural contracts with domain-specific semantics intact |
+| **P05-D02-T72** | Independent examiner reviews exact toolchain, fixtures, failures and report | Scoped qualification only; no unearned engine/performance claim |
 
 ### 14.11 Qualification matrix and evidence limits
 
@@ -795,9 +795,9 @@ A failed gate remains `FAILED`, `DEFERRED`, `SPEC_BLOCKED`, `UNSUPPORTED_BACKEND
 4. **D02-03 — Scene composition:** asset definition, instance, owner/parent separation, typed layers and independent resolved views with negative cycle tests.
 5. **D02-04 — World publication:** `read_snapshot`, `validate_delta`, `publish_if_generation`, `observe_publication` with a D01 mock admission and fault-injected CAS.
 6. **D02-05 — Region working set:** fake demand/response driver, quotas, cancellation, eviction, stale result and observer-scoped views; prove no canonical loss.
-7. **D02-06 — P09 port conformance:** fake A/B/C adapter envelopes and exact revisions; **do not implement generators or select language by intuition**.
+7. **D02-06 — P05-D03 port conformance:** fake A/B/C adapter envelopes and exact revisions; **do not implement generators or select language by intuition**.
 8. **D02-07 — Independent qualification:** execute T01–T72, cross-check D01 port parity and dependency closure, publish only actual evidence if a future code implementation is authorized.
-9. **Separate future authorization:** integrate one game/renderer/ECS/native adapter or persistent store only if a real product requirement and qualification budget justify it. P09-D01 retains procedural algorithms; no DLC/time-travel mechanics are designed here.
+9. **Separate future authorization:** integrate one game/renderer/ECS/native adapter or persistent store only if a real product requirement and qualification budget justify it. P05-D03 retains procedural algorithms; no DLC/time-travel mechanics are designed here.
 
 The staging prioritizes one usable, finite, testable world model. It does not require implementing every world-space topology, all K1 mechanisms or every engine convention before the first reference result.
 
@@ -812,9 +812,9 @@ The staging prioritizes one usable, finite, testable world model. It does not re
 | World coordinates | Frame-typed, units/precision declared | Transform error bounds and extreme-scale tests |
 | Region lifecycle | Semantic existence independent of residency | Exact backend lease/cancellation semantics |
 | Streaming | Bounded fake reference working set | Real host scheduler, performance and race tests later |
-| P09 generation | Strict request/response port | A/B/C benchmark decisions owned by P09 |
+| P05-D03 generation | Strict request/response port | A/B/C benchmark decisions owned by P05-D03 |
 | Authoritative state | In-memory snapshot + expected-version publication | Backend-specific durability and distributed semantics later |
-| P06 history | Optional public adapter, no DAG import | History/view reconstruction and retention closure if selected |
+| P03-D02 history | Optional public adapter, no DAG import | History/view reconstruction and retention closure if selected |
 | D01 world decisions | Required admission for live gameplay mutations | End-to-end fixture validates causal vs structural authority |
 | Observer visibility | Scoped projections with explicit unknowns | Side channels and deployed authorization outside pure reference |
 | External assets | Reference/definition/instance semantics | Actual format/codecs, licensing and asset pipeline outside D02 |
@@ -837,4 +837,4 @@ P06_HISTORY_OPTIONAL / IN_MEMORY_CAS_FIRST /
 NO_IMPL / NO_RUNTIME_PROOF / DOCUMENT_PUBLISHED
 ```
 
-> **Closing principle:** A game world must remain identifiable, structurally consistent, and causally meaningful even when no camera points at it, no scene is active, and no procedural region has been rendered. D01 determines *what the world can become*; D02 keeps *what the world currently is* accessible and coherent; P09 supplies representations when they are needed. The histories of how it became so remain P06's separate concern.
+> **Closing principle:** A game world must remain identifiable, structurally consistent, and causally meaningful even when no camera points at it, no scene is active, and no procedural region has been rendered. D01 determines *what the world can become*; D02 keeps *what the world currently is* accessible and coherent; P05-D03 supplies representations when they are needed. The histories of how it became so remain P03-D02's separate concern.

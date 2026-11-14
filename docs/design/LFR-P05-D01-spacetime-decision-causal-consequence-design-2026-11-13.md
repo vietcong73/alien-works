@@ -1,59 +1,59 @@
-# LFR-P08-D01 | Game World Spacetime Decision & Causal Consequence Architecture
+# LFR-P05-D01 | Symbolic Computation & Interactive Worlds / Spacetime Decision & Causal Consequence
 
 **Document class:** Source-grounded, implementable detailed design proposal for one specialist edition  
 **Date:** 13 November 2026  
 **Programme:** Lisp Foundation Reserve, LFR-C02  
 **Domain track:** `GAMING` — Gaming & Interactive Worlds  
 **Classification:** Primary gaming specialization; cross-domain reuse is permitted through explicit contracts  
-**Edition:** P08 — World, Scene & Spacetime Decision Systems  
-**Design slice:** D01 — Spacetime Decision & Causal Consequence (forward-first)  
+**Edition:** P05 — Symbolic Computation & Interactive Worlds  
+**Design slice:** D01 — Spacetime Decision & Causal Consequence  
 **Primary implementation target:** Independent Gerbil Scheme pure semantic reference core; optional integrations via explicit contracts  
-**Repository context:** `vietcong73/alien-works`, branch `audit/lisp-foundation-reserve`; path `docs/design/LFR-P08-D01-spacetime-decision-causal-consequence-design-2026-11-13.md`  
+**Repository context:** `vietcong73/alien-works`, branch `audit/lisp-foundation-reserve`; path `docs/design/LFR-P05-D01-spacetime-decision-causal-consequence-design-2026-11-13.md`  
 **Status:** `DESIGN_PROPOSED / SOURCE_CONTRACTS_REVIEWED / 64_FUTURE_TESTS_SPECIFIED / 12_FUTURE_GATES / UNIMPLEMENTED / RUNTIME_UNQUALIFIED / DOCUMENT_PUBLISHED_TO_GITHUB`  
 **Publication:** Owner-approved publication of this design document to `docs/design/` on `audit/lisp-foundation-reserve`. No historical source, game, runtime, backend, or other specialist design is modified. This publication does not authorize implementation or deployment.  
 
-> **Decision:** P08-D01 governs how versioned world rules evaluate interventions, propagate their consequences through space and time, present imperfect evidence to actors, and commit admitted world decisions. A player's choice selects an *intervention*, never a guaranteed *consequence*. The first release is forward-only. Historical intervention, persistent successor timelines and cross-timeline travel are future opt-in semantic profiles, not a DLC design or a requirement for the base system.
+> **Decision:** P05-D01 governs how versioned world rules evaluate interventions, propagate their consequences through space and time, present imperfect evidence to actors, and commit admitted world decisions. A player's choice selects an *intervention*, never a guaranteed *consequence*. The first release is forward-only. Historical intervention, persistent successor timelines and cross-timeline travel are future opt-in semantic profiles, not a DLC design or a requirement for the base system.
 
 ## 0. Research question, limits, and intended useful capability
 
 Can an independent Gerbil Scheme package let a host game, creative world, simulation or test environment author *causal decision rules*, run bounded previews, apply admissible decisions, and report consequences without requiring a renderer, physics engine, machine-learning model, database or a complete historical universe?
 
-The intended capability is **rule-governed, observer-relative world decision semantics**. A minimalist world can be a small graph of regions, actors, resources and social dependencies, not a rendered 3D planet. P08-D01 qualifies on symbolic/finite fixtures before any native world generator or game client is attached.
+The intended capability is **rule-governed, observer-relative world decision semantics**. A minimalist world can be a small graph of regions, actors, resources and social dependencies, not a rendered 3D planet. P05-D01 qualifies on symbolic/finite fixtures before any native world generator or game client is attached.
 
-**In scope:** world/revision references; spatial and logical-temporal references; intervention and admissibility; finite causal transition kernels; explicit exogenous inputs; conservative dependency/influence analysis; bounded propagation; incomplete inference; actor-relative observation; preview vs state admission; persistence/convergence/divergence; optional stability/collapse rule semantics; decision receipts; typed interfaces to P06, P08-D02, P09, P03 and K1.
+**In scope:** world/revision references; spatial and logical-temporal references; intervention and admissibility; finite causal transition kernels; explicit exogenous inputs; conservative dependency/influence analysis; bounded propagation; incomplete inference; actor-relative observation; preview vs state admission; persistence/convergence/divergence; optional stability/collapse rule semantics; decision receipts; typed interfaces to P03-D02, P05-D02, P05-D03, P03-D01 and K1.
 
-**Not in scope:** rendering, scene storage/streaming, entity-component implementation, planet/terrain generation, voxel/mesh kernels, physics solver, RL training, NPC planner, narrative content, P06 history graph implementation, N-ary historical synthesis, real-world causal identification, untrusted Scheme evaluation, universal global scheduler, distributed transaction, save-game durability or time-travel gameplay design.
+**Not in scope:** rendering, scene storage/streaming, entity-component implementation, planet/terrain generation, voxel/mesh kernels, physics solver, RL training, NPC planner, narrative content, P03-D02 history graph implementation, N-ary historical synthesis, real-world causal identification, untrusted Scheme evaluation, universal global scheduler, distributed transaction, save-game durability or time-travel gameplay design.
 
-### 0.1 Why a separate D01 within P08
+### 0.1 Why a separate D01 within P05-D01
 
-- P06 deals with **historical causal topology, recorded branches, reconstruction, synthesis and rule/meta-policy governance**. It does **not** own the spatial world dynamics or choose world consequences.
-- P08-D01 owns **intervention -> domain-specific consequences -> observation/admission**, including futures not yet committed.
-- P08-D02, designed later, will own **world/scene entities, region ownership, materialization state and accessibility**. No ECS is imposed by D01.
-- P09, designed separately, will own **procedural synthesis algorithms and their performance backends**. D01 defines only generation/materialization request contracts.
-- K1 M03/M04/M05/M06/M15 provide optional *generic primitives*; P08 owns the game/world-specific invariants and their composition. No K1 profile is assumed qualified or mandatory.
+- P03-D02 deals with **historical causal topology, recorded branches, reconstruction, synthesis and rule/meta-policy governance**. It does **not** own the spatial world dynamics or choose world consequences.
+- P05-D01 owns **intervention -> domain-specific consequences -> observation/admission**, including futures not yet committed.
+- P05-D02, designed later, will own **world/scene entities, region ownership, materialization state and accessibility**. No ECS is imposed by D01.
+- P05-D03, designed separately, will own **procedural synthesis algorithms and their performance backends**. D01 defines only generation/materialization request contracts.
+- K1 M03/M04/M05/M06/M15 provide optional *generic primitives*; P05-D01 owns the game/world-specific invariants and their composition. No K1 profile is assumed qualified or mandatory.
 
 **Semantic separation:** history != world state != observation != predicted future != published successor. These must remain distinct identities even if their serialized contents sometimes match.
 
 ## 1. Source-lineage ledger and evidentiary ceiling
 
-The sources below inform boundary choices; none is a claim that the proposed P08 implementation already exists or that fiction models physical time travel.
+The sources below inform boundary choices; none is a claim that the proposed P05-D01 implementation already exists or that fiction models physical time travel.
 
-| Evidence | Directly supported lesson | P08 adaptation | What does *not* transfer |
+| Evidence | Directly supported lesson | P05-D01 adaptation | What does *not* transfer |
 |---|---|---|---|
-| P06-D01, committed LFR specialist design | Historical ancestry, branch CAS, history immutability, policy-relative synthesis, incomplete search | Separate speculative world decisions from historical publication and use version-pinned optional P06 adapter | P08 may not own P06's DAG, merge/synthesis or historical-retention policy |
-| P03-D01, committed LFR specialist design | Pure microsteps, bounded event processing, time-domain ordering, effect intents and receipts | Deterministic step boundaries and fake-clock fixtures when a temporal director is selected | P08 is not a replacement director/event scheduler |
+| P03-D02, committed LFR specialist design | Historical ancestry, branch CAS, history immutability, policy-relative synthesis, incomplete search | Separate speculative world decisions from historical publication and use version-pinned optional P03-D02 adapter | P05-D01 may not own P03-D02's DAG, merge/synthesis or historical-retention policy |
+| P03-D01, committed LFR specialist design | Pure microsteps, bounded event processing, time-domain ordering, effect intents and receipts | Deterministic step boundaries and fake-clock fixtures when a temporal director is selected | P05-D01 is not a replacement director/event scheduler |
 | K0-D01, committed LFR foundation | Versioned identity, schema validation, effect descriptions, authority records, resource ownership and typed outcomes | Shared representation for exact refs, validation and receipt evidence | A validation result/authority record does not itself execute or secure anything |
 | K1-D01, committed LFR mechanism portfolio | Transition, projection, time, search, constraints, history and numeric profiles | Selection of separately qualified primitives by consumer need | No mandated universal `step`, optimizer, graph ontology or scheduler |
 | Naughty Dog / Jason Gregory, GDC 2009, publicly presented Uncharted state scripting | Authored state transitions and bounded game scripting coupled to native engines | An authored decision-rule IR with explicit semantics and limited native effects | No proprietary Uncharted engine code, VM or production algorithm is available for porting |
-| Alien-Works source review (Common Lisp framework) | Native resources, macros, callbacks, renderer queues and backend coupling | Keep P08 independent from native lifetime, FFI and renderer threads | Native integration is not proof of safe, causal or deterministic game rules |
+| Alien-Works source review (Common Lisp framework) | Native resources, macros, callbacks, renderer queues and backend coupling | Keep P05-D01 independent from native lifetime, FFI and renderer threads | Native integration is not proof of safe, causal or deterministic game rules |
 | Pearl, *An Introduction to Causal Inference* (2010), and Oxford SCM lecture | Interventions in a structural causal model differ from conditioning on observations; model assumptions matter | Distinguish model-defined intervention from observation and state the causal assumptions explicitly | A fictional causal model is not empirical causal identification or a proof about reality |
-| Godot official SceneTree/physics-processing docs | Scene activation, frame-driven processing and fixed-rate physics updates are distinct | P08 semantic time independent of render/physics cadence | D01 is neither a scene tree nor a real-time physics loop |
+| Godot official SceneTree/physics-processing docs | Scene activation, frame-driven processing and fixed-rate physics updates are distinct | P05-D01 semantic time independent of render/physics cadence | D01 is neither a scene tree nor a real-time physics loop |
 | Gerbil official introduction, macro/interface/test/FFI docs | Gerbil modules, checked interfaces, phase-separated macros, Gambit interop and test harnesses | Prefer plain data/structs and pure functions; macros only trusted authoring sugar | Interfaces do not by themselves enforce authority; macro expansion is not a sandbox |
 
 **Source anchors:**
 
-- P06: `docs/design/LFR-P06-D01-branching-causal-reversibility-design-2026-11-13.md` (same branch).
-- P03: `docs/design/LFR-P03-D01-semantic-state-dsl-detailed-design-2026-11-12.md` (same branch).
+- P03-D02: `docs/design/LFR-P03-D02-branching-causal-reversibility-design-2026-11-13.md` (same branch).
+- P03-D01: `docs/design/LFR-P03-D01-semantic-state-dsl-detailed-design-2026-11-12.md` (same branch).
 - K0: `docs/design/LFR-K0-D01-gerbil-meta-foundation-minimal-contract-kernel-2026-11-13.md` (same branch).
 - K1: `docs/design/LFR-K1-D01-opt-in-generalized-mechanisms-detailed-design-2026-11-13.md` (same branch).
 - GDC 2009: [GDC Vault presentation](https://www.gdcvault.com/play/1730/State_Based_Scripting_in_UNCHARTED__DRAKE_S_FORTUNE_and_UNCHARTED_2__AMONG_THIEVES); [Naughty Dog at GDC 2009](https://www.naughtydog.com/blog/naughty_dog_at_gdc_2009); [State-Based Scripting slides](https://www.gameenginebook.com/resources/gdc09-statescripting-uncharted2.pdf).
@@ -62,7 +62,7 @@ The sources below inform boundary choices; none is a claim that the proposed P08
 - Gymnasium: [Environment API](https://gymnasium.farama.org/api/env/).
 - Gerbil: [Introduction](https://gerbil.scheme.org/guide/intro.html); [Interfaces](https://gerbil.scheme.org/reference/std/interface.html); [Tests](https://gerbil.scheme.org/reference/std/test.html); [FFI](https://gerbil.scheme.org/guide/ffi.html).
 
-**Evidence status:** Published P06/P03/K0/K1 artifacts are prior *design proposals*, not passing code. Official documentation demonstrates reference API properties, not test results on the planned Gerbil toolchain. The causal formalism is a **modeling inspiration**: users can author a valid artificial world without claiming causal inference from empirical history.
+**Evidence status:** Published P03-D02/P03-D01/K0/K1 artifacts are prior *design proposals*, not passing code. Official documentation demonstrates reference API properties, not test results on the planned Gerbil toolchain. The causal formalism is a **modeling inspiration**: users can author a valid artificial world without claiming causal inference from empirical history.
 
 ## 2. Architecture and dependency boundary
 
@@ -71,7 +71,7 @@ The sources below inform boundary choices; none is a claim that the proposed P08
                          |
                observation / proposals
                          v
-              P08-D01 DECISION SEMANTICS
+              P05-D01 DECISION SEMANTICS
     +---------------+---------------------------+
     | world model   | intervention admission    |
     | causal rules  | bounded propagation       |
@@ -81,19 +81,19 @@ The sources below inform boundary choices; none is a claim that the proposed P08
                    |             |
           optional |             | optional
                    v             v
-       P06 historical          P08-D02 world / scene
+       P03-D02 historical          P05-D02 world / scene
        publication adapter     state & materialization
                    |             |
-                   |        optional P09 generator
+                   |        optional P05-D03 generator
                    v             v
-          P05 durability      graphics/physics/game host
+          P04-D01 durability      graphics/physics/game host
           only if selected     never imported by pure core
 
-  P08-D01 -> K0 contract vocabulary and *chosen* qualified K1
-  pure mechanisms; no import of P06/P09/P03 internal implementations.
+  P05-D01 -> K0 contract vocabulary and *chosen* qualified K1
+  pure mechanisms; no import of P03-D02/P05-D03/P03-D01 internal implementations.
 ```
 
-Allowed dependency direction is through **public, opt-in ports/adapters**. A base forward-only world uses no P06 installation; a history-aware game explicitly selects a P06 bridge. A small world can run purely in memory with no P08-D02/P09/backend.
+Allowed dependency direction is through **public, opt-in ports/adapters**. A base forward-only world uses no P03-D02 installation; a history-aware game explicitly selects a P03-D02 bridge. A small world can run purely in memory with no P05-D02/P05-D03/backend.
 
 Two independent roles exist:
 
@@ -120,12 +120,12 @@ For a declared deterministic and fully sealed profile, `C_v` can return a unique
 
 | Layer | Question | Output | Owned by |
 |---|---|---|---|
-| Syntax/schema | Is the proposal well formed? | `VALID/INVALID/UNVERIFIED` | K0 + P08 schema |
-| Domain admissibility | Is this action possible according to world rules at this state? | `ADMIT/REFUSE/UNRESOLVED` | P08-D01 |
-| Runtime authority | Is the caller allowed to cause this effect in this host? | bound `ALLOW/DENY/REVIEW/UNKNOWN` | Host/P04 when selected; K0 describes |
-| Causal consequence | What happens if the admitted action is applied? | `ConsequenceSet`, uncertainty, and witness | P08-D01 |
+| Syntax/schema | Is the proposal well formed? | `VALID/INVALID/UNVERIFIED` | K0 + P05-D01 schema |
+| Domain admissibility | Is this action possible according to world rules at this state? | `ADMIT/REFUSE/UNRESOLVED` | P05-D01 |
+| Runtime authority | Is the caller allowed to cause this effect in this host? | bound `ALLOW/DENY/REVIEW/UNKNOWN` | Host/P02-D02 when selected; K0 describes |
+| Causal consequence | What happens if the admitted action is applied? | `ConsequenceSet`, uncertainty, and witness | P05-D01 |
 
-An action can be valid, legal in the fictional world, and still not authorized to mutate a live host. Conversely, an authorized caller can propose a physically impossible in-world action, which P08 must reject.
+An action can be valid, legal in the fictional world, and still not authorized to mutate a live host. Conversely, an authorized caller can propose a physically impossible in-world action, which P05-D01 must reject.
 
 ### 3.2 Canonical outcome distinctions
 
@@ -299,7 +299,7 @@ A game client may *skip preview* and apply an intervention with a valid world ke
 
 ### 6.3 Fictional time vs publication order
 
-A world time coordinate may be a date in fiction; publication order is an immutable operational sequence. A change set to *historical world coordinates* (future opt-in profile) must not insert a new committed event into the operational past as though it had always existed. P06's immutable ancestry and revision-pinned reconstruction provide the right optional storage abstraction. Consequently, **a fictional causal loop does not require a cycle in the storage DAG**.
+A world time coordinate may be a date in fiction; publication order is an immutable operational sequence. A change set to *historical world coordinates* (future opt-in profile) must not insert a new committed event into the operational past as though it had always existed. P03-D02's immutable ancestry and revision-pinned reconstruction provide the right optional storage abstraction. Consequently, **a fictional causal loop does not require a cycle in the storage DAG**.
 
 ## 7. Outcomes, persistence, convergence and collapse
 
@@ -323,7 +323,7 @@ Different paths can yield the same named result (e.g., `war_occurred=true`) with
 - **Consistency:** current candidate satisfies declared hard constraints.
 - **Viability:** a declared finite-horizon or policy-specific reachability condition has a witness or refutation.
 - **Stability:** a declared perturbation/dynamics profile meets a specific bounded or asymptotic property under stated assumptions. No universal stability oracle is assumed.
-- **Collapse:** optional game-world transition activated by a *qualified collapse predicate*. It may make a timeline inaccessible under a future D02/world profile while P06 retains historical identity/evidence per retention policy.
+- **Collapse:** optional game-world transition activated by a *qualified collapse predicate*. It may make a timeline inaccessible under a future D02/world profile while P03-D02 retains historical identity/evidence per retention policy.
 
 `UNKNOWN`, `UNSAT_UNDER_MODEL`, `UNSTABLE_UNDER_PROFILE`, `COLLAPSED_IN_FICTION` and `DATA_UNAVAILABLE` are not interchangeable. For an incomplete check: refuse definitive collapse and report the missing work. A known inconsistent candidate may be rejected or repaired by an explicitly governed world rule, not automatically destroyed.
 
@@ -377,7 +377,7 @@ editions/world-spacetime/
     claims.md  backend-matrix.md  executed-evidence/
 ```
 
-`src/` topology is a proposal, not proof that Gerbil APIs exist as spelled or that source has compiled. The base has no mandatory imports of graphics libraries, P09, P06, Python, Guix, game engines, neural networks, web frameworks or external databases.
+`src/` topology is a proposal, not proof that Gerbil APIs exist as spelled or that source has compiled. The base has no mandatory imports of graphics libraries, P05-D03, P03-D02, Python, Guix, game engines, neural networks, web frameworks or external databases.
 
 ### 9.2 Authoring path
 
@@ -413,7 +413,7 @@ The rule name is illustrative. A game-world ruleset can contain causal mechanism
 
 ## 10. Interoperability contracts without hidden engine imports
 
-### 10.1 P08-D02 world/scene port
+### 10.1 P05-D02 world/scene port
 
 ```text
 WorldStatePort {
@@ -427,7 +427,7 @@ WorldStatePort {
 
 D02 owns scene/entity storage and region accessibility; D01 owns decision semantics. A pure in-memory mock port suffices for D01 qualification. No mandated ECS, quadtree, octree or renderer.
 
-### 10.2 P09 materialization request
+### 10.2 P05-D03 materialization request
 
 ```text
 MaterializationRequest {
@@ -444,11 +444,11 @@ MaterializationResult {
 ```
 
 - D01 validates *meaning and version* of a request, not the algorithm which turns a seed into terrain.
-- P09 independently selects **A: pure Gerbil**, **B: Gerbil + native acceleration**, or **C: Gerbil + external generation service** according to measured correctness/performance. This D01 does not decide a backend, port NMS proprietary code or design terrain kernels.
+- P05-D03 independently selects **A: pure Gerbil**, **B: Gerbil + native acceleration**, or **C: Gerbil + external generation service** according to measured correctness/performance. This D01 does not decide a backend, port NMS proprietary code or design terrain kernels.
 - No per-voxel FFI requirement, no accidental re-run of a generator after stale world revision, and no claim that the same seed alone guarantees byte-identical output across implementations.
 - A returned region is not a causal decision; if generator output changes authoritative world semantics, the change must be proposed/admitted as a separate world intervention.
 
-### 10.3 Optional P06 historical port
+### 10.3 Optional P03-D02 historical port
 
 ```text
 HistoryPort {
@@ -459,13 +459,13 @@ HistoryPort {
 }
 ```
 
-No unconditional `fork_at` call belongs to an ordinary forward-world step. A game selecting historical branches uses P06's **public interface** and retains its own explicit branch/policy semantics; no copying the P06 DAG into P08. If only P08 is installed, `history_ref_optional` stays absent and a documented local-world snapshot still works.
+No unconditional `fork_at` call belongs to an ordinary forward-world step. A game selecting historical branches uses P03-D02's **public interface** and retains its own explicit branch/policy semantics; no copying the P03-D02 DAG into P05-D01. If only P05-D01 is installed, `history_ref_optional` stays absent and a documented local-world snapshot still works.
 
-### 10.4 P03/P04/P07 ports
+### 10.4 P03-D01/P02-D02/P01-D02 ports
 
-- P03 may produce an event/intent compatible with P08's admitted world transition when semantic clocks and rule revisions match. It does not become P08's scheduler.
-- P04 can provide an authorized effect executor for real file/network/native effects if the host selects it; fictional world action legality is not authority.
-- P07 may render observer-scoped outcomes and task status; a UI's stale cached view does not authorize or dictate a world transition.
+- P03-D01 may produce an event/intent compatible with P05-D01's admitted world transition when semantic clocks and rule revisions match. It does not become P05-D01's scheduler.
+- P02-D02 can provide an authorized effect executor for real file/network/native effects if the host selects it; fictional world action legality is not authority.
+- P01-D02 may render observer-scoped outcomes and task status; a UI's stale cached view does not authorize or dictate a world transition.
 
 ## 11. Cross-domain fixtures and falsifying counterexamples
 
@@ -481,7 +481,7 @@ No unconditional `fork_at` call belongs to an ordinary forward-world step. A gam
 
 **F6 — Version race:** A player previews a future under rules `r1`; before commit, the world switches to `r2`. Publication fails with `STALE_MODEL_REVISION`. Re-preview under `r2` may yield a different outcome; cached `r1` result is never reused as valid.
 
-**F7 — History-aware optionality:** A previewed future changes no P06 branch. A committed step uses optional P06 CAS with original rule locks; a new world-only local snapshot exists without P06 installed. The same apparent future on two historical branches remains distinct.
+**F7 — History-aware optionality:** A previewed future changes no P03-D02 branch. A committed step uses optional P03-D02 CAS with original rule locks; a new world-only local snapshot exists without P03-D02 installed. The same apparent future on two historical branches remains distinct.
 
 **F8 — Procedural materialization:** Request a region at seed `s`, revision `g1`, branch `b`, world generation `n`; receive output after world advances to `n+1`. Result is stale and cannot overwrite a currently authoritative region. D01 checks contracts but does not generate terrain.
 
@@ -500,12 +500,12 @@ These are **proposed reference fixtures**. They must be implemented with indepen
 - **I07 — Boundedness:** all exploration, propagation, trace and intermediate sizes are budgeted; overrun yields typed partial/unknown.
 - **I08 — No implicit omniscience:** observer-relative projections enforce declared scope and information restrictions.
 - **I09 — No automatic collapse:** contradiction, nonconvergence and missing information are distinct from a fictional collapse predicate.
-- **I10 — No false rollback:** world preview/restore is not the inverse of external effects or immutable P06 historical events.
+- **I10 — No false rollback:** world preview/restore is not the inverse of external effects or immutable P03-D02 historical events.
 - **I11 — CAS publication:** stale world, actor, target, rules or history heads block an attempted commit.
 - **I12 — No universal time axis:** no implicit conversion between fictional, logical, render, physics and wall clocks.
 - **I13 — Explicit stochasticity:** nondeterminism/input closure and claimed replay conditions must be declared and checked.
 - **I14 — Observational equivalence is scoped:** convergence does not erase different histories or hidden states.
-- **I15 — Source independence:** pure D01 works without P06, P09, game engine, graphics, cloud or RL library.
+- **I15 — Source independence:** pure D01 works without P03-D02, P05-D03, game engine, graphics, cloud or RL library.
 - **I16 — Qualified adapter bounds:** pure Gerbil qualification cannot automatically certify native, network, filesystem or physical effects.
 - **I17 — Effect neutrality:** successful world simulation does not certify actual external effect completion.
 - **I18 — Rule-change governance:** rules cannot self-authorize capability escalation or retroactively reinterpret published results.
@@ -531,14 +531,14 @@ These are **proposed reference fixtures**. They must be implemented with indepen
 
 ## 13. Qualification plan: 64 proposed tests, 12 gates
 
-All `P08-Txx` tests below are **future cases**, not executed or passed. Test runs must bind actual Gerbil/Gambit toolchain versions, model/rule revisions, fixture IDs, observation scope, budgets and oracle versions. The first qualification profile is pure reference Gerbil with a fake world store.
+All `P05-D01-Txx` tests below are **future cases**, not executed or passed. Test runs must bind actual Gerbil/Gambit toolchain versions, model/rule revisions, fixture IDs, observation scope, budgets and oracle versions. The first qualification profile is pure reference Gerbil with a fake world store.
 
 ### 13.1 Gate definitions
 
 | Gate | Requirement | Evidence ceiling |
 |---|---|---|
 | Q0 — Toolchain and source locks | Compile/test exact Gerbil/Gambit APIs and record dependency closure | Toolchain-specific, no blanket portability |
-| Q1 — Schema, identity, time | Validate canonical refs and reject stale/ambiguous scopes | P08 pure contracts |
+| Q1 — Schema, identity, time | Validate canonical refs and reject stale/ambiguous scopes | P05-D01 pure contracts |
 | Q2 — Intervention admission | Independent world-action admissibility oracle and authority separation | Fictional legality, not OS security |
 | Q3 — Transition correctness | Finite deterministic transition truth tables and explicit exogenous inputs | Named model/fixtures only |
 | Q4 — Impact closure | Conservative spatial/nonlocal influence with soundness counterexamples | Named horizon/closure proof |
@@ -546,7 +546,7 @@ All `P08-Txx` tests below are **future cases**, not executed or passed. Test run
 | Q6 — Observation epistemics | No hidden-state or rule leakage, stale observation detection | Selected observer profiles |
 | Q7 — Outcome semantics | Persistence, divergence, convergence, viability and collapse distinctions | Model-relative, not physical science |
 | Q8 — State publication | CAS/rule-lock correctness and no preview side effects | Single-writer in-memory only |
-| Q9 — Adapter independence | No P06/P09/graphics requirement; optional integration fault tests | Exact tested adapter |
+| Q9 — Adapter independence | No P03-D02/P05-D03/graphics requirement; optional integration fault tests | Exact tested adapter |
 | Q10 — Cross-domain extension | One game/story fixture and one independent scenario mock consumer | Chosen cross-domain contracts |
 | Q11 — Independent audit | Failure injection, mutation tests, negative transfers, evidence reporting | Only tested revision/profile |
 
@@ -554,78 +554,78 @@ All `P08-Txx` tests below are **future cases**, not executed or passed. Test run
 
 | ID | Fixture / challenge | Pass oracle |
 |---|---|---|
-| P08-T01 | Duplicate world identity across namespaces | Distinct typed refs; no collision |
-| P08-T02 | Target ABA generation reuse | Stale target rejected |
-| P08-T03 | Unknown required intervention field | Strict rejection |
-| P08-T04 | Wrong coordinate/time schema | Invalid scope before transition |
-| P08-T05 | Same apparent world, different model revision | No shared state-cache identity |
-| P08-T06 | Unsupported wall-clock to simulation mapping | Explicit unsupported profile |
-| P08-T07 | Deterministic canonicalization and round trip | Same validated representation |
-| P08-T08 | Invalid actor/world ownership | Domain validation refusal |
-| P08-T09 | Admissible but unauthorized host effect | No dispatch |
-| P08-T10 | Authorized but world-illegal action | World refusal |
-| P08-T11 | Invalid local preconditions | No candidate or mutation |
-| P08-T12 | Rule self-grants capability | Rejected capability escalation |
-| P08-T13 | Valid action selects not desired reward | Consequence follows world model, not player wish |
-| P08-T14 | No matching rule | Typed unhandled-action policy |
-| P08-T15 | Two equal-priority conflicting rules | Explicit ambiguity, no silent selection |
-| P08-T16 | Change under immutable pre-step state | Reference state-transition oracle agrees |
-| P08-T17 | Sealed exogenous deterministic input | Exact repeated trace under pinned profile |
-| P08-T18 | Missing exogenous noise | UNKNOWN, not invented exact future |
-| P08-T19 | Stochastic probability normalization failure | Invalid probability profile |
-| P08-T20 | One intervention, multiple valid candidates | Bounded candidates with incomplete/pure status |
-| P08-T21 | Local change with local certified closure | Sound named-horizon unaffected claim |
-| P08-T22 | Nonlocal trade/network dependency | Remote possible/affected scope included |
-| P08-T23 | Unknown outgoing dependency from region | No false unaffected proof |
-| P08-T24 | Dynamic rule changes influence topology | Incremental cache invalidated |
-| P08-T25 | Spatial boundary edge-crossing | Boundary policy respected |
-| P08-T26 | Zero-size materialized region, nonlocal effect | Still model possible remote outcome |
-| P08-T27 | Cyclic monotone dependency | Fixed point matches independent oracle |
-| P08-T28 | Oscillating dependency and finite fuel | Typed incomplete, no collapse |
-| P08-T29 | Candidate frontier cap | Completeness marked PARTIAL |
-| P08-T30 | Maximum state/trace byte bounds | No unbounded allocation; typed status |
-| P08-T31 | Deep rule dependency expansion | Depth/fuel bound enforced |
-| P08-T32 | Invalid same-time ordering ambiguity | Explicit clock/order rule or refusal |
-| P08-T33 | Same observation from different latent states | Player sees same view, world states remain distinct |
-| P08-T34 | Privileged debugger observes hidden factor | Scoped access only, no player leak |
-| P08-T35 | Player asks for full causal graph | Denied/redacted under player profile |
-| P08-T36 | Stale historical testimony | Observation marked stale/qualified |
-| P08-T37 | Player hypothesis of false causal relation | Hypothesis never becomes authoritative rule |
-| P08-T38 | Observation projector raises exception | No world mutation or secret exposure |
-| P08-T39 | Changed intervention, unchanged war outcome | UNCHANGED_OBSERVABLE plus distinct witness |
-| P08-T40 | Changed intervention changes outcome | DIVERGED with observer-specific evidence |
-| P08-T41 | Two distinct paths observationally converge | CONVERGED; histories not merged |
-| P08-T42 | Observational equality vs state equality | Distinct result types and oracles |
-| P08-T43 | Constraint-conflicting candidate | Rejected without fictional collapse |
-| P08-T44 | Optional valid collapse predicate | Collapse only when exact qualified rule triggers |
-| P08-T45 | Unqualified collapse predicate | Refused, never collapsed |
-| P08-T46 | Finite horizon viability failure | Scope-specific VIABILITY_FAILED witness |
-| P08-T47 | Time-unbounded stability requested | UNKNOWN unless qualified proof exists |
-| P08-T48 | Ambiguous collapse/unknown presentation | UI receives distinguishable statuses |
-| P08-T49 | Preview without commit | State and P06 history unchanged |
-| P08-T50 | Concurrent model version change | STALE_MODEL_REVISION, no commit |
-| P08-T51 | Concurrent actor/target generation change | Commit rejected |
-| P08-T52 | Single-writer state CAS | One winner; conflict visible |
-| P08-T53 | Multi-region atomicity demanded from weak store | Unsupported guarantee refused |
-| P08-T54 | Lost external effect acknowledgment | UNKNOWN_AFTER_DISPATCH, no unsafe retry |
-| P08-T55 | Optional P06 adapter unavailable | Pure forward world still works |
-| P08-T56 | P06 history request with stale branch head | History conflict preserved; no data rewrite |
-| P08-T57 | Late P09 region result from older generation | Stale materialization rejected |
-| P08-T58 | Generator revision mismatch | No silent region replacement |
-| P08-T59 | Gerbil-only reference consumer | Runs without graphics/FFI/RL/database dependencies |
-| P08-T60 | Independent control/scenario mock | Shared contracts without adopting gameplay rules |
-| P08-T61 | Fault injection into rule evaluator | Typed safe failure; no partial authoritative mutation |
-| P08-T62 | Mutated influence rule drops remote edge | Property oracle catches unsound unaffected result |
-| P08-T63 | Replay with incompatible compiler/version lock | Refuse exact replay claim |
-| P08-T64 | Independent review of evidence claims | Design/mock/backend claims never overstated |
+| P05-D01-T01 | Duplicate world identity across namespaces | Distinct typed refs; no collision |
+| P05-D01-T02 | Target ABA generation reuse | Stale target rejected |
+| P05-D01-T03 | Unknown required intervention field | Strict rejection |
+| P05-D01-T04 | Wrong coordinate/time schema | Invalid scope before transition |
+| P05-D01-T05 | Same apparent world, different model revision | No shared state-cache identity |
+| P05-D01-T06 | Unsupported wall-clock to simulation mapping | Explicit unsupported profile |
+| P05-D01-T07 | Deterministic canonicalization and round trip | Same validated representation |
+| P05-D01-T08 | Invalid actor/world ownership | Domain validation refusal |
+| P05-D01-T09 | Admissible but unauthorized host effect | No dispatch |
+| P05-D01-T10 | Authorized but world-illegal action | World refusal |
+| P05-D01-T11 | Invalid local preconditions | No candidate or mutation |
+| P05-D01-T12 | Rule self-grants capability | Rejected capability escalation |
+| P05-D01-T13 | Valid action selects not desired reward | Consequence follows world model, not player wish |
+| P05-D01-T14 | No matching rule | Typed unhandled-action policy |
+| P05-D01-T15 | Two equal-priority conflicting rules | Explicit ambiguity, no silent selection |
+| P05-D01-T16 | Change under immutable pre-step state | Reference state-transition oracle agrees |
+| P05-D01-T17 | Sealed exogenous deterministic input | Exact repeated trace under pinned profile |
+| P05-D01-T18 | Missing exogenous noise | UNKNOWN, not invented exact future |
+| P05-D01-T19 | Stochastic probability normalization failure | Invalid probability profile |
+| P05-D01-T20 | One intervention, multiple valid candidates | Bounded candidates with incomplete/pure status |
+| P05-D01-T21 | Local change with local certified closure | Sound named-horizon unaffected claim |
+| P05-D01-T22 | Nonlocal trade/network dependency | Remote possible/affected scope included |
+| P05-D01-T23 | Unknown outgoing dependency from region | No false unaffected proof |
+| P05-D01-T24 | Dynamic rule changes influence topology | Incremental cache invalidated |
+| P05-D01-T25 | Spatial boundary edge-crossing | Boundary policy respected |
+| P05-D01-T26 | Zero-size materialized region, nonlocal effect | Still model possible remote outcome |
+| P05-D01-T27 | Cyclic monotone dependency | Fixed point matches independent oracle |
+| P05-D01-T28 | Oscillating dependency and finite fuel | Typed incomplete, no collapse |
+| P05-D01-T29 | Candidate frontier cap | Completeness marked PARTIAL |
+| P05-D01-T30 | Maximum state/trace byte bounds | No unbounded allocation; typed status |
+| P05-D01-T31 | Deep rule dependency expansion | Depth/fuel bound enforced |
+| P05-D01-T32 | Invalid same-time ordering ambiguity | Explicit clock/order rule or refusal |
+| P05-D01-T33 | Same observation from different latent states | Player sees same view, world states remain distinct |
+| P05-D01-T34 | Privileged debugger observes hidden factor | Scoped access only, no player leak |
+| P05-D01-T35 | Player asks for full causal graph | Denied/redacted under player profile |
+| P05-D01-T36 | Stale historical testimony | Observation marked stale/qualified |
+| P05-D01-T37 | Player hypothesis of false causal relation | Hypothesis never becomes authoritative rule |
+| P05-D01-T38 | Observation projector raises exception | No world mutation or secret exposure |
+| P05-D01-T39 | Changed intervention, unchanged war outcome | UNCHANGED_OBSERVABLE plus distinct witness |
+| P05-D01-T40 | Changed intervention changes outcome | DIVERGED with observer-specific evidence |
+| P05-D01-T41 | Two distinct paths observationally converge | CONVERGED; histories not merged |
+| P05-D01-T42 | Observational equality vs state equality | Distinct result types and oracles |
+| P05-D01-T43 | Constraint-conflicting candidate | Rejected without fictional collapse |
+| P05-D01-T44 | Optional valid collapse predicate | Collapse only when exact qualified rule triggers |
+| P05-D01-T45 | Unqualified collapse predicate | Refused, never collapsed |
+| P05-D01-T46 | Finite horizon viability failure | Scope-specific VIABILITY_FAILED witness |
+| P05-D01-T47 | Time-unbounded stability requested | UNKNOWN unless qualified proof exists |
+| P05-D01-T48 | Ambiguous collapse/unknown presentation | UI receives distinguishable statuses |
+| P05-D01-T49 | Preview without commit | State and P03-D02 history unchanged |
+| P05-D01-T50 | Concurrent model version change | STALE_MODEL_REVISION, no commit |
+| P05-D01-T51 | Concurrent actor/target generation change | Commit rejected |
+| P05-D01-T52 | Single-writer state CAS | One winner; conflict visible |
+| P05-D01-T53 | Multi-region atomicity demanded from weak store | Unsupported guarantee refused |
+| P05-D01-T54 | Lost external effect acknowledgment | UNKNOWN_AFTER_DISPATCH, no unsafe retry |
+| P05-D01-T55 | Optional P03-D02 adapter unavailable | Pure forward world still works |
+| P05-D01-T56 | P03-D02 history request with stale branch head | History conflict preserved; no data rewrite |
+| P05-D01-T57 | Late P05-D03 region result from older generation | Stale materialization rejected |
+| P05-D01-T58 | Generator revision mismatch | No silent region replacement |
+| P05-D01-T59 | Gerbil-only reference consumer | Runs without graphics/FFI/RL/database dependencies |
+| P05-D01-T60 | Independent control/scenario mock | Shared contracts without adopting gameplay rules |
+| P05-D01-T61 | Fault injection into rule evaluator | Typed safe failure; no partial authoritative mutation |
+| P05-D01-T62 | Mutated influence rule drops remote edge | Property oracle catches unsound unaffected result |
+| P05-D01-T63 | Replay with incompatible compiler/version lock | Refuse exact replay claim |
+| P05-D01-T64 | Independent review of evidence claims | Design/mock/backend claims never overstated |
 
 ### 13.3 Test harness and release labels
 
 - `DESIGN_PROPOSED`: architecture, contracts, tests specified only.
 - `PURE_REFERENCE_QUALIFIED`: a real Gerbil implementation, actual executed tests, and independent finite oracles passed under a locked toolchain.
 - `WORLD_STORE_ADAPTER_QUALIFIED`: selected in-memory/other adapter passed CAS, stale state and fault tests; no blanket durability guarantee.
-- `HISTORY_ADAPTER_QUALIFIED`: optional exact P06 boundary and historical-version/CAS tests passed.
-- `GENERATOR_ADAPTER_QUALIFIED`: optional exact P09 version and materialization tests passed; no blanket correctness across backends.
+- `HISTORY_ADAPTER_QUALIFIED`: optional exact P03-D02 boundary and historical-version/CAS tests passed.
+- `GENERATOR_ADAPTER_QUALIFIED`: optional exact P05-D03 version and materialization tests passed; no blanket correctness across backends.
 - `GAME_RUNTIME_QUALIFIED`: a selected host/game client passed end-to-end tests under exact versions, performance targets and bounded resource budgets.
 - `UNQUALIFIED`, `SPEC_BLOCKED`, `DEFERRED`, `REJECTED`: legitimate statuses; never silently reclassify them as PASS.
 
@@ -633,31 +633,31 @@ For negative tests, use property checks, mutation tests and independent referenc
 
 ## 14. Implementation sequencing (only if separately authorized)
 
-1. **P08-00 — Frozen semantic register:** pin P06/P03/K0/K1 design refs, official Gerbil toolchain and initial world-rule schema. Record all non-goals and semantics.
-2. **P08-01 — Pure decision fixture:** tiny region/actor/resource world, validated intervention, state transition and independent oracle. No scene/backend.
-3. **P08-02 — Influence propagation:** conservative local/nonlocal dependency closure, horizon scoping, cycles and budgets.
-4. **P08-03 — Epistemic projection:** distinct player/debug observation profiles, hidden causes and testable clues.
-5. **P08-04 — Admission/publication:** separate preview and single-writer in-memory commit; stale-rule CAS, failure injection and receipts.
-6. **P08-05 — Outcome semantics:** convergence/persistence, optional named viability predicate and collapse counterexamples. Collapse remains disabled until qualified.
-7. **P08-06 — Independent tests/audit:** run Q0–Q11 with recorded failures and exact claims. Require a game fixture and an independent non-game fixture.
-8. **Separate design authority:** P08-D02 world/scene architecture, P09-D01 procedural generators, and optional P06 time-travel integration. Other application domains may cite P08-D01 as source material and define their own interfaces. No implementation or DLC design is implied by this D01.
+1. **P05-D01-00 — Frozen semantic register:** pin P03-D02/P03-D01/K0/K1 design refs, official Gerbil toolchain and initial world-rule schema. Record all non-goals and semantics.
+2. **P05-D01-01 — Pure decision fixture:** tiny region/actor/resource world, validated intervention, state transition and independent oracle. No scene/backend.
+3. **P05-D01-02 — Influence propagation:** conservative local/nonlocal dependency closure, horizon scoping, cycles and budgets.
+4. **P05-D01-03 — Epistemic projection:** distinct player/debug observation profiles, hidden causes and testable clues.
+5. **P05-D01-04 — Admission/publication:** separate preview and single-writer in-memory commit; stale-rule CAS, failure injection and receipts.
+6. **P05-D01-05 — Outcome semantics:** convergence/persistence, optional named viability predicate and collapse counterexamples. Collapse remains disabled until qualified.
+7. **P05-D01-06 — Independent tests/audit:** run Q0–Q11 with recorded failures and exact claims. Require a game fixture and an independent non-game fixture.
+8. **Separate design authority:** P05-D02 world/scene architecture, P05-D03 procedural generators, and optional P03-D02 time-travel integration. Other application domains may cite P05-D01 as source material and define their own interfaces. No implementation or DLC design is implied by this D01.
 
-Each slice should remain useful by itself. Do not implement eighteen K1 mechanisms or all P08/P09 subsystems just to qualify a small P08 pure reference transition.
+Each slice should remain useful by itself. Do not implement eighteen K1 mechanisms or all P05-D01/P05-D03 subsystems just to qualify a small P05-D01 pure reference transition.
 
 ## 15. Open design decisions and final verdict
 
 | Issue | Proposed decision | Remaining evidence requirement |
 |---|---|---|
 | Base-game temporal profile | **Forward-only default** | Exact world/clock semantics after mock qualification |
-| Historical intervention | **Future opt-in integration** | P06 public adapter, successor preservation, explicit travel rules |
-| World space ontology | **Abstract space scopes** | P08-D02 decides scene/entity/region storage |
+| Historical intervention | **Future opt-in integration** | P03-D02 public adapter, successor preservation, explicit travel rules |
+| World space ontology | **Abstract space scopes** | P05-D02 decides scene/entity/region storage |
 | Causal modeling grammar | **Typed deterministic/explicit stochastic rules first** | Gerbil DSL probes, oracle correctness; optional SCM profile later |
 | Causal dependencies | **Versioned, conservative and potentially nonlocal** | Soundness counterexamples and changing-rule tests |
 | Collapse | **Disabled without named qualified fictional rule** | Consistency/viability/stability oracle plus player-facing semantics |
 | Prediction completeness | **Never promised globally** | Explicit budgets, scopes and completeness witnesses |
 | Player uncertainty | **Observer-specific and evidence-grounded** | Hidden-world fixtures and nonleakage tests |
-| Persistence | **Local in-memory reference only initially** | P05/P06/D02 adapter selected and separately qualified if needed |
-| Procedural generation | **Request contract only** | P09 chooses A/B/C based on qualified benchmarks |
+| Persistence | **Local in-memory reference only initially** | P04-D01/P03-D02/D02 adapter selected and separately qualified if needed |
+| Procedural generation | **Request contract only** | P05-D03 chooses A/B/C based on qualified benchmarks |
 | Other application domains | **Independent consumers of decision/observation semantics** | Separate domain designs determine their own adapters and qualification |
 | Real-world causal truth | **Not claimed** | No fictitious physical-time or empirical-causation proof |
 

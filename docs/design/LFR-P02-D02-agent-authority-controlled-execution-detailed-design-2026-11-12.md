@@ -1,15 +1,16 @@
-# LFR-P04-D01 | Agent Authority & Controlled Execution Reserve
+# LFR-P02-D02 | Declarative Scheme Systems & Governed Execution / Agent Authority & Controlled Execution
 
 **Document class:** Detailed Design Proposal, one specialized edition only  
 **Date:** 12 November 2026  
 **Programme:** Lisp Foundation Reserve, current concept LFR-C02  
-**Edition:** P04, Agent Authority & Controlled Execution  
+**Edition:** P02 — Declarative Scheme Systems & Governed Execution  
+**Design slice:** D02 — Agent Authority & Controlled Execution  
 **Language:** Gerbil Scheme (new independent implementation, not a source port)  
 **Main source:** Mark Watson, Gerbil Coding Harness, pinned revision `1335cb2708926213ba62afd2998754358f655db1` (11 November 2026)  
-**Research context:** Existing Coding Harness source audit; LFR-C02; P01–P03 are independent sibling designs  
+**Research context:** Existing Coding Harness source audit; LFR-C02; P01-D01–P03-D01 are independent sibling designs  
 **Status:** `DETAILED_DESIGN_PROPOSED / SOURCE_LINEAGE_EXPLICIT / SECURITY_BOUNDARIES_SPECIFIED / RUNTIME_UNQUALIFIED`  
 **Publication:** Owner-approved documentation publication on 12 November 2026 under `docs/design/` in `vietcong73/alien-works`, branch `audit/lisp-foundation-reserve`. This publication does not authorize source code changes, implementation, deployment, runtime tool execution, or a new repository.  
-**Scope isolation:** Does not modify LFR-C02, P01–P03, existing reviews, Alien-Works source, or historical isolated concept 04.
+**Scope isolation:** Does not modify LFR-C02, P01-D01–P03-D01, existing reviews, Alien-Works source, or historical isolated concept 04.
 
 ---
 
@@ -19,10 +20,10 @@ Design **one independent Gerbil specialized reserve** that converts potentially 
 
 Two separately qualifying profiles:
 
-- **P04-A — Authority & Policy (primary, pure):** tool contracts, schema validation, effect classification, contextual policy evaluation, binding approvals to exact requests, and structured decisions. No filesystem or subprocess operations.
-- **P04-B — Controlled Local Execution (optional, effectful):** narrowly registered read operations, staged edits, checkers, subprocess invocation, operational receipts, and recovery. A feature-specific driver must qualify its guarantees. P04-B consumes decisions from P04-A rather than inheriting a global `auto-approve` flag.
+- **P02-D02-A — Authority & Policy (primary, pure):** tool contracts, schema validation, effect classification, contextual policy evaluation, binding approvals to exact requests, and structured decisions. No filesystem or subprocess operations.
+- **P02-D02-B — Controlled Local Execution (optional, effectful):** narrowly registered read operations, staged edits, checkers, subprocess invocation, operational receipts, and recovery. A feature-specific driver must qualify its guarantees. P02-D02-B consumes decisions from P02-D02-A rather than inheriting a global `auto-approve` flag.
 
-Optional *outside* adapters may provide model proposals or UI approval, but P04 has no mandatory OpenAI, Gemini, cloud, browser, MCP, database, GUI, Guix/Guile, P01, P02, P03, or Meta-Foundation dependency.
+Optional *outside* adapters may provide model proposals or UI approval, but P02-D02 has no mandatory OpenAI, Gemini, cloud, browser, MCP, database, GUI, Guix/Guile, P01-D01, P02-D01, P03-D01, or Meta-Foundation dependency.
 
 The **goal is not to make arbitrary model code safe merely by putting it inside Gerbil**. The local tool runtime executes with the permissions and kernel protections of its process. For hostile code, operating-system sandboxing and privilege separation are separate acceptance requirements.
 
@@ -39,13 +40,13 @@ Not an autonomous agent platform, LLM framework, general-purpose system policy a
 
 ## 1. Threat, trust, and control boundaries
 
-The threat model distinguishes five parties; treating them as equivalent would erase the entire purpose of P04.
+The threat model distinguishes five parties; treating them as equivalent would erase the entire purpose of P02-D02.
 
 | Party | Trust assumption | Allowed role |
 |---|---|---|
 | **Application owner** | Supplies bounded configuration and approvals | Select tool set, root, policy, budgets, and external isolation strategy |
-| **P04-A policy evaluator** | Trusted local implementation and configuration | Validate and decide; deterministic audit records |
-| **P04-B executor/driver** | Trusted implementation, but operating inside host OS permissions | Execute authorized operations; report what occurred |
+| **P02-D02-A policy evaluator** | Trusted local implementation and configuration | Validate and decide; deterministic audit records |
+| **P02-D02-B executor/driver** | Trusted implementation, but operating inside host OS permissions | Execute authorized operations; report what occurred |
 | **Agent/model caller** | Untrusted proposal producer, even when helpful | Submit typed requests; never self-grant rights |
 | **Repository content, search output, tool text** | Untrusted data | Supply context only; not authority, policy or developer instructions |
 
@@ -63,9 +64,9 @@ A `policy-decision=ALLOW` is sufficient only within the *configured* trust setti
 
 ## 2. Source-lineage and defect-resolution register
 
-Evidence statuses: **S** = directly inspected static source; **R** = existing bounded review; **D** = documentation-level official behavior; **P** = proposed P04 requirement, **not implemented**.
+Evidence statuses: **S** = directly inspected static source; **R** = existing bounded review; **D** = documentation-level official behavior; **P** = proposed P02-D02 requirement, **not implemented**.
 
-| ID | Source: original problem and mechanism | Verified strength | Known weakness or boundary | Proposed P04 correction | Falsification evidence |
+| ID | Source: original problem and mechanism | Verified strength | Known weakness or boundary | Proposed P02-D02 correction | Falsification evidence |
 |---|---|---|---|---|---|
 | **CH-01** | Coding Harness `tools.ss`: centralized `define-tool` registry | Tool inventory and schemas are explicit (S) | Registry schema alone grants no authority or effect constraints | Versioned `ToolSpec`; separate `EffectSpec`, `PolicyDecision`, `ExecutorBinding` | Unknown/malformed/mismatched tool requests fail closed |
 | **CH-02** | `tools.ss:134–150`, `checker.ss:131–132`: file tools / project inclusion | Useful file and diagnostic tools (S) | Inadequate root containment; string-prefix sibling confusion (S) | Root-handle scoped, race-resistant file driver; deny absolute/escape paths | `../`, sibling, symlink, rename race, `/proc` magic-link tests |
@@ -78,26 +79,26 @@ Evidence statuses: **S** = directly inspected static source; **R** = existing bo
 | **CH-09** | `llm.ss:170–220`: iteration and repetition cap | Limits simple repeated tool-call loops (S) | Identical polling can be legitimate; loops can vary wording | Resource budgets + operation-specific progress and idempotency semantics | Polling with new state allowed; nonprogress bounded |
 | **CH-10** | `lang.ss`: per-language dispatch and syntax checker | Multi-language tool behavior is inspectable (S) | Language selection cannot substitute for scoped execution and authority | Language profiles are *data* and checker descriptors; not permission grants | Changing file extension cannot elevate capabilities |
 | **PA-01** | Personal AI CLI review: API errors can be treated as text answers (R) | Clear example of typed-result need | Failure values can be misclassified as valid model output | Tagged `OperationResult`, `Failure`, `Uncertain` separate from human prose | API error, validator error and refused action cannot become `SUCCESS` |
-| **P02-X** | P02-D01 optional process-driver design (concept only) | Distinguishes OS supervision from actor lifecycle | P02 remains unbuilt, and P04 cannot claim its capabilities | Own minimal `CommandDriver`; optional independent future adapter, **no P02 dependency** | Dependency audit and real-driver capability tests |
+| **P02-D01-X** | P02-D01 optional process-driver design (concept only) | Distinguishes OS supervision from actor lifecycle | P02-D01 remains unbuilt, and P02-D02 cannot claim its capabilities | Own minimal `CommandDriver`; optional independent future adapter, **no P02-D01 dependency** | Dependency audit and real-driver capability tests |
 
-**Evidence boundary:** The source findings are static; P04 remedies are proposals. Source evidence does not establish successful execution of any P04 design. The Coding Harness repository headers identify AGPL-3.0; preserve attribution and assess license obligations before any verbatim source reuse. Studying algorithms/contracts is not automatic authorization to port code.
+**Evidence boundary:** The source findings are static; P02-D02 remedies are proposals. Source evidence does not establish successful execution of any P02-D02 design. The Coding Harness repository headers identify AGPL-3.0; preserve attribution and assess license obligations before any verbatim source reuse. Studying algorithms/contracts is not automatic authorization to port code.
 
 ## 3. Internal architecture and dependency direction
 
 ```text
-OUTSIDE P04
+OUTSIDE P02-D02
   application / CLI / optional LLM caller / optional approval UI
                       |
                 typed ToolRequest
                       v
-P04-A [PURE, MAIN PROFILE]
+P02-D02-A [PURE, MAIN PROFILE]
   registry -> normalize -> schema-validate -> effect-classify
              -> policy-evaluate -> prepare approval commitment
              -> authorize exact request or refuse
                       |
             immutable authority decision
                       v
-P04-B [OPTIONAL, EFFECTFUL]
+P02-D02-B [OPTIONAL, EFFECTFUL]
   executor gate / decision verification
     +-- scoped read adapter
     +-- staged-edit adapter -> isolated validator -> commit gate
@@ -106,17 +107,17 @@ P04-B [OPTIONAL, EFFECTFUL]
                       |
                  RunReceipt
                       |
-OUTSIDE P04
+OUTSIDE P02-D02
   application interprets final outcome and manages larger workflow
 ```
 
 **Dependency rules:**
 
-- P04-A may not import filesystem mutation, process, network or model modules through runtime dependencies.
-- P04-B imports P04-A's *public contracts*, not its private policy internals.
+- P02-D02-A may not import filesystem mutation, process, network or model modules through runtime dependencies.
+- P02-D02-B imports P02-D02-A's *public contracts*, not its private policy internals.
 - The optional model-facing adapter imports the public request schema, never the executive driver directly.
-- No source-level dependency on original Coding Harness, AGPL code, Guix, Guile, Shepherd, P01–P03, or Meta-Foundation is required.
-- Event orchestration and temporal directors remain P03's specialty; persistent OS supervision remains P02's specialty. P04 owns a *bounded invocation*, not a daemon or scheduler.
+- No source-level dependency on original Coding Harness, AGPL code, Guix, Guile, Shepherd, P01-D01–P03-D01, or Meta-Foundation is required.
+- Event orchestration and temporal directors remain P03-D01's specialty; persistent OS supervision remains P02-D01's specialty. P02-D02 owns a *bounded invocation*, not a daemon or scheduler.
 
 ### Proposed Gerbil module layout (not yet created)
 
@@ -238,7 +239,7 @@ Receive request
   -> execute through the named driver only
 ```
 
-A lower-trust caller cannot manufacture an `ALLOW` record. P04-B accepts only decisions from the configured P04-A evaluator and checks their binding. The approval interface is deliberately decoupled from model chat content.
+A lower-trust caller cannot manufacture an `ALLOW` record. P02-D02-B accepts only decisions from the configured P02-D02-A evaluator and checks their binding. The approval interface is deliberately decoupled from model chat content.
 
 ### 5.4 Approval binding and revocation
 
@@ -251,7 +252,7 @@ The final commit gate must check the same base identity **again**. Displaying a 
 
 ### 5.5 Delegation
 
-No general transitive delegation. A delegated tool credential, if introduced later, must only attenuate (never increase) tool set, scope, budget, and lifetime. A child agent cannot authorize its own escalation. Default P04-D01 supports no agent-created subagents or automatic permission inheritance.
+No general transitive delegation. A delegated tool credential, if introduced later, must only attenuate (never increase) tool set, scope, budget, and lifetime. A child agent cannot authorize its own escalation. Default P02-D02 supports no agent-created subagents or automatic permission inheritance.
 
 ## 6. Scoped filesystem and path-resolution protocol
 
@@ -259,7 +260,7 @@ No general transitive delegation. A delegated tool credential, if introduced lat
 
 `../x`, `/absolute`, `root-copy/foo`, symlink chains, magic links, mount traversal, hard-link aliases, renamed directories and concurrent swaps require distinct tests. A path prefix test must **not** be an authorization check.
 
-P04's *future Linux driver* is proposed to open an owner-selected root directory and operate via directory file descriptors. Linux `openat2()` provides policy flags such as `RESOLVE_BENEATH`, `RESOLVE_NO_MAGICLINKS` and optionally `RESOLVE_NO_SYMLINKS` or `RESOLVE_NO_XDEV`; the exact choice depends on the scope policy. `RESOLVE_BENEATH` alone must not be advertised as a complete filesystem sandbox.
+P02-D02's *future Linux driver* is proposed to open an owner-selected root directory and operate via directory file descriptors. Linux `openat2()` provides policy flags such as `RESOLVE_BENEATH`, `RESOLVE_NO_MAGICLINKS` and optionally `RESOLVE_NO_SYMLINKS` or `RESOLVE_NO_XDEV`; the exact choice depends on the scope policy. `RESOLVE_BENEATH` alone must not be advertised as a complete filesystem sandbox.
 
 A descriptor-relative strategy still needs to handle **write operations**, concurrent renames, mount conditions, creation semantics, and which filesystem objects the process can access through other APIs. The driver must pass race tests. If adequate primitives are unavailable, **refuse high-assurance scoped write operations** instead of falling back silently to `realpath` + ordinary `open`.
 
@@ -347,7 +348,7 @@ Gerbil's documented `:std/misc/process` `run-process` is an argv-based synchrono
 
 Use monotonic elapsed time for deadlines. Silence/inactivity timeout is separate from hard wall duration. A continuously printing child must still time out when its absolute budget expires. Sending SIGKILL to a single PID does not establish that all descendants terminated. A process-group or cgroup-based plan must document escape limits, session changes, reaping and identity reuse; refuse guarantees that cannot be verified.
 
-P04 owns a **bounded command**, not a long-lived system service. P02-B remains the separate source-derived design for durable local service supervision.
+P02-D02 owns a **bounded command**, not a long-lived system service. P02-D01-B remains the separate source-derived design for durable local service supervision.
 
 ## 9. Tool execution and request lifecycle
 
@@ -386,13 +387,13 @@ The model adapter is deliberately a *translator*, not a policy authority.
 1. Parse structured tool calls through an allowlisted schema.
 2. Treat model-generated descriptions and repository documents as **untrusted evidence**.
 3. Never parse tool output as instructions to grant new permissions.
-4. Only P04-A's configured owner policy and approved user actions can authorize an effect.
+4. Only P02-D02-A's configured owner policy and approved user actions can authorize an effect.
 5. Do not automatically forward secrets or sensitive tool output to a model provider; transmission is itself a separately declared external effect.
 6. Return typed error/status fields, not solely prose, to the calling agent.
 7. The model may propose *why* a tool is needed, but its rationale does not change effect class.
 8. A caller wanting code evaluation must request a distinct, high-risk tool with an OS isolation profile. It is **disabled by default**.
 
-An application without an LLM can issue the same `ToolRequest` records. P04 consequently remains useful as a local bounded tool governor.
+An application without an LLM can issue the same `ToolRequest` records. P02-D02 consequently remains useful as a local bounded tool governor.
 
 ## 11. Evidence, receipts, audit and privacy
 
@@ -418,7 +419,7 @@ A stable final verdict is derived from **current run state and verified postcond
 
 ## 12. Security and ownership boundaries
 
-| Boundary | P04 owns | P04 does not claim |
+| Boundary | P02-D02 owns | P02-D02 does not claim |
 |---|---|---|
 | Application-level approval | Exact request/effect/policy binding | Proof of malicious-code containment |
 | Scoped file API | Fail-closed, driver-qualified resolution of approved workspace | Global protection against same-UID code accessing other files |
@@ -426,9 +427,9 @@ A stable final verdict is derived from **current run state and verified postcond
 | Process call | Structured request, deadlines and driver results | Linux isolation without kernel primitives |
 | LLM adapter | Parse untrusted proposals | Authority derived from model role or textual instructions |
 | Logs/receipts | Accurate typed outcomes and uncertainties | A full forensic or tamper-proof audit system |
-| Cross-edition contracts | Local P04 mapping for identity/effect/result | Ownership of Meta-Foundation or P01–P03 internals |
+| Cross-edition contracts | Local P02-D02 mapping for identity/effect/result | Ownership of Meta-Foundation or P01-D01–P03-D01 internals |
 
-A user-level Gerbil executable running on GNU Guix may be *packaged* by Guix, but P04 requires no Guile Scheme, Guix service definitions, Shepherd process manager or `guix-daemon` at runtime. Any such integration belongs to a future consumer.
+A user-level Gerbil executable running on GNU Guix may be *packaged* by Guix, but P02-D02 requires no Guile Scheme, Guix service definitions, Shepherd process manager or `guix-daemon` at runtime. Any such integration belongs to a future consumer.
 
 ## 13. Proposed API surface (behavioral pseudocode, not executable Gerbil)
 
@@ -479,50 +480,50 @@ No tests listed here have been run. IDs are stable design targets; pass/fail is 
 
 | ID | Scenario | Expected contract |
 |---|---|---|
-| P04-T01 | Build P04-A without LLM, network, process or file-write dependencies | Pure profile isolation |
-| P04-T02 | Unregistered tool | `REQUEST_INVALID` or `POLICY_DENIED`, never dispatch |
-| P04-T03 | Wrong tool-version/schema | Fail before effect |
-| P04-T04 | Oversized/deeply nested request | Bounded parse refusal |
-| P04-T05 | Tool descriptor mislabels an executable as read-only | Registry rejects/driver refuses mismatch |
-| P04-T06 | Caller inserts `approved=true` in args | Ignored as non-authoritative |
-| P04-T07 | Model impersonates human in prose | No elevation |
-| P04-T08 | Policy deny overrides all model arguments | Deterministic deny |
-| P04-T09 | Change policy after approval | Approval stale |
-| P04-T10 | Change tool version after approval | Approval stale |
-| P04-T11 | Change target content after approval | `APPROVAL_STALE` |
-| P04-T12 | Change command args after approval | New approval required |
-| P04-T13 | Expire or reuse approval nonce | Refuse |
-| P04-T14 | User rejects change | No effect; typed denial |
-| P04-T15 | Noninteractive EOF at approval | Fail closed |
-| P04-T16 | `../` path traversal | Refuse before opening outside |
-| P04-T17 | Absolute path outside workspace | Refuse |
-| P04-T18 | Sibling-prefix `/proj` vs `/proj-copy` | Refuse |
-| P04-T19 | Symlink to outside | Refuse in strict profile |
-| P04-T20 | Parent-dir symlink/rename race | No escaped read/write under qualified OS driver |
-| P04-T21 | Magic-link path such as `/proc` indirection | Refuse when policy forbids |
-| P04-T22 | Hard-link alias / mount boundary | Explicit documented behavior, not silent security claim |
-| P04-T23 | Concurrent reader/writer changing target | Stale-base or bounded conflict result |
-| P04-T24 | New file absent vs unreadable target | Distinct errors, no destructive fallback |
-| P04-T25 | Pure edit proposal | No target mutation |
-| P04-T26 | Checker failure before commit | Target unchanged in atomic profile |
-| P04-T27 | Checker writes outside staging sandbox | Blocked by qualified isolation or capability unsupported |
-| P04-T28 | Approval digest altered after display | Commit refused |
-| P04-T29 | Atomic single-file commit and digest verification | `COMMITTED` with correct observed bytes |
-| P04-T30 | Failure during commit | `PARTIAL_EFFECT`/`UNKNOWN_EFFECT` and recovery evidence |
-| P04-T31 | Multi-file edit under atomic-only policy | Refused, no false transaction |
-| P04-T32 | Crash-restart during journal update | No unsafe automatic replay |
-| P04-T33 | Shell metacharacters embedded in argv | Passed as literals; no implicit shell |
-| P04-T34 | Executable path changed after admission | Driver detects/refuses stale executable identity |
-| P04-T35 | Inherited environment contains secret | Excluded by default allowlist |
-| P04-T36 | Nonzero process exit | Structured `EXIT_NONZERO`, not success |
-| P04-T37 | Infinite child continuously prints output | Hard deadline still enforced if claimed |
-| P04-T38 | Output exceeds capture limit | Truncation indicated independently from exit |
-| P04-T39 | Child creates grandchildren | Real-driver cleanup claim verified or refused |
-| P04-T40 | Cancel after effect begins | Record known and uncertain effects |
-| P04-T41 | `fail → repair → pass` | Final current-run success, earlier failure retained |
-| P04-T42 | Harmless output contains word `FAILED` | Does not corrupt final result |
-| P04-T43 | Legitimate repeated polling with changing state | Not falsely classified as infinite loop |
-| P04-T44 | Repeated non-idempotent invocation after lost ack | Refuse retry or require reconciliation |
+| P02-D02-T01 | Build P02-D02-A without LLM, network, process or file-write dependencies | Pure profile isolation |
+| P02-D02-T02 | Unregistered tool | `REQUEST_INVALID` or `POLICY_DENIED`, never dispatch |
+| P02-D02-T03 | Wrong tool-version/schema | Fail before effect |
+| P02-D02-T04 | Oversized/deeply nested request | Bounded parse refusal |
+| P02-D02-T05 | Tool descriptor mislabels an executable as read-only | Registry rejects/driver refuses mismatch |
+| P02-D02-T06 | Caller inserts `approved=true` in args | Ignored as non-authoritative |
+| P02-D02-T07 | Model impersonates human in prose | No elevation |
+| P02-D02-T08 | Policy deny overrides all model arguments | Deterministic deny |
+| P02-D02-T09 | Change policy after approval | Approval stale |
+| P02-D02-T10 | Change tool version after approval | Approval stale |
+| P02-D02-T11 | Change target content after approval | `APPROVAL_STALE` |
+| P02-D02-T12 | Change command args after approval | New approval required |
+| P02-D02-T13 | Expire or reuse approval nonce | Refuse |
+| P02-D02-T14 | User rejects change | No effect; typed denial |
+| P02-D02-T15 | Noninteractive EOF at approval | Fail closed |
+| P02-D02-T16 | `../` path traversal | Refuse before opening outside |
+| P02-D02-T17 | Absolute path outside workspace | Refuse |
+| P02-D02-T18 | Sibling-prefix `/proj` vs `/proj-copy` | Refuse |
+| P02-D02-T19 | Symlink to outside | Refuse in strict profile |
+| P02-D02-T20 | Parent-dir symlink/rename race | No escaped read/write under qualified OS driver |
+| P02-D02-T21 | Magic-link path such as `/proc` indirection | Refuse when policy forbids |
+| P02-D02-T22 | Hard-link alias / mount boundary | Explicit documented behavior, not silent security claim |
+| P02-D02-T23 | Concurrent reader/writer changing target | Stale-base or bounded conflict result |
+| P02-D02-T24 | New file absent vs unreadable target | Distinct errors, no destructive fallback |
+| P02-D02-T25 | Pure edit proposal | No target mutation |
+| P02-D02-T26 | Checker failure before commit | Target unchanged in atomic profile |
+| P02-D02-T27 | Checker writes outside staging sandbox | Blocked by qualified isolation or capability unsupported |
+| P02-D02-T28 | Approval digest altered after display | Commit refused |
+| P02-D02-T29 | Atomic single-file commit and digest verification | `COMMITTED` with correct observed bytes |
+| P02-D02-T30 | Failure during commit | `PARTIAL_EFFECT`/`UNKNOWN_EFFECT` and recovery evidence |
+| P02-D02-T31 | Multi-file edit under atomic-only policy | Refused, no false transaction |
+| P02-D02-T32 | Crash-restart during journal update | No unsafe automatic replay |
+| P02-D02-T33 | Shell metacharacters embedded in argv | Passed as literals; no implicit shell |
+| P02-D02-T34 | Executable path changed after admission | Driver detects/refuses stale executable identity |
+| P02-D02-T35 | Inherited environment contains secret | Excluded by default allowlist |
+| P02-D02-T36 | Nonzero process exit | Structured `EXIT_NONZERO`, not success |
+| P02-D02-T37 | Infinite child continuously prints output | Hard deadline still enforced if claimed |
+| P02-D02-T38 | Output exceeds capture limit | Truncation indicated independently from exit |
+| P02-D02-T39 | Child creates grandchildren | Real-driver cleanup claim verified or refused |
+| P02-D02-T40 | Cancel after effect begins | Record known and uncertain effects |
+| P02-D02-T41 | `fail → repair → pass` | Final current-run success, earlier failure retained |
+| P02-D02-T42 | Harmless output contains word `FAILED` | Does not corrupt final result |
+| P02-D02-T43 | Legitimate repeated polling with changing state | Not falsely classified as infinite loop |
+| P02-D02-T44 | Repeated non-idempotent invocation after lost ack | Refuse retry or require reconciliation |
 
 ## 16. Qualification gates
 
@@ -541,17 +542,17 @@ No tests listed here have been run. IDs are stable design targets; pass/fail is 
 
 ## 17. Proposed implementation sequence, if separately authorized
 
-1. **P04-00:** Lock source evidence, legal provenance and test oracle definitions. Avoid wholesale AGPL source import.
-2. **P04-01:** Build P04-A schema, tool registry, request normalization and effect classification.
-3. **P04-02:** Implement deterministic policy and exact approval binding with pure tests.
-4. **P04-03:** Add mock filesystem, staged-change workflow and failure-injection checks.
-5. **P04-04:** Qualify one bounded read/edit path; explicitly distinguish staging from actual target writes.
-6. **P04-05:** Add mock command driver, deadlines, retry policy and structured results.
-7. **P04-06:** Investigate real Gerbil/Gambit/Linux capabilities. Implement only those OS guarantees that can be independently observed.
-8. **P04-07:** Add a deterministic fake-model request translator as an *optional* adapter. A live cloud model is unnecessary for acceptance.
-9. **P04-Q01:** Independent review and qualification report. Publish PASS/REJECTED/UNQUALIFIED per feature, not a blanket safe label.
+1. **P02-D02-00:** Lock source evidence, legal provenance and test oracle definitions. Avoid wholesale AGPL source import.
+2. **P02-D02-01:** Build P02-D02-A schema, tool registry, request normalization and effect classification.
+3. **P02-D02-02:** Implement deterministic policy and exact approval binding with pure tests.
+4. **P02-D02-03:** Add mock filesystem, staged-change workflow and failure-injection checks.
+5. **P02-D02-04:** Qualify one bounded read/edit path; explicitly distinguish staging from actual target writes.
+6. **P02-D02-05:** Add mock command driver, deadlines, retry policy and structured results.
+7. **P02-D02-06:** Investigate real Gerbil/Gambit/Linux capabilities. Implement only those OS guarantees that can be independently observed.
+8. **P02-D02-07:** Add a deterministic fake-model request translator as an *optional* adapter. A live cloud model is unnecessary for acceptance.
+9. **P02-D02-Q01:** Independent review and qualification report. Publish PASS/REJECTED/UNQUALIFIED per feature, not a blanket safe label.
 
-P04 design approval does not authorize P01–P03 changes, P05 design, Meta-Foundation implementation, repository creation, Guix reconfiguration, deployment, or source code changes. Documentation publication has been separately approved.
+P02-D02 design approval does not authorize P01-D01–P03-D01 changes, P04-D01 design, Meta-Foundation implementation, repository creation, Guix reconfiguration, deployment, or source code changes. Documentation publication has been separately approved.
 
 ## 18. Open decisions and engineering uncertainties
 
@@ -565,14 +566,14 @@ P04 design approval does not authorize P01–P03 changes, P05 design, Meta-Found
 8. **Logging privacy:** retention, redaction and encryption rules belong to the consuming application's deployment policy.
 9. **Process-tree guarantee:** whether a driver can credibly contain detached descendants; fail closed for strict cleanup requirements.
 10. **Source licensing:** Coding Harness source is AGPL-3.0 according to file headers. Avoid copying implementation until distribution and derivative obligations are explicitly resolved.
-11. **Cross-edition abstraction:** P04's identity/effect/result records may someday inform Meta-Foundation, but promotion requires independent cross-domain evidence, not name matching.
+11. **Cross-edition abstraction:** P02-D02's identity/effect/result records may someday inform Meta-Foundation, but promotion requires independent cross-domain evidence, not name matching.
 12. **Durability:** atomic rename alone is not power-loss durability; filesystem-specific evidence may remain unresolved.
 
 ## 19. Final verdict
 
 `P04_D01_DETAILED_DESIGN_PROPOSED / CODING_HARNESS_LINEAGE_EXPLICIT / PURE_AUTHORITY_AND_OPTIONAL_EXECUTION / GERBIL_NATIVE / MOCK_FIRST / SECURITY_CEILING_EXPLICIT / APPROVAL_BOUND_TO_EXACT_REQUEST / NO_AUTO_EVAL / FILE_AND_PROCESS_DRIVERS_UNQUALIFIED / P01_P02_P03_UNTOUCHED / DOCUMENT_PUBLISHED`
 
-P04 preserves the Coding Harness's strongest practical idea: **an agent can work through a registered, inspectable tool protocol rather than unconstrained opaque edits**. It corrects the boundaries that source inspection exposed: directory scope, authorization binding, check-before-commit, structured outcomes, hard deadlines and nonproductive loops. This is an independently proposed Gerbil specialized edition, not a source copy, production guarantee, or general security sandbox.
+P02-D02 preserves the Coding Harness's strongest practical idea: **an agent can work through a registered, inspectable tool protocol rather than unconstrained opaque edits**. It corrects the boundaries that source inspection exposed: directory scope, authorization binding, check-before-commit, structured outcomes, hard deadlines and nonproductive loops. This is an independently proposed Gerbil specialized edition, not a source copy, production guarantee, or general security sandbox.
 
 ---
 
@@ -589,4 +590,4 @@ P04 preserves the Coding Harness's strongest practical idea: **an agent can work
 9. Gerbil process utilities: https://gerbil.scheme.org/reference/std/misc/process.html
 10. Linux path-resolution interface: https://man7.org/linux/man-pages/man2/openat2.2.html
 11. LFR-C02 approved concept: https://github.com/vietcong73/alien-works/blob/audit/lisp-foundation-reserve/docs/concept/LFR-C02-source-lineage-gerbil-reserve-concept-2026-11-12.md
-12. Existing P02 sibling design: https://github.com/vietcong73/alien-works/blob/audit/lisp-foundation-reserve/docs/design/LFR-P02-D01-declarative-systems-process-supervision-detailed-design-2026-11-12.md
+12. Existing P02-D01 sibling design: https://github.com/vietcong73/alien-works/blob/audit/lisp-foundation-reserve/docs/design/LFR-P02-D01-declarative-systems-process-supervision-detailed-design-2026-11-12.md

@@ -1,17 +1,17 @@
-# LFR-P09-D03 | Control & Autonomous Systems Architecture
+# LFR-P06-D03 | Adaptive Intelligence & Autonomous Systems / Control & Autonomous Systems
 
 **Document class:** Source-grounded specialist detailed-design proposal  
 **Date:** 13 November 2026  
 **Programme:** Lisp Foundation Reserve (LFR-C02)  
 **Domain track:** `ADAPTIVE SYSTEMS` — Adaptive Intelligence & Autonomous Systems  
-**Edition:** P09 — Adaptive Intelligence & Autonomous Systems  
+**Edition:** P06 — Adaptive Intelligence & Autonomous Systems  
 **Design slice:** D03 — Control & Autonomous Systems  
 **Primary design language:** Gerbil Scheme for versioned contracts, finite reference plants, deterministic control and supervision; qualified native/solver/service adapters when measured requirements justify them  
-**Repository context:** `vietcong73/alien-works`, branch `audit/lisp-foundation-reserve`; path `docs/design/LFR-P09-D03-control-autonomous-systems-architecture-2026-11-13.md`  
+**Repository context:** `vietcong73/alien-works`, branch `audit/lisp-foundation-reserve`; path `docs/design/LFR-P06-D03-control-autonomous-systems-architecture-2026-11-13.md`  
 **Status:** `SOURCE_GROUNDED_DESIGN_PROPOSED / 80_FUTURE_TESTS / 12_FUTURE_GATES / UNIMPLEMENTED / RUNTIME_UNQUALIFIED / DOCUMENT_PUBLISHED_TO_GITHUB`  
 **Publication:** Owner-approved publication of this design document to `docs/design/` on `audit/lisp-foundation-reserve`. Implementation, installation, device access and deployment follow separate authorization.
 
-> **Design decision:** P09-D03 composes a **plant model, measurement/estimation path, control candidate, supervisory admission and effect host** through exact time-, unit-, model- and policy-version contracts. The baseline is a finite simulation with analytic transition and robust-admissibility oracles. Classical controllers, optimization-based controllers and learned candidates are task-selected alternatives. Safety evidence is qualified against a declared plant, disturbance, observation and execution envelope.
+> **Design decision:** P06-D03 composes a **plant model, measurement/estimation path, control candidate, supervisory admission and effect host** through exact time-, unit-, model- and policy-version contracts. The baseline is a finite simulation with analytic transition and robust-admissibility oracles. Classical controllers, optimization-based controllers and learned candidates are task-selected alternatives. Safety evidence is qualified against a declared plant, disturbance, observation and execution envelope.
 
 ## 0. Objectives, capability, and boundaries
 
@@ -21,7 +21,7 @@
 
 **In scope:** discrete and continuous plant descriptions; linear/nonlinear/hybrid modes; model/units/time validity; state estimation and uncertainty; reference tracking; PID/LQR/MPC candidates; supervisory arbitration; bounded fallback; observer/controller scheduling; operational authority; effect receipts; synthetic experiments; calibration; model mismatch; algorithm qualification; optional learning and multi-agent proposal ports.
 
-**Adjacent owners:** P09-D01 owns learner and policy-update lifecycle; P09-D02 owns multi-agent behavior and joint proposals; P09-D04 will own distributed delivery/consistency; P10-D01 owns general scientific/physical simulation; P11 owns formal/symbolic proof machinery if later designed. K0 owns shared boundary vocabulary, and K1 mechanisms are individually optional. P08 world causality and scene truth remain with P08.
+**Adjacent owners:** P06-D01 owns learner and policy-update lifecycle; P06-D02 owns multi-agent behavior and joint proposals; P06-D04 will own distributed delivery/consistency; P07-D01 owns general scientific/physical simulation; P05-D00 owns formal/symbolic proof machinery if later designed. K0 owns shared boundary vocabulary, and K1 mechanisms are individually optional. P05 world causality and scene truth remain with P05.
 
 **Execution scope:** the first qualification class is `SIMULATION_CONTROL`. Real plant control is a separately qualified `DEVICE_CONTROL` class with hardware-specific safety case, operator authority, lifecycle, watchdogs, I/O interface and timing evidence. Finance/robotics examples are interface fixtures, not executable trading or robot-driving profiles.
 
@@ -38,9 +38,9 @@ A successful simulation test substantiates only its declared simulation profile.
 
 ## 1. Source and implementation evidence ledger
 
-Evidence labels: `DOC` official project documentation; `SOURCE` inspectable code/reference; `RESEARCH` conceptual technique; `LFR` existing design proposal; `PROPOSED` P09-D03 design awaiting implementation. Documentation and source inspection are separate from runtime qualification.
+Evidence labels: `DOC` official project documentation; `SOURCE` inspectable code/reference; `RESEARCH` conceptual technique; `LFR` existing design proposal; `PROPOSED` P06-D03 design awaiting implementation. Documentation and source inspection are separate from runtime qualification.
 
-| Source and evidence | Concrete engineering lesson | P09-D03 design use | Qualification limit |
+| Source and evidence | Concrete engineering lesson | P06-D03 design use | Qualification limit |
 |---|---|---|---|
 | [python-control overview](https://python-control.readthedocs.io/en/latest/) (`DOC/SOURCE`) | State-space, nonlinear I/O, LQR, H-infinity, estimation and stability analysis in one implementation ecosystem | Reference oracle/benchmark for linear controllers and estimators | Python implementation is an external comparison, not compiled Gerbil functionality |
 | [python-control discrete LQR](https://python-control.readthedocs.io/en/stable/generated/control.dlqr.html) (`DOC`) | Riccati-based discrete optimal state feedback and closed-loop eigenvalues | Frozen LQR gain and independent Riccati/eigenvalue tests | Unconstrained quadratic design requires separate actuator/robustness checks |
@@ -57,7 +57,7 @@ Evidence labels: `DOC` official project documentation; `SOURCE` inspectable code
 | [NASA RTA verification framework](https://ntrs.nasa.gov/citations/20240007986) (`RESEARCH`) | Advanced/reversionary controller, safety monitor and switch assumptions are explicit | Hybrid supervisor with monitored reversion | Device-specific safety analysis and switch timing remain necessary |
 | [Gerbil interfaces](https://gerbil.scheme.org/reference/std/interface.html), [test library](https://gerbil.scheme.org/reference/std/test.html) (`DOC`) | Checked method contracts and repeatable test primitives exist | Gerbil reference and typed boundary/test harness | `&` unchecked dispatch is a trusted internal detail |
 | LFR [K0-D01](LFR-K0-D01-gerbil-meta-foundation-minimal-contract-kernel-2026-11-13.md), [K1-D01](LFR-K1-D01-opt-in-generalized-mechanisms-detailed-design-2026-11-13.md) (`LFR`) | Identity, effect, authority, evidence; optional time, numeric, constraint and simulation mechanisms | Reuse exact portable concepts by interface | Prior design documents have no automatic runtime qualification |
-| LFR [P09-D01](LFR-P09-D01-reinforcement-learning-adaptive-intelligence-architecture-2026-11-13.md), [P09-D02](LFR-P09-D02-multi-agent-behavioral-systems-architecture-2026-11-13.md) (`LFR`) | Frozen policy ownership, train/eval separation, agent identity/role and joint action proposal | Candidate policy or coordinated setpoint adapter | Learning/coordination results are separate from plant admission |
+| LFR [P06-D01](LFR-P06-D01-reinforcement-learning-adaptive-intelligence-architecture-2026-11-13.md), [P06-D02](LFR-P06-D02-multi-agent-behavioral-systems-architecture-2026-11-13.md) (`LFR`) | Frozen policy ownership, train/eval separation, agent identity/role and joint action proposal | Candidate policy or coordinated setpoint adapter | Learning/coordination results are separate from plant admission |
 
 **Inspection policy:** before implementation, pin exact library commits/tags, license, supported toolchain, numerical algorithm, ABI and benchmark fixture; record benchmark on the same plant/time/precision profile. External comparisons can be implemented in other languages without becoming dependencies of the Gerbil reference runtime.
 
@@ -113,11 +113,11 @@ The **plant model** specifies dynamics and admissible state; the **estimator** p
 
 - K0: exact identity, revision, validation, effect and result envelopes.
 - K1: optional M04 observation, M05 time, M08 objective/cost, M09 resource scope, M10 effects, M11 reconciliation, M12 snapshot, M13 interop, M14 experiments, M15 constraints/supervision, M16 provenance, M17 numeric, M18 model coupling.
-- P09-D01: frozen policy proposal, model/policy identity, learner and independent training/evaluation lifecycle.
-- P09-D02: agent/team proposals and role constraints, converted into a bounded setpoint or command intent.
-- P09-D04: future transport and remote consistency; D03 retains tick/plant/command semantics.
-- P10-D01: optional physical-model/simulation adapters; plant solver ownership remains explicit.
-- P08: optional game/world host for simulated agency and consequences.
+- P06-D01: frozen policy proposal, model/policy identity, learner and independent training/evaluation lifecycle.
+- P06-D02: agent/team proposals and role constraints, converted into a bounded setpoint or command intent.
+- P06-D04: future transport and remote consistency; D03 retains tick/plant/command semantics.
+- P07-D01: optional physical-model/simulation adapters; plant solver ownership remains explicit.
+- P05: optional game/world host for simulated agency and consequences.
 
 ## 3. Plant, operating envelope and typed contracts
 
@@ -207,7 +207,7 @@ Validate `NaN/Inf`, signed zero and overflow behavior where relevant, dimensions
 
 **Update phases:** predict state and uncertainty to the current tick; validate measurement timestamp/units/covariance; apply measurement update; publish state estimate and residual/inconsistency evidence; record whether the estimate was predicted without a fresh observation. Missing or conflicting observations may enlarge uncertainty or reject the control tick according to the profile.
 
-**Separation:** `estimate.value`, `estimate.uncertainty`, `measurement`, `true_state_for_evaluator` are independent records. Training-only privileged state from P09-D01 and evaluation truth are outside deployed estimator inputs unless the specific device genuinely exposes them.
+**Separation:** `estimate.value`, `estimate.uncertainty`, `measurement`, `true_state_for_evaluator` are independent records. Training-only privileged state from P06-D01 and evaluation truth are outside deployed estimator inputs unless the specific device genuinely exposes them.
 
 **Example:** for a sensor reading `y = x + v` with `|v| ≤ e`, an interval estimate `[y-e, y+e]` is conditionally sound if the sensor bound holds. Propagating it to the next tick must account for command and disturbance bounds; reusing the same interval after a tick without propagation is stale.
 
@@ -232,7 +232,7 @@ An estimate violating its declared validity conditions returns `ESTIMATE_UNUSABL
 | Nonlinear / robust MPC | Nonlinear or uncertain plant, feasible solver and time budget | acados/do-mpc candidates, separately pinned solver | Model mismatch, robust constraints, solver status, deadline tails |
 | Barrier / viability filter | Verified admissible set under declared dynamics and uncertainty | Pure analytic scalar filter first; specialized QP later | Boundary, disturbance worst case, empty feasible set, reachable-set witness |
 | Hybrid supervisor | Multiple controllers/modes, monitor and switching conditions | Gerbil finite-state monitor with exact trace | Guard precedence, fallback feasibility, hysteresis, dwell, urgent reversion |
-| Learned policy | Frozen P09-D01 artifact with observation/control schema parity | Optional policy inference via D01 | Out-of-support state, timing, invalid output, adversarial model shift |
+| Learned policy | Frozen P06-D01 artifact with observation/control schema parity | Optional policy inference via D01 | Out-of-support state, timing, invalid output, adversarial model shift |
 
 **Selection rule:** choose the smallest algorithm family that meets the *named control task* under the required uncertainty, constraint and runtime profile. A method failing the actual task is rejected for that profile. A valid task-specific controller stays qualified even if it lacks properties irrelevant to that task.
 
@@ -339,7 +339,7 @@ The backend is selected by plant complexity and latency budget. **A remote compu
 ### 8.2 Proposed Gerbil namespace
 
 ```text
-lfr/p09/control/
+lfr/p06/control/
   contract/{plant,signal,units,time,observation,estimate,task,command,receipt}.ss
   model/{discrete,linear,hybrid,uncertainty}.ss
   estimation/{direct,interval,observer,kalman-adapter,diagnostics}.ss
@@ -370,17 +370,17 @@ The API sketch describes data/control flow; exact Gerbil syntax, exported method
 
 ## 9. Interoperability and autonomy composition
 
-**P09-D01 policy:** adapter converts observation/estimate to the frozen policy input and returns a candidate action with policy version, action units, confidence/support metadata where available and inference deadline. D03 owns control admission and plant interpretation. Training data remain within D01's lifecycle.
+**P06-D01 policy:** adapter converts observation/estimate to the frozen policy input and returns a candidate action with policy version, action units, confidence/support metadata where available and inference deadline. D03 owns control admission and plant interpretation. Training data remain within D01's lifecycle.
 
-**P09-D02 agents:** adapter maps role-approved tasks and joint proposals to a plant target/setpoint or bounded command intent. Multi-agent agreement is advisory to the control host; competing setpoints are arbitrated by the application and supervisor profile. An agent's task success is not equivalent to actuator completion.
+**P06-D02 agents:** adapter maps role-approved tasks and joint proposals to a plant target/setpoint or bounded command intent. Multi-agent agreement is advisory to the control host; competing setpoints are arbitrated by the application and supervisor profile. An agent's task success is not equivalent to actuator completion.
 
-**P09-D04 distribution:** design a typed gateway for remote controller computation, telemetry and reconciliation. D03 specifies command timing and feasibility; D04 later supplies message delivery and replicated/remote execution semantics. Network acknowledgment and physical effect observation remain distinguishable.
+**P06-D04 distribution:** design a typed gateway for remote controller computation, telemetry and reconciliation. D03 specifies command timing and feasibility; D04 later supplies message delivery and replicated/remote execution semantics. Network acknowledgment and physical effect observation remain distinguishable.
 
-**P10-D01 simulation:** general physical/co-simulation engines supply model steps and events under a versioned adapter; D03 owns controller/evaluation contracts. Coupled models declare who advances time, handles algebraic loops and detects continuous events. FMI-like adapters are separate candidates and carry model/solver export provenance.
+**P07-D01 simulation:** general physical/co-simulation engines supply model steps and events under a versioned adapter; D03 owns controller/evaluation contracts. Coupled models declare who advances time, handles algebraic loops and detects continuous events. FMI-like adapters are separate candidates and carry model/solver export provenance.
 
-**P08 worlds:** a control output may be proposed as a P08 intervention or simulated actuator; P08 applies its own world rules and causal admission. A player/NPC decision does not directly alter P08 canonical state through a D03 control proposal.
+**P05 worlds:** a control output may be proposed as a P05 intervention or simulated actuator; P05 applies its own world rules and causal admission. A player/NPC decision does not directly alter P05 canonical state through a D03 control proposal.
 
-**P11 formal computing:** optional proof artifacts can carry invariant region/automaton/certificate evidence under exact binding to the plant and monitor profile. Runtime monitor validation and formal proof validity remain separately qualified.
+**P05-D00 formal computing:** optional proof artifacts can carry invariant region/automaton/certificate evidence under exact binding to the plant and monitor profile. Runtime monitor validation and formal proof validity remain separately qualified.
 
 ## 10. Evaluation harness and experiment governance
 
@@ -430,7 +430,7 @@ The API sketch describes data/control flow; exact Gerbil syntax, exported method
 25. **I25 — External authority:** device effects require an independently authorized host.
 26. **I26 — Replay scope:** deterministic simulation replay and physical effect history remain distinct.
 27. **I27 — Resource limits:** budget exhaustion yields explicit bounded outcome.
-28. **I28 — Cross-domain adapters:** P08/P09/P10 ownership is preserved at interface boundaries.
+28. **I28 — Cross-domain adapters:** P05/P06/P07 ownership is preserved at interface boundaries.
 29. **I29 — Evidence integrity:** evaluation records include exact model, code and data locks.
 30. **I30 — Qualification scope:** passed claims name plant, controller, envelope and platform.
 
@@ -468,121 +468,121 @@ A release declares exactly which gates apply to its profile. The first pure fini
 
 | ID | Test | Required oracle or failure evidence |
 |---|---|---|
-| **P09-D03-T01** | Plant ID revision lock | Reject candidate referencing another plant revision |
-| **P09-D03-T02** | Command dimension | Reject scalar command into vector-only actuator profile |
-| **P09-D03-T03** | Units mismatch | Reject degrees versus radians without declared conversion |
-| **P09-D03-T04** | Missing numeric value | Reject null/NaN/Inf before compute/admission |
-| **P09-D03-T05** | Discrete sample duration | Reject zero and negative dt; permit named valid dt |
-| **P09-D03-T06** | Clock-domain mismatch | Reject wall time used as logical tick without adapter |
-| **P09-D03-T07** | Operating envelope revision | Reject stale invariant-set hash |
-| **P09-D03-T08** | Actuator slew schema | Enforce previous-command reference and slew constraint |
-| **P09-D03-T09** | Covariance matrix shape | Reject nonsymmetric/invalid dimension matrices |
-| **P09-D03-T10** | Double command claim | Only one host command token wins per same plant/tick |
+| **P06-D03-T01** | Plant ID revision lock | Reject candidate referencing another plant revision |
+| **P06-D03-T02** | Command dimension | Reject scalar command into vector-only actuator profile |
+| **P06-D03-T03** | Units mismatch | Reject degrees versus radians without declared conversion |
+| **P06-D03-T04** | Missing numeric value | Reject null/NaN/Inf before compute/admission |
+| **P06-D03-T05** | Discrete sample duration | Reject zero and negative dt; permit named valid dt |
+| **P06-D03-T06** | Clock-domain mismatch | Reject wall time used as logical tick without adapter |
+| **P06-D03-T07** | Operating envelope revision | Reject stale invariant-set hash |
+| **P06-D03-T08** | Actuator slew schema | Enforce previous-command reference and slew constraint |
+| **P06-D03-T09** | Covariance matrix shape | Reject nonsymmetric/invalid dimension matrices |
+| **P06-D03-T10** | Double command claim | Only one host command token wins per same plant/tick |
 
 #### T11–T20: Plant dynamics and oracles
 
 | ID | Test | Required oracle or failure evidence |
 |---|---|---|
-| **P09-D03-T11** | Scalar zero input | Match analytic scalar transition for exact w=0 |
-| **P09-D03-T12** | Scalar disturbance endpoints | Match both +/-W oracle transitions |
-| **P09-D03-T13** | Double-integrator zero-order hold | Match exact p/v transition with constant acceleration |
-| **P09-D03-T14** | State bound at endpoint | Include equality endpoints under declared numeric tolerance |
-| **P09-D03-T15** | Parameter revision changed | Invalidate controller claim after A/B matrix change |
-| **P09-D03-T16** | Hybrid guard order | Use declared priority when two guards enabled |
-| **P09-D03-T17** | Hybrid reset map | Verify state reset at a mode transition |
-| **P09-D03-T18** | Numeric precision profile | Quantify float-versus-reference discrepancy |
-| **P09-D03-T19** | Simulation time drift | Reject wrong dt sequence in replay |
-| **P09-D03-T20** | Inter-sample crossing | Flag sampled endpoint passing despite continuous-bound breach |
+| **P06-D03-T11** | Scalar zero input | Match analytic scalar transition for exact w=0 |
+| **P06-D03-T12** | Scalar disturbance endpoints | Match both +/-W oracle transitions |
+| **P06-D03-T13** | Double-integrator zero-order hold | Match exact p/v transition with constant acceleration |
+| **P06-D03-T14** | State bound at endpoint | Include equality endpoints under declared numeric tolerance |
+| **P06-D03-T15** | Parameter revision changed | Invalidate controller claim after A/B matrix change |
+| **P06-D03-T16** | Hybrid guard order | Use declared priority when two guards enabled |
+| **P06-D03-T17** | Hybrid reset map | Verify state reset at a mode transition |
+| **P06-D03-T18** | Numeric precision profile | Quantify float-versus-reference discrepancy |
+| **P06-D03-T19** | Simulation time drift | Reject wrong dt sequence in replay |
+| **P06-D03-T20** | Inter-sample crossing | Flag sampled endpoint passing despite continuous-bound breach |
 
 #### T21–T30: Observation and estimation
 
 | ID | Test | Required oracle or failure evidence |
 |---|---|---|
-| **P09-D03-T21** | Direct observation match | Estimate equals measured state when direct profile selected |
-| **P09-D03-T22** | Interval consistency | Retain truth inside declared bounded-noise interval |
-| **P09-D03-T23** | Prediction-only uncertainty | Widen bounds under missing observation |
-| **P09-D03-T24** | Out-of-order measurement | Reject/reconcile by explicit timestamp policy |
-| **P09-D03-T25** | Delayed sensor window | Mark estimate stale at expired freshness bound |
-| **P09-D03-T26** | Sensor stuck-at | Raise health diagnostic on configured stuck-at pattern |
-| **P09-D03-T27** | Kalman covariance PSD | Check covariance symmetry/PSD within tolerance |
-| **P09-D03-T28** | Unobservable linear mode | Block unsupported convergence claim |
-| **P09-D03-T29** | Estimate/evaluator truth isolation | Deny truth-only fields to controller |
-| **P09-D03-T30** | Reset estimator state | Version and trace reset after model or sensor change |
+| **P06-D03-T21** | Direct observation match | Estimate equals measured state when direct profile selected |
+| **P06-D03-T22** | Interval consistency | Retain truth inside declared bounded-noise interval |
+| **P06-D03-T23** | Prediction-only uncertainty | Widen bounds under missing observation |
+| **P06-D03-T24** | Out-of-order measurement | Reject/reconcile by explicit timestamp policy |
+| **P06-D03-T25** | Delayed sensor window | Mark estimate stale at expired freshness bound |
+| **P06-D03-T26** | Sensor stuck-at | Raise health diagnostic on configured stuck-at pattern |
+| **P06-D03-T27** | Kalman covariance PSD | Check covariance symmetry/PSD within tolerance |
+| **P06-D03-T28** | Unobservable linear mode | Block unsupported convergence claim |
+| **P06-D03-T29** | Estimate/evaluator truth isolation | Deny truth-only fields to controller |
+| **P06-D03-T30** | Reset estimator state | Version and trace reset after model or sensor change |
 
 #### T31–T40: Controller performance
 
 | ID | Test | Required oracle or failure evidence |
 |---|---|---|
-| **P09-D03-T31** | Proportional baseline | Meet error target on small stable reference task |
-| **P09-D03-T32** | Integral antiwindup | Bound integrator under saturation |
-| **P09-D03-T33** | Derivative sampling | Bound noise amplification under selected filter |
-| **P09-D03-T34** | Step tracking | Record overshoot/settling on frozen step test |
-| **P09-D03-T35** | Disturbance rejection | Compare IAE against no-control and P baselines |
-| **P09-D03-T36** | LQR gain parity | Compare gain and poles with independent DARE oracle |
-| **P09-D03-T37** | Unstable gain | Reject stability label when closed-loop radius >=1 |
-| **P09-D03-T38** | Saturation-induced shift | Reassess stability/performance with actuator clipping |
-| **P09-D03-T39** | Gain revision replacement | Reject unversioned hot swap mid-tick |
-| **P09-D03-T40** | Task-specific method comparison | Preserve a simple controller when it meets declared task |
+| **P06-D03-T31** | Proportional baseline | Meet error target on small stable reference task |
+| **P06-D03-T32** | Integral antiwindup | Bound integrator under saturation |
+| **P06-D03-T33** | Derivative sampling | Bound noise amplification under selected filter |
+| **P06-D03-T34** | Step tracking | Record overshoot/settling on frozen step test |
+| **P06-D03-T35** | Disturbance rejection | Compare IAE against no-control and P baselines |
+| **P06-D03-T36** | LQR gain parity | Compare gain and poles with independent DARE oracle |
+| **P06-D03-T37** | Unstable gain | Reject stability label when closed-loop radius >=1 |
+| **P06-D03-T38** | Saturation-induced shift | Reassess stability/performance with actuator clipping |
+| **P06-D03-T39** | Gain revision replacement | Reject unversioned hot swap mid-tick |
+| **P06-D03-T40** | Task-specific method comparison | Preserve a simple controller when it meets declared task |
 
 #### T41–T50: Optimizer and backend
 
 | ID | Test | Required oracle or failure evidence |
 |---|---|---|
-| **P09-D03-T41** | OSQP solved | Check residual/constraint witness before admission |
-| **P09-D03-T42** | OSQP solved inaccurate | Apply explicit residual threshold or reject |
-| **P09-D03-T43** | Primal infeasible status | Emit infeasible control result and fallback trace |
-| **P09-D03-T44** | Dual infeasible status | Handle separately from primal infeasibility |
-| **P09-D03-T45** | Iteration budget | Reject over-budget candidate before plant tick |
-| **P09-D03-T46** | MPC warm-start parity | Compare cold/warm feasible results within tolerance |
-| **P09-D03-T47** | Model mismatch in MPC | Report predicted/actual deviation and breaches |
-| **P09-D03-T48** | Generated solver provenance | Pin C solver source and ABI/precision profile |
-| **P09-D03-T49** | Native buffer lifetime | Reject stale/aliased FFI output buffer |
-| **P09-D03-T50** | Remote response lateness | Reject deadline-expired command with audit record |
+| **P06-D03-T41** | OSQP solved | Check residual/constraint witness before admission |
+| **P06-D03-T42** | OSQP solved inaccurate | Apply explicit residual threshold or reject |
+| **P06-D03-T43** | Primal infeasible status | Emit infeasible control result and fallback trace |
+| **P06-D03-T44** | Dual infeasible status | Handle separately from primal infeasibility |
+| **P06-D03-T45** | Iteration budget | Reject over-budget candidate before plant tick |
+| **P06-D03-T46** | MPC warm-start parity | Compare cold/warm feasible results within tolerance |
+| **P06-D03-T47** | Model mismatch in MPC | Report predicted/actual deviation and breaches |
+| **P06-D03-T48** | Generated solver provenance | Pin C solver source and ABI/precision profile |
+| **P06-D03-T49** | Native buffer lifetime | Reject stale/aliased FFI output buffer |
+| **P06-D03-T50** | Remote response lateness | Reject deadline-expired command with audit record |
 
 #### T51–T60: Supervisor and feasibility
 
 | ID | Test | Required oracle or failure evidence |
 |---|---|---|
-| **P09-D03-T51** | Scalar robust lower bound | Match analytic robust interval lower endpoint |
-| **P09-D03-T52** | Scalar robust upper bound | Match analytic robust interval upper endpoint |
-| **P09-D03-T53** | Empty admissible set | Return INFEASIBLE for widened interval example |
-| **P09-D03-T54** | At-boundary controller | Accept equality-control only under valid tolerance |
-| **P09-D03-T55** | Fallback zero counterexample | Refuse zero command lacking robust feasibility witness |
-| **P09-D03-T56** | Proposed command revision | Clamp/replace only when selected rule permits |
-| **P09-D03-T57** | Dwell urgent reversion | Urgent protection overrides ordinary dwell |
-| **P09-D03-T58** | Switch controller state | Transfer/reset integrator state under versioned map |
-| **P09-D03-T59** | Conflicting guard priority | Match deterministic priority in hybrid oracle |
-| **P09-D03-T60** | Fallback missing | Report FALLBACK_UNAVAILABLE and emergency host path |
+| **P06-D03-T51** | Scalar robust lower bound | Match analytic robust interval lower endpoint |
+| **P06-D03-T52** | Scalar robust upper bound | Match analytic robust interval upper endpoint |
+| **P06-D03-T53** | Empty admissible set | Return INFEASIBLE for widened interval example |
+| **P06-D03-T54** | At-boundary controller | Accept equality-control only under valid tolerance |
+| **P06-D03-T55** | Fallback zero counterexample | Refuse zero command lacking robust feasibility witness |
+| **P06-D03-T56** | Proposed command revision | Clamp/replace only when selected rule permits |
+| **P06-D03-T57** | Dwell urgent reversion | Urgent protection overrides ordinary dwell |
+| **P06-D03-T58** | Switch controller state | Transfer/reset integrator state under versioned map |
+| **P06-D03-T59** | Conflicting guard priority | Match deterministic priority in hybrid oracle |
+| **P06-D03-T60** | Fallback missing | Report FALLBACK_UNAVAILABLE and emergency host path |
 
 #### T61–T70: Runtime and host integration
 
 | ID | Test | Required oracle or failure evidence |
 |---|---|---|
-| **P09-D03-T61** | Tick deadline | Reject candidate computed after admissible tick deadline |
-| **P09-D03-T62** | Late sample | Use defined rejection/prediction policy for late observation |
-| **P09-D03-T63** | Hold-last-command expiry | Stop hold on expiry and issue typed response |
-| **P09-D03-T64** | Host admission denied | Record denial without issuing effect |
-| **P09-D03-T65** | Issued not observed | Keep effect unconfirmed when only write acknowledged |
-| **P09-D03-T66** | Unknown effect on timeout | Return UNKNOWN and reconcile before any retry |
-| **P09-D03-T67** | Host command interface conflict | Detect two active controllers claiming one interface |
-| **P09-D03-T68** | Hardware read error | Activate configured fault path; preserve actual-state uncertainty |
-| **P09-D03-T69** | Jitter under load | Measure p99/max/deadline misses under frozen load |
-| **P09-D03-T70** | Device simulation separation | Reject device claim based solely on simulated timing |
+| **P06-D03-T61** | Tick deadline | Reject candidate computed after admissible tick deadline |
+| **P06-D03-T62** | Late sample | Use defined rejection/prediction policy for late observation |
+| **P06-D03-T63** | Hold-last-command expiry | Stop hold on expiry and issue typed response |
+| **P06-D03-T64** | Host admission denied | Record denial without issuing effect |
+| **P06-D03-T65** | Issued not observed | Keep effect unconfirmed when only write acknowledged |
+| **P06-D03-T66** | Unknown effect on timeout | Return UNKNOWN and reconcile before any retry |
+| **P06-D03-T67** | Host command interface conflict | Detect two active controllers claiming one interface |
+| **P06-D03-T68** | Hardware read error | Activate configured fault path; preserve actual-state uncertainty |
+| **P06-D03-T69** | Jitter under load | Measure p99/max/deadline misses under frozen load |
+| **P06-D03-T70** | Device simulation separation | Reject device claim based solely on simulated timing |
 
 #### T71–T80: Cross-domain and evidence
 
 | ID | Test | Required oracle or failure evidence |
 |---|---|---|
-| **P09-D03-T71** | Frozen RL policy adapter | D01 model/policy revision follows control candidate |
-| **P09-D03-T72** | Learner mid-tick update | Reject policy revision change during command admission |
-| **P09-D03-T73** | Multi-agent joint proposal | D02 consensus maps into one explicit control intent |
-| **P09-D03-T74** | Agent authority mismatch | Reject action intent lacking host control scope |
-| **P09-D03-T75** | P08 world intervention adapter | World host retains rule/transition admission |
-| **P09-D03-T76** | P10 simulation clock owner | Prevent double plant-time advance on coupling |
-| **P09-D03-T77** | Held-out disturbance seeds | Compare controller/task metrics on frozen held-out set |
-| **P09-D03-T78** | Trace replay manifest | Replay exact finite-plant trace from hashes and inputs |
-| **P09-D03-T79** | Incomplete evidence disposition | Report UNRESOLVED rather than PASS for missing oracle |
-| **P09-D03-T80** | Profile-scoped report | Separate model, control, supervisor and device claim levels |
+| **P06-D03-T71** | Frozen RL policy adapter | D01 model/policy revision follows control candidate |
+| **P06-D03-T72** | Learner mid-tick update | Reject policy revision change during command admission |
+| **P06-D03-T73** | Multi-agent joint proposal | D02 consensus maps into one explicit control intent |
+| **P06-D03-T74** | Agent authority mismatch | Reject action intent lacking host control scope |
+| **P06-D03-T75** | P05 world intervention adapter | World host retains rule/transition admission |
+| **P06-D03-T76** | P07 simulation clock owner | Prevent double plant-time advance on coupling |
+| **P06-D03-T77** | Held-out disturbance seeds | Compare controller/task metrics on frozen held-out set |
+| **P06-D03-T78** | Trace replay manifest | Replay exact finite-plant trace from hashes and inputs |
+| **P06-D03-T79** | Incomplete evidence disposition | Report UNRESOLVED rather than PASS for missing oracle |
+| **P06-D03-T80** | Profile-scoped report | Separate model, control, supervisor and device claim levels |
 
 ### 12.3 Claim-to-gate matrix
 
@@ -605,7 +605,7 @@ Each claim is assembled from actual executed evidence; the presence of the propo
 5. **D03-04 — Hybrid reversion:** fixed small mode machine, priority, switch latency, hysteresis and bounded recovery; establish Q7.
 6. **D03-05 — DoubleIntegrator:** zero-order-hold oracle, velocity/acceleration bounds and braking feasibility with inter-sample audit.
 7. **D03-06 — Qualified optimization candidates:** choose LQR/QP-MPC/NMPC only where the frozen task requires them; inspect and pin implementation source; complete Q5 and fair latency budgets.
-8. **D03-07 — Controlled integrations:** synthetic P09-D01 learner-policy and P09-D02 setpoint adapters, optional P10 simulator; check contract and truth boundaries with mock hosts.
+8. **D03-07 — Controlled integrations:** synthetic P06-D01 learner-policy and P06-D02 setpoint adapters, optional P07 simulator; check contract and truth boundaries with mock hosts.
 9. **D03-08 — Real-time/device research branch:** analyze actual device host API and hazard profile; add dedicated hardware-in-loop tests and operator authorization if separately requested.
 10. **D03-09 — Independent qualification:** run the applicable 80-case subset and gates; archive traces/negative results; release only evidence-scoped profiles.
 
@@ -623,10 +623,10 @@ Each claim is assembled from actual executed evidence; the presence of the propo
 | Constrained optimization | OSQP-style linear MPC when required | Solver status/residual/latency and input bounds |
 | Nonlinear control | acados/do-mpc candidates | Model-specific numeric and timing qualification |
 | Continuous safety | Profile-specific reachability/validated integration | Inter-sample bound and solver error evidence |
-| Learned controller | P09-D01 frozen policy adapter | Exact input/output, support and supervisor tests |
+| Learned controller | P06-D01 frozen policy adapter | Exact input/output, support and supervisor tests |
 | Device support | Separate host-admissible design profile | Hardware target, hazard analysis, timing and permission |
-| Distributed control | P09-D04 port when separately specified | Network, consistency and failure reconciliation |
-| Scientific simulator | P10-D01 port when separately specified | Clock ownership and model/coupling evidence |
+| Distributed control | P06-D04 port when separately specified | Network, consistency and failure reconciliation |
+| Scientific simulator | P07-D01 port when separately specified | Clock ownership and model/coupling evidence |
 
 **Design maturity:** source-grounded, mathematically specified finite reference with proposed oracles, control/estimation/supervision contracts, 80 tests and 12 qualification gates. No Gerbil or native control implementation, benchmark pass, safety proof, hardware test or deployment authorization has been asserted.
 

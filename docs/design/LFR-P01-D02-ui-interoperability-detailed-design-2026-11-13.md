@@ -1,38 +1,39 @@
-# LFR-P07-D01 | Typed UI & Interoperability Reserve
+# LFR-P01-D02 | Lisp Metaprogramming & Interoperability / Typed UI & Interoperability
 
 **Document class:** Detailed design proposal, one specialist edition  
 **Date:** 13 November 2026  
 **Programme:** Lisp Foundation Reserve (LFR-C02)  
-**Edition:** P07 — UI & Interoperability (opt-in)  
+**Edition:** P01 — Lisp Metaprogramming & Interoperability  
+**Design slice:** D02 — Typed UI & Interoperability  
 **Implementation target:** Independent Gerbil Scheme; transport-neutral core with optional HTTP and JavaScript bindings  
 **Primary source:** `Glow-Lang/gloui@bac31fab2ff8394cf8d5e727df49baf2bb3b66a1`  
 **Source review:** `docs/reviews/gerbil-projects/03-gloui-gerbil-source-code-review.md` in `vietcong73/alien-works@audit/lisp-foundation-reserve`  
 **Status:** `DETAILED_DESIGN_PROPOSED / DIRECT_SOURCE_GROUNDED / UNIMPLEMENTED / RUNTIME_UNQUALIFIED / DOCUMENT_PUBLISHED_TO_GITHUB`  
-**Scope isolation:** No modifications to source specimens, LFR-C02, P01–P06, their designs, or their runtime. Documentation publication is owner-approved; runtime implementation still requires separate authorization.
+**Scope isolation:** No modifications to source specimens, LFR-C02, P01-D01–P03-D02, their designs, or their runtime. Documentation publication is owner-approved; runtime implementation still requires separate authorization.
 
 ---
 
 ## 0. Decision and useful product
 
-Create a **Gerbil-native, contract-driven UI interoperability reserve** for applications that expose typed entities, read-only projections, asynchronous work, and specifically authorized operations to an interface. P07 is **not** a UI framework, an Ethereum wallet, a React/Vue replacement, a full-stack web application generator, a general scheduler, or an authority server. It is the reliable seam between application semantics and an external presentation environment.
+Create a **Gerbil-native, contract-driven UI interoperability reserve** for applications that expose typed entities, read-only projections, asynchronous work, and specifically authorized operations to an interface. P01-D02 is **not** a UI framework, an Ethereum wallet, a React/Vue replacement, a full-stack web application generator, a general scheduler, or an authority server. It is the reliable seam between application semantics and an external presentation environment.
 
 The target product is reusable by a research interface, local simulator, desktop tool, diagnostic dashboard, workflow client, or a web app without installing blockchain software, Quasar/Vue, or any mandatory JavaScript runtime.
 
-Three independently testable, jointly required capabilities for a **full P07 reserve**:
+Three independently testable, jointly required capabilities for a **full P01-D02 reserve**:
 
-- **P07-A — Typed Boundary & Entity Identity:** schema-versioned message envelopes, checked serialization/deserialization, entity-scoped projections, exact typed errors and unit-aware numeric values.
-- **P07-B — Async Task Presentation:** request acceptance separated from execution and effect outcome, durable-optional task observations, sequencing, cancellation acknowledgments, bounded subscriptions, client reconciliation and per-entity isolation.
-- **P07-C — Governed Code–Data Bridge:** declarative Gerbil interface specifications lowered to validated, version-pinned intermediate representation (IR), producing protocol validators and opt-in target bindings with parity tests; no trusted code execution from untrusted serialized declarations.
+- **P01-D02-A — Typed Boundary & Entity Identity:** schema-versioned message envelopes, checked serialization/deserialization, entity-scoped projections, exact typed errors and unit-aware numeric values.
+- **P01-D02-B — Async Task Presentation:** request acceptance separated from execution and effect outcome, durable-optional task observations, sequencing, cancellation acknowledgments, bounded subscriptions, client reconciliation and per-entity isolation.
+- **P01-D02-C — Governed Code–Data Bridge:** declarative Gerbil interface specifications lowered to validated, version-pinned intermediate representation (IR), producing protocol validators and opt-in target bindings with parity tests; no trusted code execution from untrusted serialized declarations.
 
-A and B may be imported independently in limited deployments. A complete P07 release requires A, B, and C, with at least one **qualified end-to-end adapter pair** (Gerbil process-to-transport-to-client reference), not merely isolated macro expansion tests. An effectful adapter additionally requires the independent authority gate. A pure read-only consumer need not have an effectful adapter.
+A and B may be imported independently in limited deployments. A complete P01-D02 release requires A, B, and C, with at least one **qualified end-to-end adapter pair** (Gerbil process-to-transport-to-client reference), not merely isolated macro expansion tests. An effectful adapter additionally requires the independent authority gate. A pure read-only consumer need not have an effectful adapter.
 
-**Falsifiable thesis:** given the same validated source entity, revision, and authorized observable, all admitted P07 adapters produce equivalent user-visible claims, preserve distinct entity identities, reject malformed or unauthorized commands before their effectful handler, and never reclassify an accepted/unknown task as a completed success.
+**Falsifiable thesis:** given the same validated source entity, revision, and authorized observable, all admitted P01-D02 adapters produce equivalent user-visible claims, preserve distinct entity identities, reject malformed or unauthorized commands before their effectful handler, and never reclassify an accepted/unknown task as a completed success.
 
 ## 1. Research lineage and evidentiary boundaries
 
 Classification: `S` directly inspected pinned code; `R` static review finding; `E` separately reproduced interop semantics; `D` design response, not implemented; `X` external standard.
 
-| ID | Source evidence | Useful mechanism | Limitation or defect and strength | P07 design response | Regression obligation |
+| ID | Source evidence | Useful mechanism | Limitation or defect and strength | P01-D02 design response | Regression obligation |
 |---|---|---|---|---|---|
 | GLO-01 | `server/ftw.ss:36–47` (`define-json-endpoint`) | Scheme macro can express HTTP endpoint registration concisely (S) | Generated endpoint declaration does not itself enforce input, output, auth and effect contracts (S/D) | `define-interface` declares typed operation, schema, outcome and authority profile; static IR validation before adapter codegen | Generated route cannot bypass type/effect checks |
 | GLO-02 | `server/ethereum/process.ss:25–32`; `server/ethereum/balance.ss` | Resource-keyed handler registry makes operations extensible (S) | Unregistered type can yield `#f` invoked as a function (S/R) | Typed `HandlerDescriptor`, registration collision checks, lookup returns tagged `UNSUPPORTED_CAPABILITY` | Unknown type never invokes handler |
@@ -59,23 +60,23 @@ Classification: `S` directly inspected pinned code; `R` static review finding; `
 - JSON Schema Draft 2020-12 vocabulary for compatible validation adapters: https://json-schema.org/draft/2020-12/
 - OWASP API Security Top 10 for object-level/function-level authorization and resource-consumption threats: https://owasp.org/API-Security/
 
-The HTTP and JSON Schema standards inform **optional adapters**, not the ontology of a mandatory network server. P07's core `Result`/`Failure` algebra is transport-neutral; an HTTP adapter maps failures to suitable status and optionally RFC 9457 problem documents. A JSON Schema document does not, by itself, certify authorization or business semantics.
+The HTTP and JSON Schema standards inform **optional adapters**, not the ontology of a mandatory network server. P01-D02's core `Result`/`Failure` algebra is transport-neutral; an HTTP adapter maps failures to suitable status and optionally RFC 9457 problem documents. A JSON Schema document does not, by itself, certify authorization or business semantics.
 
 ## 2. System boundaries and source-derived design principles
 
 **Core invariant:** an interface is an observation-and-command boundary, **not** the source of truth for the domain entity or the authority to execute an effect.
 
-| Boundary | P07 owns | Explicitly outside P07 |
+| Boundary | P01-D02 owns | Explicitly outside P01-D02 |
 |---|---|---|
 | Domain entities | Validated identity references, projections, schema versions and revision checks | Domain calculations, object truth and database transactions |
 | UI | Data/action contracts, per-entity view model, client reconciliation | Widget toolkit, layout engine, browser renderer, native GUI rendering |
 | Commands | Validation, classification, authorization-gate invocation, typed dispatch and task receipt | General policy governance, signing secrets, privileged effect implementation |
 | Async work | Task observation protocol and bounded local reference dispatcher | Universal job scheduler, distributed queue, process tree supervisor |
 | Metaprogramming | Compile-time declarations -> typed IR -> validators and bindings | Arbitrary dynamic eval of external declarations, untrusted compiler plug-ins |
-| Persistence | Retention protocol, task recovery claims and receipts | Mandatory database, P05 durable storage implementation |
-| Cross-edition | Explicit adapters/contracts only | P04 authority engine, P05 provenance DB, P06 branch/synthesis implementation |
+| Persistence | Retention protocol, task recovery claims and receipts | Mandatory database, P04-D01 durable storage implementation |
+| Cross-edition | Explicit adapters/contracts only | P02-D02 authority engine, P04-D01 provenance DB, P03-D02 branch/synthesis implementation |
 
-**Negative transfer:** no `:mukn/ethereum`, blockchain address, ERC-20 decimals, wallet, keypair, Quasar, Vue, browser `window` object, native HTTP daemon, or event-source transport in the P07 core.
+**Negative transfer:** no `:mukn/ethereum`, blockchain address, ERC-20 decimals, wallet, keypair, Quasar, Vue, browser `window` object, native HTTP daemon, or event-source transport in the P01-D02 core.
 
 ## 3. Architecture: describe -> validate -> generate -> operate -> observe
 
@@ -233,7 +234,7 @@ Per-entity state is indexed by the full identity and principal projection scope.
 - Event delivery may use polling first. SSE/WebSocket are possible adapters, not mandatory requirements; all must share the same typed event and reconciliation semantics.
 - Subscription protocols declare bounded replay window, cursor semantics, page limits, backpressure, slow-consumer policy and terminal tombstones.
 - Task registry never grows without bound. Eviction requires TTL, memory/byte quotas, pinned outstanding observations and explicit `TASK_EXPIRED` / `HISTORY_UNAVAILABLE` results; never fabricate missing history.
-- Crash durability requires a separately qualified storage adapter. P07 in-memory mode cannot claim that tasks are recoverable after a process exits.
+- Crash durability requires a separately qualified storage adapter. P01-D02 in-memory mode cannot claim that tasks are recoverable after a process exits.
 
 ## 6. Security and effectful operation admission
 
@@ -250,13 +251,13 @@ The UI is an **untrusted requester**. Disabled buttons, hidden routes, localStor
 7. Execute only through a registered handler with an allowlisted effect scope; record acknowledgment, evidence and outcome separately.
 8. Revalidate permissions and safety at dispatch time for queued actions if policy could have changed after admission. Never silently promote read-only permission into mutation permission.
 
-A policy decision provider may be supplied by P04 or an application-defined gate; **P07 always enforces its own admission contract** even when P04 is absent. Neither a generated policy macro nor a client-provided capability tag may approve itself.
+A policy decision provider may be supplied by P02-D02 or an application-defined gate; **P01-D02 always enforces its own admission contract** even when P02-D02 is absent. Neither a generated policy macro nor a client-provided capability tag may approve itself.
 
 For optional HTTP, the default listener is loopback-only, and any non-loopback exposure needs an explicitly qualified deployment profile with authentication, TLS as applicable, origin allowlist, CSRF defense for cookie-authenticated mutating routes, request quotas and logs. CORS only governs browser-origin sharing and is not authentication. An effectful route cannot be activated merely by importing an endpoint module. Do not echo secrets into error messages or task output.
 
 ## 7. Gerbil metaprogramming: code and data without authority confusion
 
-**P07-C uses code–data duality as the engine of interoperability**, not as an excuse to run arbitrary code embedded in a message.
+**P01-D02-C uses code–data duality as the engine of interoperability**, not as an excuse to run arbitrary code embedded in a message.
 
 ```scheme
 ;; Declarative design notation: NOT an implemented Gerbil macro.
@@ -350,95 +351,95 @@ Recommended initial resource limits are **configuration fields** (`max_payload_b
 
 | Test | Fixture | Required oracle |
 |---|---|---|
-| P07-T01 | Valid typed query and response | Round-trip canonical fields and exact schema revision |
-| P07-T02 | Unknown major protocol version | Reject without attempting a handler |
-| P07-T03 | Unknown optional field | Version-policy-controlled, no automatic effect expansion |
-| P07-T04 | Malformed JSON and duplicate key ambiguity | Deterministic rejection |
-| P07-T05 | Deep/nested/large payload | Quota refusal before materialization |
-| P07-T06 | Numeric value above JS safe integer | Decimal string retains exact value |
-| P07-T07 | Decimal with wrong scale/fraction | No silent rounding or guessed unit |
-| P07-T08 | NaN, Infinity, malformed numeric strings | Strict rejection |
-| P07-T09 | Unicode normalization edge cases | Canonicalization policy explicit and stable |
-| P07-T10 | Canonical hash collision injection | Exact canonical equality prevents false match |
-| P07-T11 | Schema version kept but shape changed | Digest and admitted compatibility detect mismatch |
-| P07-T12 | Failure serialized through HTTP | Actual status and problem detail agree; no diagnostic leak |
+| P01-D02-T01 | Valid typed query and response | Round-trip canonical fields and exact schema revision |
+| P01-D02-T02 | Unknown major protocol version | Reject without attempting a handler |
+| P01-D02-T03 | Unknown optional field | Version-policy-controlled, no automatic effect expansion |
+| P01-D02-T04 | Malformed JSON and duplicate key ambiguity | Deterministic rejection |
+| P01-D02-T05 | Deep/nested/large payload | Quota refusal before materialization |
+| P01-D02-T06 | Numeric value above JS safe integer | Decimal string retains exact value |
+| P01-D02-T07 | Decimal with wrong scale/fraction | No silent rounding or guessed unit |
+| P01-D02-T08 | NaN, Infinity, malformed numeric strings | Strict rejection |
+| P01-D02-T09 | Unicode normalization edge cases | Canonicalization policy explicit and stable |
+| P01-D02-T10 | Canonical hash collision injection | Exact canonical equality prevents false match |
+| P01-D02-T11 | Schema version kept but shape changed | Digest and admitted compatibility detect mismatch |
+| P01-D02-T12 | Failure serialized through HTTP | Actual status and problem detail agree; no diagnostic leak |
 
 ### T13–T22: entity identity and isolation
 
 | Test | Fixture | Required oracle |
 |---|---|---|
-| P07-T13 | A and B created from same generated prototype | A serialization unchanged when B created |
-| P07-T14 | A/B interleaved updates | Per-instance state and projection preserved |
-| P07-T15 | Same display name, different IDs | Distinct cache keys |
-| P07-T16 | Same ID after deletion/recreation | Generation prevents stale revival |
-| P07-T17 | Same entity, two principals | Projection and cache cannot leak privileged fields |
-| P07-T18 | Switch selection A -> B during A request | A response never paints B |
-| P07-T19 | Malicious `__proto__`/constructor fields | No prototype or privileged-instance pollution |
-| P07-T20 | Hidden private field in projection | No over-disclosure in JSON or logs |
-| P07-T21 | Read-only projected state mistaken for command | Type system refuses effect invocation |
-| P07-T22 | Concurrent serializers of many entities | No cross-instance, cross-tenant contamination |
+| P01-D02-T13 | A and B created from same generated prototype | A serialization unchanged when B created |
+| P01-D02-T14 | A/B interleaved updates | Per-instance state and projection preserved |
+| P01-D02-T15 | Same display name, different IDs | Distinct cache keys |
+| P01-D02-T16 | Same ID after deletion/recreation | Generation prevents stale revival |
+| P01-D02-T17 | Same entity, two principals | Projection and cache cannot leak privileged fields |
+| P01-D02-T18 | Switch selection A -> B during A request | A response never paints B |
+| P01-D02-T19 | Malicious `__proto__`/constructor fields | No prototype or privileged-instance pollution |
+| P01-D02-T20 | Hidden private field in projection | No over-disclosure in JSON or logs |
+| P01-D02-T21 | Read-only projected state mistaken for command | Type system refuses effect invocation |
+| P01-D02-T22 | Concurrent serializers of many entities | No cross-instance, cross-tenant contamination |
 
 ### T23–T38: async truth, observation and bounded lifecycle
 
 | Test | Fixture | Required oracle |
 |---|---|---|
-| P07-T23 | Reject before worker construction | No worker dereference, rejected receipt |
-| P07-T24 | Worker starts and completes normally | Success only with completion/effect witness |
-| P07-T25 | Worker exits abnormally | Typed failure and separate diagnostics |
-| P07-T26 | Empty list of tasks requested | Precondition failure before dispatch |
-| P07-T27 | `202 Accepted` without task completion | UI does not display success |
-| P07-T28 | Task completion event delayed beyond newer update | No state regression |
-| P07-T29 | Duplicate event sequence received | Idempotent reconciliation |
-| P07-T30 | Gap in sequence during reconnect | Resnapshot or explicit history-unavailable state |
-| P07-T31 | Disconnect while running | Truth remains running; view says disconnected |
-| P07-T32 | Cancel requested but effect already succeeded | Actual success retained, not fake cancelled |
-| P07-T33 | Cancel requested and confirmed before execution | `CANCELLED` only with verified nonexecution |
-| P07-T34 | Response lost after external dispatch | Unknown effect status, no blind retry |
-| P07-T35 | Server restarts without durable adapter | No fake restored task or completion claim |
-| P07-T36 | Task output grows past quota | Bounded truncation with explicit receipt |
-| P07-T37 | Registry fills and TTL expires | Quota enforcement; `TASK_EXPIRED` semantics |
-| P07-T38 | Task lookup by another principal | Object-level access refusal |
+| P01-D02-T23 | Reject before worker construction | No worker dereference, rejected receipt |
+| P01-D02-T24 | Worker starts and completes normally | Success only with completion/effect witness |
+| P01-D02-T25 | Worker exits abnormally | Typed failure and separate diagnostics |
+| P01-D02-T26 | Empty list of tasks requested | Precondition failure before dispatch |
+| P01-D02-T27 | `202 Accepted` without task completion | UI does not display success |
+| P01-D02-T28 | Task completion event delayed beyond newer update | No state regression |
+| P01-D02-T29 | Duplicate event sequence received | Idempotent reconciliation |
+| P01-D02-T30 | Gap in sequence during reconnect | Resnapshot or explicit history-unavailable state |
+| P01-D02-T31 | Disconnect while running | Truth remains running; view says disconnected |
+| P01-D02-T32 | Cancel requested but effect already succeeded | Actual success retained, not fake cancelled |
+| P01-D02-T33 | Cancel requested and confirmed before execution | `CANCELLED` only with verified nonexecution |
+| P01-D02-T34 | Response lost after external dispatch | Unknown effect status, no blind retry |
+| P01-D02-T35 | Server restarts without durable adapter | No fake restored task or completion claim |
+| P01-D02-T36 | Task output grows past quota | Bounded truncation with explicit receipt |
+| P01-D02-T37 | Registry fills and TTL expires | Quota enforcement; `TASK_EXPIRED` semantics |
+| P01-D02-T38 | Task lookup by another principal | Object-level access refusal |
 
 ### T39–T48: capability and authority enforcement
 
 | Test | Fixture | Required oracle |
 |---|---|---|
-| P07-T39 | Unknown handler registry key | Typed unsupported, not procedure invocation |
-| P07-T40 | Duplicate handler registration | Deterministic conflict refusal |
-| P07-T41 | Handler unregistered while task running | Drain/deny per lifetime policy |
-| P07-T42 | Effectful route missing authority provider | Denied by default |
-| P07-T43 | Authenticated principal accesses unrelated entity | Refused on object-level authorization |
-| P07-T44 | Client-supplied fake principal/capability | Untrusted tag cannot grant access |
-| P07-T45 | Cookie-authenticated cross-origin mutation | Origin/CSRF policy refuses unauthorized request |
-| P07-T46 | Same idempotency key, exact same request | One effect, same receipt when qualified |
-| P07-T47 | Same key with different payload/revision | Typed conflict, no extra effect |
-| P07-T48 | Permission revoked between enqueue and dispatch | Final gate denies stale permission |
+| P01-D02-T39 | Unknown handler registry key | Typed unsupported, not procedure invocation |
+| P01-D02-T40 | Duplicate handler registration | Deterministic conflict refusal |
+| P01-D02-T41 | Handler unregistered while task running | Drain/deny per lifetime policy |
+| P01-D02-T42 | Effectful route missing authority provider | Denied by default |
+| P01-D02-T43 | Authenticated principal accesses unrelated entity | Refused on object-level authorization |
+| P01-D02-T44 | Client-supplied fake principal/capability | Untrusted tag cannot grant access |
+| P01-D02-T45 | Cookie-authenticated cross-origin mutation | Origin/CSRF policy refuses unauthorized request |
+| P01-D02-T46 | Same idempotency key, exact same request | One effect, same receipt when qualified |
+| P01-D02-T47 | Same key with different payload/revision | Typed conflict, no extra effect |
+| P01-D02-T48 | Permission revoked between enqueue and dispatch | Final gate denies stale permission |
 
 ### T49–T60: code–data generation and adapter parity
 
 | Test | Fixture | Required oracle |
 |---|---|---|
-| P07-T49 | Declarative interface produces typed IR | All fields/effects/authority policies retained |
-| P07-T50 | Invalid DSL schema or unknown type | Compile-time checked refusal |
-| P07-T51 | Generated Gerbil validator vs reference oracle | Same admissibility on fixture corpus |
-| P07-T52 | JS/client binding vs Gerbil codec | Round-trip and error parity |
-| P07-T53 | Macro/compiler revision drifts | Revision lock mismatch forces requalification |
-| P07-T54 | Generated READ operation tries to mutate | Static/effect admission rejects |
-| P07-T55 | Untrusted code-shaped field in wire data | Parsing causes no evaluation or privileged side effect |
-| P07-T56 | Generated entity uses prototype-shared mutable `self` | Static or runtime isolation test fails |
-| P07-T57 | Source IR digest collision or friendly version reused | Distinct semantics not silently aliased |
-| P07-T58 | Old client with newer schema | Declared compatibility/refusal, no guessing |
-| P07-T59 | Generated binding attempts privileged self-registration | Registry admission prevents activation |
-| P07-T60 | One mock app using local adapter vs HTTP/JSON | Same qualified entity/task outcomes |
+| P01-D02-T49 | Declarative interface produces typed IR | All fields/effects/authority policies retained |
+| P01-D02-T50 | Invalid DSL schema or unknown type | Compile-time checked refusal |
+| P01-D02-T51 | Generated Gerbil validator vs reference oracle | Same admissibility on fixture corpus |
+| P01-D02-T52 | JS/client binding vs Gerbil codec | Round-trip and error parity |
+| P01-D02-T53 | Macro/compiler revision drifts | Revision lock mismatch forces requalification |
+| P01-D02-T54 | Generated READ operation tries to mutate | Static/effect admission rejects |
+| P01-D02-T55 | Untrusted code-shaped field in wire data | Parsing causes no evaluation or privileged side effect |
+| P01-D02-T56 | Generated entity uses prototype-shared mutable `self` | Static or runtime isolation test fails |
+| P01-D02-T57 | Source IR digest collision or friendly version reused | Distinct semantics not silently aliased |
+| P01-D02-T58 | Old client with newer schema | Declared compatibility/refusal, no guessing |
+| P01-D02-T59 | Generated binding attempts privileged self-registration | Registry admission prevents activation |
+| P01-D02-T60 | One mock app using local adapter vs HTTP/JSON | Same qualified entity/task outcomes |
 
 ### T61–T64: fault and independence
 
 | Test | Fixture | Required oracle |
 |---|---|---|
-| P07-T61 | Partial transport write/failure | No false success; typed uncertainty and replay rules |
-| P07-T62 | Invalid CORS/deployment settings | Secure profile refuses activation |
-| P07-T63 | Optional P04/P05/P06 unavailable | Pure P07-A operations still work without hidden imports |
-| P07-T64 | Deliberate failed assertion in native test runner | Nonzero process exit; no print-only `FAIL` |
+| P01-D02-T61 | Partial transport write/failure | No false success; typed uncertainty and replay rules |
+| P01-D02-T62 | Invalid CORS/deployment settings | Secure profile refuses activation |
+| P01-D02-T63 | Optional P02-D02/P04-D01/P03-D02 unavailable | Pure P01-D02-A operations still work without hidden imports |
+| P01-D02-T64 | Deliberate failed assertion in native test runner | Nonzero process exit; no print-only `FAIL` |
 
 ### Qualification gates
 
@@ -453,23 +454,23 @@ Recommended initial resource limits are **configuration fields** (`max_payload_b
 | **Q6 — Metaprogramming/codegen** | T49–T59: IR provenance, generated parity, safe staging, no self-authorization |
 | **Q7 — Adapter parity** | T12, T27, T52, T58, T60–T62 under at least one complete adapter pair |
 | **Q8 — Fault tolerance** | T23, T25, T30–T35, T41, T48, T61 and injected failures |
-| **Q9 — Cross-edition isolation** | T63: no dependency on optional P04/P05/P06, no mandatory HTTP/JS dependency in core |
+| **Q9 — Cross-edition isolation** | T63: no dependency on optional P02-D02/P04-D01/P03-D02, no mandatory HTTP/JS dependency in core |
 | **Q10 — Independent acceptance** | T64, randomized property tests, differential reference harness, recorded reproducible evidence |
 
-**Qualification policy:** `P07-A_QUALIFIED` requires Q0–Q2. `P07-B_QUALIFIED` requires Q0, Q3–Q4, Q8. `P07-C_QUALIFIED` requires Q0, Q1 and Q6. `P07_FULL_QUALIFIED` requires Q0–Q4, Q6–Q10 and a complete adapter pair. Q5 is **additionally mandatory for every effectful deployment**; a purely read-only P07 release can state clearly that effectful operations are disabled and unqualified. A design document passes none of these gates.
+**Qualification policy:** `P01-D02-A_QUALIFIED` requires Q0–Q2. `P01-D02-B_QUALIFIED` requires Q0, Q3–Q4, Q8. `P01-D02-C_QUALIFIED` requires Q0, Q1 and Q6. `P07_FULL_QUALIFIED` requires Q0–Q4, Q6–Q10 and a complete adapter pair. Q5 is **additionally mandatory for every effectful deployment**; a purely read-only P01-D02 release can state clearly that effectful operations are disabled and unqualified. A design document passes none of these gates.
 
 ## 11. Implementation sequence if separately authorized
 
-1. **P07-00:** freeze pinned source reviews, licenses, failure classification and reference fixtures; explicitly disallow source port by default.
-2. **P07-01:** implement canonical schema/envelope/result algebra with immutable reference codec.
-3. **P07-02:** implement `EntityRef`, scoped projection and per-instance/per-principal state; reproduce and block GloUI prototype leakage.
-4. **P07-03:** implement reference task-state machine, sequence/event log and read-only observation reconcile.
-5. **P07-04:** implement strict registry, bounded retention, idempotency and authorization-admission contracts in no-effect mock mode.
-6. **P07-05:** implement Gerbil DSL parser/IR normalization and generated Gerbil validation code; independently check macro expansion.
-7. **P07-06:** add minimal JavaScript/client metadata generator and parity fixtures. Avoid prescribing a UI toolkit.
-8. **P07-07:** add in-process reference adapter, then optional loopback HTTP/JSON adapter with RFC semantics, secure defaults and authenticated effect test harness.
-9. **P07-08:** run adversarial tests, independent differential audit, memory quotas, malformed payload fuzzing and cancellation/disconnect fault injections.
-10. **P07-Q01:** report admitted profiles, refused claims and benchmark data; only then consider UI toolkit integrations.
+1. **P01-D02-00:** freeze pinned source reviews, licenses, failure classification and reference fixtures; explicitly disallow source port by default.
+2. **P01-D02-01:** implement canonical schema/envelope/result algebra with immutable reference codec.
+3. **P01-D02-02:** implement `EntityRef`, scoped projection and per-instance/per-principal state; reproduce and block GloUI prototype leakage.
+4. **P01-D02-03:** implement reference task-state machine, sequence/event log and read-only observation reconcile.
+5. **P01-D02-04:** implement strict registry, bounded retention, idempotency and authorization-admission contracts in no-effect mock mode.
+6. **P01-D02-05:** implement Gerbil DSL parser/IR normalization and generated Gerbil validation code; independently check macro expansion.
+7. **P01-D02-06:** add minimal JavaScript/client metadata generator and parity fixtures. Avoid prescribing a UI toolkit.
+8. **P01-D02-07:** add in-process reference adapter, then optional loopback HTTP/JSON adapter with RFC semantics, secure defaults and authenticated effect test harness.
+9. **P01-D02-08:** run adversarial tests, independent differential audit, memory quotas, malformed payload fuzzing and cancellation/disconnect fault injections.
+10. **P01-D02-Q01:** report admitted profiles, refused claims and benchmark data; only then consider UI toolkit integrations.
 
 ## 12. Open decisions and explicitly retained limits
 
@@ -483,10 +484,10 @@ Recommended initial resource limits are **configuration fields** (`max_payload_b
 8. Cancel/stop semantics differ by domain; `CANCEL_REQUESTED` is an observation, not evidence that an external effect was reversed.
 9. Real-time and streaming transports require additional backpressure/event-order qualification beyond polling fixtures.
 10. Generated client code is a convenience, not a security boundary; all admission is enforced again on the trusted server/adaptor.
-11. Admitted HTTP exposure may need CSP, TLS termination, authentication and CSRF strategy. P07 will not presume loopback implies security from every local actor.
+11. Admitted HTTP exposure may need CSP, TLS termination, authentication and CSRF strategy. P01-D02 will not presume loopback implies security from every local actor.
 12. The design does not require choosing JavaScript, Vue or React; a Rust GUI, terminal UI or native client can consume the same typed contract when individually qualified.
 13. Code generation correctness cannot be inferred from macro hygiene alone: semantic parity and negative tests remain mandatory.
-14. Cross-edition integration is contract-only. P04 may supply authorization, P05 durable evidence and task records, P06 versioned simulation branches, but none is a mandatory runtime import.
+14. Cross-edition integration is contract-only. P02-D02 may supply authorization, P04-D01 durable evidence and task records, P03-D02 versioned simulation branches, but none is a mandatory runtime import.
 15. Performance, security and correctness remain unqualified until exercised with a real Gerbil toolchain, client adapters, and actual failure-injection evidence.
 
 ## 13. Design verdict
@@ -495,4 +496,4 @@ Recommended initial resource limits are **configuration fields** (`max_payload_b
 
 **Final design principle:** *The interface may describe, request and observe; it must never silently become the entity, the worker, the permission system, or the proof of success.*
 
-P07 is intentionally a specialist reserve. It can make a Gerbil application pleasantly usable without turning UI rendering or network exposure into a compulsory part of the Meta-Foundation.
+P01-D02 is intentionally a specialist reserve. It can make a Gerbil application pleasantly usable without turning UI rendering or network exposure into a compulsory part of the Meta-Foundation.

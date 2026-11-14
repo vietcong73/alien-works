@@ -1,10 +1,11 @@
-# LFR-P03-D01 | Semantic Compilation & Temporal State DSL Reserve
+# LFR-P03-D01 | Symbolic State Machines & Causal Histories / Semantic Compilation & Temporal State DSL
 
 **Document class:** Detailed Design Proposal, one specialized edition only  
 **Date:** 12 November 2026  
 **Status:** `DETAILED_DESIGN_PROPOSED / STATIC_SOURCE_GROUNDED / RUNTIME_UNQUALIFIED`  
 **Programme:** Lisp Foundation Reserve, current concept LFR-C02  
-**Edition:** P03, Semantic Compilation & Temporal State  
+**Edition:** P03 — Symbolic State Machines & Causal Histories  
+**Design slice:** D01 — Semantic Compilation & Temporal State DSL  
 **Target implementation:** Gerbil Scheme, standalone and independently testable  
 **Research baseline:** Glow source at `47753e6777ebe933be319f117c00401745eaeb2f`, public Naughty Dog/Uncharted GDC 2008/2009 materials, Alien-Works at `86381f8bce44a396347cbe8de70349be5b43ece1` as secondary comparison  
 **Publication:** Owner-approved documentation publication on 12 November 2026 under `docs/design/` in `vietcong73/alien-works`, branch `audit/lisp-foundation-reserve`. This publication does not authorize source implementation, source imports, deployment, or a custom VM.  
@@ -14,57 +15,57 @@
 
 Design one Gerbil-native **semantic compilation and temporal orchestration reserve** with two independently usable profiles, sharing one typed behavioral representation:
 
-- **P03-A — Semantic Compiler (primary, pure):** validate small domain descriptions, normalize them through inspectable passes, construct control-flow/state graphs, compute correct fixed-point facts, and produce immutable verified `BehaviorSpec` artifacts. A consumer can use P03-A without starting the runtime or loading foreign libraries.
-- **P03-B — Temporal State Runtime (opt-in):** interpret validated `BehaviorSpec` objects with deterministic, bounded state transitions, events, logical timers, suspension/resumption, and coordinator/director instances. It emits effect *intents*, not unchecked native operations. External effect executors belong to a consumer or separately qualified adapter.
+- **P03-D01-A — Semantic Compiler (primary, pure):** validate small domain descriptions, normalize them through inspectable passes, construct control-flow/state graphs, compute correct fixed-point facts, and produce immutable verified `BehaviorSpec` artifacts. A consumer can use P03-D01-A without starting the runtime or loading foreign libraries.
+- **P03-D01-B — Temporal State Runtime (opt-in):** interpret validated `BehaviorSpec` objects with deterministic, bounded state transitions, events, logical timers, suspension/resumption, and coordinator/director instances. It emits effect *intents*, not unchecked native operations. External effect executors belong to a consumer or separately qualified adapter.
 
-P03 is *not* the Gerbil Meta-Foundation, a general build system, a game engine, a distributed workflow engine, a blockchain participant runtime, an actor capability-security framework, or a re-creation of Naughty Dog's proprietary VM. It does not use Glow itself as a runtime dependency.
+P03-D01 is *not* the Gerbil Meta-Foundation, a general build system, a game engine, a distributed workflow engine, a blockchain participant runtime, an actor capability-security framework, or a re-creation of Naughty Dog's proprietary VM. It does not use Glow itself as a runtime dependency.
 
 **Product purpose:** allow applications to express what happens, when it can happen, what an event changes, and what external effect is requested, without scattering untestable callbacks and clocks throughout implementation code. This should work for small interactive simulations, task coordinators, device-independent scenarios and other domains, while making the boundary between pure behavior and external consequences explicit.
 
 **Core hypothesis:** source-authored declarative behavior is useful only when its static analysis and runtime semantics are precise enough to permit deterministic tests, rejection of invalid programs, bounded execution, and replay that never silently duplicates real-world side effects.
 
-## 1. Source lineage: exactly what P03 learns and what it must repair
+## 1. Source lineage: exactly what P03-D01 learns and what it must repair
 
-| ID | Source / original problem solved | Proven mechanism or public evidence | Boundary / issue | P03 design response | Falsifiable evidence needed |
+| ID | Source / original problem solved | Proven mechanism or public evidence | Boundary / issue | P03-D01 design response | Falsifiable evidence needed |
 | --- | --- | --- | --- | --- | --- |
 | **GL-01** | [Glow `compiler/passes.ss`](https://github.com/Glow-Lang/glow/blob/47753e6777ebe933be319f117c00401745eaeb2f/compiler/passes.ss): compile declarative interactions | Registered layers, passes and intermediate outputs from parse/alpha/type/ANF to checkpoints/projection | A pass's presence does not establish invariant preservation; some source comments identify missing source locations / ancillary-data handling | Versioned `PassContract`, explicit input/output layer schemas, validator after each pass, diagnostics with source span | Inject a malformed pass and ensure the pipeline fails at the named boundary |
 | **GL-02** | [Glow `compiler/multipass.ss`](https://github.com/Glow-Lang/glow/blob/47753e6777ebe933be319f117c00401745eaeb2f/compiler/multipass.ss): make compiler steps inspectable and testable | Layer registry, pass registry, ordered strategies, read/write/compare test artifacts | Mutable registries and stage-local comparison alone are not semantic proof; strategy comments describe future DAG work | Immutable compile-session registry, explicit pass DAG validation, per-pass artifact identity and schema | Duplicate outputs, pass cycles, mismatched inputs and nondeterministic canonical output are rejected |
 | **GL-03** | [Glow `compiler/checkpointify/checkpointify.ss`](https://github.com/Glow-Lang/glow/blob/47753e6777ebe933be319f117c00401745eaeb2f/compiler/checkpointify/checkpointify.ss): mark participant/transition boundaries | Checkpoint graph with incoming/outgoing transitions and variables/effects | Glow checkpoints are for multiparty interaction, not universal orchestration; joins, branches and loops complicate analysis | General `BehaviorGraph` with explicit edge identity and `use/def`, no implicit participant or consensus semantics | Diamond, loop, join and unreachable-node fixtures preserve graph invariants |
 | **GL-04** | [Glow `compiler/liveness/checkpoint-liveness.ss`](https://github.com/Glow-Lang/glow/blob/47753e6777ebe933be319f117c00401745eaeb2f/compiler/liveness/checkpoint-liveness.ss): compute values live across checkpoints | Backward propagation of introduced/used variables through transitions | Source-grounded concern: `seen` can suppress predecessor reprocessing after facts grow at a join; an end-to-end reachable failure remains to be proven | Monotone set-lattice worklist; re-enqueue predecessors **whenever** facts change, even if visited | Counterexample and property tests against a simple reference fixed-point implementation |
-| **GL-05** | [Glow `compiler/project/project.ss`](https://github.com/Glow-Lang/glow/blob/47753e6777ebe933be319f117c00401745eaeb2f/compiler/project/project.ss): transform one interaction into participant-specific views | Structural projection guided by checkpoint and participant context | Its consensus/EVM and participant semantics are not generally applicable; correctness not inherited | Keep multi-view/endpoint projection as **deferred optional investigation**, not a core P03 feature | Later: prove view consistency for a chosen restricted semantics before adding a module |
+| **GL-05** | [Glow `compiler/project/project.ss`](https://github.com/Glow-Lang/glow/blob/47753e6777ebe933be319f117c00401745eaeb2f/compiler/project/project.ss): transform one interaction into participant-specific views | Structural projection guided by checkpoint and participant context | Its consensus/EVM and participant semantics are not generally applicable; correctness not inherited | Keep multi-view/endpoint projection as **deferred optional investigation**, not a core P03-D01 feature | Later: prove view consistency for a chosen restricted semantics before adding a module |
 | **UC-01** | [Gregory, GDC 2009](https://www.gameenginebook.com/resources/gdc09-statescripting-uncharted2.pdf): define repeatable native-game behavior in a domain language | Publicly described states, begin/update/end, events, transitions, native hooks | Proprietary production implementation unavailable; platform- and game-specific | A new finite-state/event DSL with explicit guards, transition atomicity and event ordering | Hand-authored trace fixtures, observational equivalence between IR and reference interpreter |
-| **UC-02** | [Gregory, GDC 2009](https://www.gameenginebook.com/resources/gdc09-statescripting-uncharted2.pdf): orchestrate sequences across objects | Stand-alone directors, waits/signals, state tracks, suspension/resume as public architectural pattern | Director does not equal ordinary event poller or universal async runtime; real-world timing uncertain | `DirectorSpec` is a composition of P03 machines plus explicit signals and logical timers | Deterministic wait/resume tests, timeout and cancellation precedence, no lost wakeups |
+| **UC-02** | [Gregory, GDC 2009](https://www.gameenginebook.com/resources/gdc09-statescripting-uncharted2.pdf): orchestrate sequences across objects | Stand-alone directors, waits/signals, state tracks, suspension/resume as public architectural pattern | Director does not equal ordinary event poller or universal async runtime; real-world timing uncertain | `DirectorSpec` is a composition of P03-D01 machines plus explicit signals and logical timers | Deterministic wait/resume tests, timeout and cancellation precedence, no lost wakeups |
 | **UC-03** | [Liebgold, GDC 2008](https://media.gdcvault.com/gdc08/slides/S6636i1.pdf): use Scheme between data and native engine | Data definition / compilation boundary | Public slides are **not** open-source implementation or license to reproduce engine scripts | Independent Gerbil source authoring -> canonical IR -> inspected artifact | No proprietary source copied; independent fixture attribution and clean lineage |
-| **AW-01** | [Alien-Works materials](https://github.com/borodust/alien-works/blob/86381f8bce44a396347cbe8de70349be5b43ece1/src/graphics/material.lisp): macros for specialized graphics authoring | `defmaterial`, shader declarations and builder abstractions | Coupling to Varjo/Filament, runtime registration and native effects | Optional ergonomic Gerbil macros that emit **only** validated P03 data, not privileged backend calls | Macro expansion equals hand-authored normalized representation |
+| **AW-01** | [Alien-Works materials](https://github.com/borodust/alien-works/blob/86381f8bce44a396347cbe8de70349be5b43ece1/src/graphics/material.lisp): macros for specialized graphics authoring | `defmaterial`, shader declarations and builder abstractions | Coupling to Varjo/Filament, runtime registration and native effects | Optional ergonomic Gerbil macros that emit **only** validated P03-D01 data, not privileged backend calls | Macro expansion equals hand-authored normalized representation |
 | **AW-02** | [Alien-Works host](https://github.com/borodust/alien-works/blob/86381f8bce44a396347cbe8de70349be5b43ece1/src/host/host.lisp): native event polling | SDL events handed to callbacks | Event polling is not transition semantics or a director | Untrusted events enter through an explicit envelope/schema validation boundary | Invalid, duplicate, late and out-of-order events follow defined policies |
-| **GB-01** | [Gerbil macro guide](https://gerbil.scheme.org/guide/intro.html), [prelude syntax](https://gerbil.scheme.org/reference/gerbil/prelude/macros.html) | Hygienic `defsyntax`, `syntax-case`, phase separation and module imports | Macro-phase authority is still trusted code; documentation does not prove P03 DSL implementation | Small Gerbil syntax front end over a validated serializable AST; data-only loader is preferred for untrusted input | Macro/data parser conformance fixtures and source-location diagnostics |
+| **GB-01** | [Gerbil macro guide](https://gerbil.scheme.org/guide/intro.html), [prelude syntax](https://gerbil.scheme.org/reference/gerbil/prelude/macros.html) | Hygienic `defsyntax`, `syntax-case`, phase separation and module imports | Macro-phase authority is still trusted code; documentation does not prove P03-D01 DSL implementation | Small Gerbil syntax front end over a validated serializable AST; data-only loader is preferred for untrusted input | Macro/data parser conformance fixtures and source-location diagnostics |
 
-**Evidence grading:** GL/AW claims are bounded direct source inspection. UC claims are primary public presentations interpreted through the existing review, **not** production-source access. GB is official language documentation. All P03 behavior below is a proposed design, not a passed runtime test.
+**Evidence grading:** GL/AW claims are bounded direct source inspection. UC claims are primary public presentations interpreted through the existing review, **not** production-source access. GB is official language documentation. All P03-D01 behavior below is a proposed design, not a passed runtime test.
 
 **Negative-transfer rules:** no Glow blockchain/consensus imports; no Naughty Dog code, binary, VM, game scripts or disguised recreation; no unconditional Varjo/Filament imports; no direct executable authorization from a macro; no inference that using Scheme makes a compiler correct.
 
 ## 2. Scope and ownership boundaries
 
-P03 **owns**:
+P03-D01 **owns**:
 1. Domain syntax and canonical behavior IR; semantic validation and diagnostics.
 2. Finite control-flow graphs, pass artifacts, graph analyses and termination diagnostics.
 3. Pure step semantics, logical time, timers, explicit event ordering and state transitions.
 4. Local director composition, signal/wait coordination and bounded scheduling decisions.
 5. Trace/receipt schemas local to behavior, replay of **pure decisions**, and model/test harnesses.
 
-P03 **does not own**:
-- native handles, rendering, FFI or memory (P01); OS child/process supervision, Guix or deployment graphs (P02);
-- global user authorization, agent tool access, filesystem/network privileges (future consumer or P04);
+P03-D01 **does not own**:
+- native handles, rendering, FFI or memory (P01-D01); OS child/process supervision, Guix or deployment graphs (P02-D01);
+- global user authorization, agent tool access, filesystem/network privileges (future consumer or P02-D02);
 - distributed messages, consensus, network timing, RPC delivery, durable exactly-once effects, arbitrary coroutine/continuation capture;
 - general-purpose bytecode VM, runtime evaluation of untrusted Gerbil source, or unrestricted third-party plugin execution;
-- the final Meta-Foundation K0/K1 contract design. P03 exports only a small, versioned **proposed** identity/schema/effect/result projection for future comparison.
+- the final Meta-Foundation K0/K1 contract design. P03-D01 exports only a small, versioned **proposed** identity/schema/effect/result projection for future comparison.
 
-A timer in P03 is an instance-local **logical deadline**. It is not an OS process timer, deadline enforcement guarantee, hardware clock or a durable scheduling service.
+A timer in P03-D01 is an instance-local **logical deadline**. It is not an OS process timer, deadline enforcement guarantee, hardware clock or a durable scheduling service.
 
 ## 3. Architecture: pure semantics first
 
 ```text
-           P03-A: COMPILER / ANALYSIS (Gerbil; pure)
+           P03-D01-A: COMPILER / ANALYSIS (Gerbil; pure)
   trusted macro syntax  OR  untrusted validated data descriptor
                   |                     |
             source AST / source maps / schema version
@@ -79,9 +80,9 @@ A timer in P03 is an instance-local **logical deadline**. It is not an OS proces
                              |
                   digest / diagnostics / tests
                              |
-             optional P03-B loading boundary
+             optional P03-D01-B loading boundary
                              v
-              P03-B: TEMPORAL RUNTIME (Gerbil)
+              P03-D01-B: TEMPORAL RUNTIME (Gerbil)
        (MachineInstance, DirectorInstance, ClockAdapter)
                              |
       event normalization -> deterministic step selection
@@ -89,12 +90,12 @@ A timer in P03 is an instance-local **logical deadline**. It is not an OS proces
         new state + timers + effect intents + trace
                              |
                 optional consumer adapter
-           (authorization and real effects OUTSIDE P03)
+           (authorization and real effects OUTSIDE P03-D01)
                              |
                 observed effect-result events
 ```
 
-**Dependency invariants:** P03-A imports no runtime interpreter, native backend, graphics, Guix, Guile, Shepherd, LLM, database or network package. P03-B depends on P03-A's validated artifacts and pure semantic functions. Both run in Gerbil/Gambit with a mock event/clock host; no custom VM is a prerequisite.
+**Dependency invariants:** P03-D01-A imports no runtime interpreter, native backend, graphics, Guix, Guile, Shepherd, LLM, database or network package. P03-D01-B depends on P03-D01-A's validated artifacts and pure semantic functions. Both run in Gerbil/Gambit with a mock event/clock host; no custom VM is a prerequisite.
 
 ## 4. Proposed Gerbil module structure (not created)
 
@@ -143,7 +144,7 @@ editions/semantic-state/
     qualification.md
 ```
 
-There is **no** `native/`, `ffi/`, `vm/`, `guile/`, `guix/`, `engine/` or `network/` module in the required P03 design. No compiler pass runs arbitrary user-provided Scheme as part of descriptor parsing.
+There is **no** `native/`, `ffi/`, `vm/`, `guile/`, `guix/`, `engine/` or `network/` module in the required P03-D01 design. No compiler pass runs arbitrary user-provided Scheme as part of descriptor parsing.
 
 ## 5. Type contracts and canonical representation
 
@@ -198,7 +199,7 @@ A trusted Gerbil macro may make this pleasant to write; a data-only equivalent m
 - Expose `dump-ir`, `explain-transition`, `explain-pass`, `explain-liveness` and `diff-spec` diagnostics as pure interfaces.
 - Unknown guards, effects, event payload fields and symbols fail before loading.
 
-## 6. P03-A compiler pipeline and pass contracts
+## 6. P03-D01-A compiler pipeline and pass contracts
 
 | Stage | Input -> Output | Mandatory verification |
 | --- | --- | --- |
@@ -219,7 +220,7 @@ Pass runner duties:
 6. Nondeterministic plugins, external I/O or ambient-host reads are excluded from the core compiler profile.
 7. Every diagnostic includes pass, artifact, source span where available, and cause; no bare 'compiler failed' result.
 
-Pass order is a constrained DAG, not a freeform build system. A pass DAG may branch into diagnostics and analysis artifacts, but P03 does not become P02's generic dependency graph framework.
+Pass order is a constrained DAG, not a freeform build system. A pass DAG may branch into diagnostics and analysis artifacts, but P03-D01 does not become P02-D01's generic dependency graph framework.
 
 ## 7. Correct fixed-point analysis: the Glow lesson made explicit
 
@@ -257,7 +258,7 @@ For the edge-based equation above, `L[T] = {}`, `L[B] = {x}`, `L[D] = {y}`, `L[C
 - Record step counts and convergence diagnostics; exhaustion must return `ANALYSIS_INCOMPLETE`, not `VALID`.
 - Separate **static variable liveness**, **transition reachability** and **eventual runtime progress**; they answer different questions.
 
-## 8. P03-B operational semantics: exact behavior of one microstep
+## 8. P03-D01-B operational semantics: exact behavior of one microstep
 
 Define a pure relation:
 
@@ -316,7 +317,7 @@ ACTIVE -> PAUSED | COMPLETED | FAILED | CANCELLED
 ### 9.2 Event ingress and delivery
 
 - Every inbound event is validated, assigned stable local insertion sequence, and bound to a machine generation.
-- P03 guarantees **deterministic single-writer consumption** *for events it has accepted into one in-memory queue*. It does not promise distributed exactly-once delivery or durability across crashes.
+- P03-D01 guarantees **deterministic single-writer consumption** *for events it has accepted into one in-memory queue*. It does not promise distributed exactly-once delivery or durability across crashes.
 - Queue capacity, event size, maximum age, and per-source rate limits are explicit. Backpressure returns `QUEUE_FULL` or other typed outcome; events are not silently dropped unless a declared bounded-drop policy permits it and emits a receipt.
 - Within one microstep, producer callbacks may enqueue follow-up events, which are processed only at the next boundary.
 - Event timestamps from outside are untrusted hints unless normalized by an admitted clock adapter.
@@ -350,11 +351,11 @@ Director responsibilities:
 
 Example: two child machines `A` and `B` must finish before a parent director emits `next-phase`. If `A` completes, `B` times out, and the director fails, the trace must preserve both outcomes rather than retroactively deleting `A`'s completion. If an external adapter performed an action for `A`, the director cannot roll it back merely by reverting a state snapshot.
 
-**No automatic distributed causality or transactional cross-process coordination.** P03 directors are in one logical execution domain; crossing machine/process/network boundaries requires a future separately qualified protocol adapter.
+**No automatic distributed causality or transactional cross-process coordination.** P03-D01 directors are in one logical execution domain; crossing machine/process/network boundaries requires a future separately qualified protocol adapter.
 
 ## 11. Effect boundary and authorization
 
-P03 emits **effect descriptors**, never unrestricted foreign calls:
+P03-D01 emits **effect descriptors**, never unrestricted foreign calls:
 
 ```text
 EffectIntent {
@@ -369,7 +370,7 @@ EffectIntent {
 - An effect outcome is one of `SUCCEEDED`, `FAILED`, `CANCELLED`, `UNKNOWN`, with observable external-state evidence when available.
 - `UNKNOWN` forbids unconditional retry of non-idempotent effects. Idempotency keys are caller/backend contracts, not magic exactly-once guarantees.
 - An external executor crash, timeout or lost acknowledgement must leave a traceable pending/uncertain intent, never convert to success by default.
-- P03 must not hardcode P01 resource APIs, P02 process APIs or P04 agent tools. Those are optional consumers of normalized descriptors through separately validated integration contracts.
+- P03-D01 must not hardcode P01-D01 resource APIs, P02-D01 process APIs or P02-D02 agent tools. Those are optional consumers of normalized descriptors through separately validated integration contracts.
 
 ## 12. Replay, observability and persistence boundaries
 
@@ -379,7 +380,7 @@ EffectIntent {
 2. `TRACE_CHECK`: compare before/after digests, selected rules, timers, transition source spans and intent identities against expected trace.
 3. `SCENARIO_SIMULATION`: fake clock/event source and mock outcomes, including failure injection and permutation testing.
 
-`LIVE_REEXECUTION` is **not** a P03 replay mode. If a consumer needs to reissue actual effects, it must make an independently authorized execution decision with idempotency/reconciliation checks. Persistent crash recovery is deferred: the proposed initial product is in-memory deterministic; a storage adapter is optional and must explicitly state durability and write ordering.
+`LIVE_REEXECUTION` is **not** a P03-D01 replay mode. If a consumer needs to reissue actual effects, it must make an independently authorized execution decision with idempotency/reconciliation checks. Persistent crash recovery is deferred: the proposed initial product is in-memory deterministic; a storage adapter is optional and must explicitly state durability and write ordering.
 
 Record versioned field types, bounded trace length, cause IDs, redaction policy, and artifact digest. Snapshotting memory does not prove physical rollback, and restoring a machine snapshot does not undo signals already delivered elsewhere.
 
@@ -412,7 +413,7 @@ Dependencies: Gerbil/Gambit; **no runtime engine, native FFI or clock**.
 
 Input: director waiting for two child milestones, one delayed signal, one timeout, and one cancellation event.  
 Expected: deterministic total event order; repeatable final state; identical traces across source-map-only changes; cancelled timers never resume a new instance.  
-Dependencies: P03-A + P03-B mock clock and queue; **no OS timer guarantees**.
+Dependencies: P03-D01-A + P03-D01-B mock clock and queue; **no OS timer guarantees**.
 
 ### Slice C — Mock external effect with uncertain result
 
@@ -444,44 +445,44 @@ These names specify behavior, not compilable Gerbil signatures. No arbitrary hos
 
 | ID | Scenario | Required result |
 | --- | --- | --- |
-| **P03-T01** | Build P03-A without P03-B or any native/Guix/LLM dependencies | Import/build succeeds in an isolated Gerbil toolchain |
-| **P03-T02** | Unknown DSL tag from data-only input | `UNSUPPORTED_SYNTAX`, no eval |
-| **P03-T03** | Trusted macro vs equivalent data AST | Same canonical `BehaviorSpec` |
-| **P03-T04** | Duplicate state, event or rule ID | Rejected before S5 |
-| **P03-T05** | Missing state or event target | Source-located error |
-| **P03-T06** | Impure or unknown guard | Static rejection |
-| **P03-T07** | Pass produces wrong schema | Named `PASS_POSTCONDITION_FAILED` |
-| **P03-T08** | Compiler pass execution reads ambient input | Strict core mode refuses undeclared dependency |
-| **P03-T09** | Same descriptor with randomized map order | Stable canonical digest |
-| **P03-T10** | Changed compiler or semantic option version | No reuse of stale artifact |
-| **P03-T11** | Diamond CFG; variables introduced/used along different paths | Correct liveness by slow reference solver |
-| **P03-T12** | Late-growing fact at a join | Predecessors re-enqueued, complete least fixed point |
-| **P03-T13** | Cyclic CFG without terminal node | Analysis converges or explicitly reports bounded failure |
-| **P03-T14** | Random graph 1–20 nodes with mixed use/def | Worklist equals all-edges reference solver |
-| **P03-T15** | Reverse edge enumeration order | Identical liveness facts |
-| **P03-T16** | Artificial low analysis budget | `ANALYSIS_INCOMPLETE`, never qualified |
-| **P03-T17** | Two competing equal-priority rules | `AMBIGUOUS_TRANSITION` |
-| **P03-T18** | Unhandled event with each declared policy | Exactly `IGNORE`, `DEFER`, or `REJECT` semantics |
-| **P03-T19** | Same event log and logical clock in two runs | Same state/receipt trace |
-| **P03-T20** | Event enqueued during a handler | Processed after current commit, no reentrancy |
-| **P03-T21** | Fake clock advances to exact timer deadline | Timer fires once at declared boundary |
-| **P03-T22** | Fake clock moves backwards | `CLOCK_REGRESSION`, unchanged state |
-| **P03-T23** | Timeout and signal at identical logical instant | Declared precedence enforced |
-| **P03-T24** | Cancellation and timer at same instant | Cancellation wins under default rule; timer invalidated |
-| **P03-T25** | Late event for old machine generation | Rejected as stale |
-| **P03-T26** | Duplicate event under bounded dedup policy | Identified duplicate never silently executes transition twice |
-| **P03-T27** | Queue reaches capacity | Typed backpressure; no silent uncontrolled growth |
-| **P03-T28** | Zero-time self-emitting loop | Fuel exhaustion, no infinite run |
-| **P03-T29** | Director `ALL` wait, A completes, B completes | One completion after both, causal trace intact |
-| **P03-T30** | Director `ALL` wait, A completes, B times out | Failed join retains A completion and B timeout |
-| **P03-T31** | Director cancellation with pending child results | No stale child result revives director |
-| **P03-T32** | Mock effect succeeds but result acknowledgement lost | Outcome `UNKNOWN`, no automatic unsafe retry |
-| **P03-T33** | Reconcile unknown effect from later observation | Correct causal receipt linkage |
-| **P03-T34** | Pure trace replay with mock observer instrumented | Zero calls to any external effect sink |
-| **P03-T35** | Serialized spec from incompatible schema version | `INCOMPATIBLE_SPEC`, no permissive interpretation |
-| **P03-T36** | Mutated recorded rule result or timer order | `TRACE_DIVERGED` with first mismatched step |
+| **P03-D01-T01** | Build P03-D01-A without P03-D01-B or any native/Guix/LLM dependencies | Import/build succeeds in an isolated Gerbil toolchain |
+| **P03-D01-T02** | Unknown DSL tag from data-only input | `UNSUPPORTED_SYNTAX`, no eval |
+| **P03-D01-T03** | Trusted macro vs equivalent data AST | Same canonical `BehaviorSpec` |
+| **P03-D01-T04** | Duplicate state, event or rule ID | Rejected before S5 |
+| **P03-D01-T05** | Missing state or event target | Source-located error |
+| **P03-D01-T06** | Impure or unknown guard | Static rejection |
+| **P03-D01-T07** | Pass produces wrong schema | Named `PASS_POSTCONDITION_FAILED` |
+| **P03-D01-T08** | Compiler pass execution reads ambient input | Strict core mode refuses undeclared dependency |
+| **P03-D01-T09** | Same descriptor with randomized map order | Stable canonical digest |
+| **P03-D01-T10** | Changed compiler or semantic option version | No reuse of stale artifact |
+| **P03-D01-T11** | Diamond CFG; variables introduced/used along different paths | Correct liveness by slow reference solver |
+| **P03-D01-T12** | Late-growing fact at a join | Predecessors re-enqueued, complete least fixed point |
+| **P03-D01-T13** | Cyclic CFG without terminal node | Analysis converges or explicitly reports bounded failure |
+| **P03-D01-T14** | Random graph 1–20 nodes with mixed use/def | Worklist equals all-edges reference solver |
+| **P03-D01-T15** | Reverse edge enumeration order | Identical liveness facts |
+| **P03-D01-T16** | Artificial low analysis budget | `ANALYSIS_INCOMPLETE`, never qualified |
+| **P03-D01-T17** | Two competing equal-priority rules | `AMBIGUOUS_TRANSITION` |
+| **P03-D01-T18** | Unhandled event with each declared policy | Exactly `IGNORE`, `DEFER`, or `REJECT` semantics |
+| **P03-D01-T19** | Same event log and logical clock in two runs | Same state/receipt trace |
+| **P03-D01-T20** | Event enqueued during a handler | Processed after current commit, no reentrancy |
+| **P03-D01-T21** | Fake clock advances to exact timer deadline | Timer fires once at declared boundary |
+| **P03-D01-T22** | Fake clock moves backwards | `CLOCK_REGRESSION`, unchanged state |
+| **P03-D01-T23** | Timeout and signal at identical logical instant | Declared precedence enforced |
+| **P03-D01-T24** | Cancellation and timer at same instant | Cancellation wins under default rule; timer invalidated |
+| **P03-D01-T25** | Late event for old machine generation | Rejected as stale |
+| **P03-D01-T26** | Duplicate event under bounded dedup policy | Identified duplicate never silently executes transition twice |
+| **P03-D01-T27** | Queue reaches capacity | Typed backpressure; no silent uncontrolled growth |
+| **P03-D01-T28** | Zero-time self-emitting loop | Fuel exhaustion, no infinite run |
+| **P03-D01-T29** | Director `ALL` wait, A completes, B completes | One completion after both, causal trace intact |
+| **P03-D01-T30** | Director `ALL` wait, A completes, B times out | Failed join retains A completion and B timeout |
+| **P03-D01-T31** | Director cancellation with pending child results | No stale child result revives director |
+| **P03-D01-T32** | Mock effect succeeds but result acknowledgement lost | Outcome `UNKNOWN`, no automatic unsafe retry |
+| **P03-D01-T33** | Reconcile unknown effect from later observation | Correct causal receipt linkage |
+| **P03-D01-T34** | Pure trace replay with mock observer instrumented | Zero calls to any external effect sink |
+| **P03-D01-T35** | Serialized spec from incompatible schema version | `INCOMPATIBLE_SPEC`, no permissive interpretation |
+| **P03-D01-T36** | Mutated recorded rule result or timer order | `TRACE_DIVERGED` with first mismatched step |
 
-`P03-T11`–`T16` are not optional “unit tests”; they protect precisely the Glow fixed-point failure class identified in prior source review. `P03-T19`–`T34` protect temporal semantics. Count: **36 scenarios**, all design requirements rather than executed passes.
+`P03-D01-T11`–`T16` are not optional “unit tests”; they protect precisely the Glow fixed-point failure class identified in prior source review. `P03-D01-T19`–`T34` protect temporal semantics. Count: **36 scenarios**, all design requirements rather than executed passes.
 
 ## 17. Qualification gates
 
@@ -493,19 +494,19 @@ These names specify behavior, not compilable Gerbil signatures. No arbitrary hos
 - **Q5 — Effect/replay boundary:** intent-only output, lost-acknowledgement uncertainty, pure replay isolation, causal evidence and versioned artifact loading pass.
 - **Q6 — Independent review and portability:** cold Gerbil build, negative import/dependency audit, property/fuzz tests, documented performance limits and independent failure-path review pass.
 
-**Gate accounting:** P03-A may be released as `COMPILER_QUALIFIED` after Q0–Q2 with its own evidence. P03-B is not qualified without Q3–Q5. Q6 is required before describing any edition as generally reusable. Design acceptance is not execution qualification; an audited source does not count as a passing P03 test.
+**Gate accounting:** P03-D01-A may be released as `COMPILER_QUALIFIED` after Q0–Q2 with its own evidence. P03-D01-B is not qualified without Q3–Q5. Q6 is required before describing any edition as generally reusable. Design acceptance is not execution qualification; an audited source does not count as a passing P03-D01 test.
 
 ## 18. Proposed staged implementation, if separately authorized
 
-1. **P03-00:** freeze AST/IR schemas, source maps and source-lineage/negative-transfer register. Write a reference conformance specification, not a broad framework.
-2. **P03-01:** implement parser, resolver, canonicalization and compiler pass runner with synthetic fixtures; test without runtime.
-3. **P03-02:** implement finite-graph worklist analysis and independent slow reference solver; require T11–T16 before any checkpoint-like optimization.
-4. **P03-03:** implement tiny pure reference interpreter and deterministic logical clock; exercise T17–T28.
-5. **P03-04:** implement directors, joins, waits and cancellation semantics under mock event source; exercise T29–T31.
-6. **P03-05:** implement intent/result envelopes and pure replay; exercise T32–T36.
-7. **P03-Q01:** independent test tour, negative-dependency build and evidence-based gate disposition.
+1. **P03-D01-00:** freeze AST/IR schemas, source maps and source-lineage/negative-transfer register. Write a reference conformance specification, not a broad framework.
+2. **P03-D01-01:** implement parser, resolver, canonicalization and compiler pass runner with synthetic fixtures; test without runtime.
+3. **P03-D01-02:** implement finite-graph worklist analysis and independent slow reference solver; require T11–T16 before any checkpoint-like optimization.
+4. **P03-D01-03:** implement tiny pure reference interpreter and deterministic logical clock; exercise T17–T28.
+5. **P03-D01-04:** implement directors, joins, waits and cancellation semantics under mock event source; exercise T29–T31.
+6. **P03-D01-05:** implement intent/result envelopes and pure replay; exercise T32–T36.
+7. **P03-D01-Q01:** independent test tour, negative-dependency build and evidence-based gate disposition.
 
-No P01/P02 code changes, K0 implementation, custom VM, native engine, OS deployment, or source port is authorized as part of this *design document*. Publication of P03-D01 itself was separately approved by the owner. Performance optimization should follow reference correctness, not precede it.
+No P01-D01/P02-D01 code changes, K0 implementation, custom VM, native engine, OS deployment, or source port is authorized as part of this *design document*. Publication of P03-D01 itself was separately approved by the owner. Performance optimization should follow reference correctness, not precede it.
 
 ## 19. Unresolved questions, recorded rather than concealed
 
@@ -524,7 +525,7 @@ No P01/P02 code changes, K0 implementation, custom VM, native engine, OS deploym
 
 `P03_D01_DETAILED_DESIGN_PROPOSED / GLOW_PASS_IR_AND_FIXED_POINT_LINEAGE / UNCHARTED_TEMPORAL_DIRECTOR_LINEAGE / ALIEN_WORKS_MACRO_COMPARATOR / GERBIL_NATIVE / DATA_FIRST / PURE_COMPILER_AND_MOCK_RUNTIME / NO_CUSTOM_VM / NO_PROPRIETARY_PORT / OTHER_EDITIONS_UNTOUCHED / RUNTIME_UNQUALIFIED / DOCUMENT_PUBLISHED`
 
-**Conclusion:** P03 should preserve the inspectability of Glow's multi-pass compiler and the expressive temporal state/director ideas reported by Naughty Dog, while explicitly preventing incomplete dataflow convergence, ambiguous event ordering, stale timers, uncontrolled loops and accidental execution of external effects. It remains one specialized reserve, not the new universal foundation.
+**Conclusion:** P03-D01 should preserve the inspectability of Glow's multi-pass compiler and the expressive temporal state/director ideas reported by Naughty Dog, while explicitly preventing incomplete dataflow convergence, ambiguous event ordering, stale timers, uncontrolled loops and accidental execution of external effects. It remains one specialized reserve, not the new universal foundation.
 
 ## Primary source anchors
 

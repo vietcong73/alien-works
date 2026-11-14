@@ -1,17 +1,17 @@
-# LFR-P09-D04 | Distributed Systems & Coordination Architecture
+# LFR-P06-D04 | Adaptive Intelligence & Autonomous Systems / Distributed Systems & Coordination
 
 **Document class:** Source-grounded specialist detailed-design proposal, architecture revision v2  
 **Date:** 14 November 2026  
 **Programme:** Lisp Foundation Reserve (LFR-C02)  
 **Domain track:** `ADAPTIVE SYSTEMS` — Adaptive Intelligence & Autonomous Systems  
-**Edition:** P09 — Adaptive Intelligence & Autonomous Systems  
+**Edition:** P06 — Adaptive Intelligence & Autonomous Systems  
 **Design slice:** D04 — Distributed Systems & Coordination  
 **Primary design language:** Gerbil Scheme for message contracts, bounded simulation, actor coordination and reference algorithms; measured and qualified external backends for stronger durability, consensus and scale  
-**Repository context:** `vietcong73/alien-works`, branch `audit/lisp-foundation-reserve`; path `docs/design/LFR-P09-D04-distributed-systems-coordination-architecture-2026-11-14.md`  
+**Repository context:** `vietcong73/alien-works`, branch `audit/lisp-foundation-reserve`; path `docs/design/LFR-P06-D04-distributed-systems-coordination-architecture-2026-11-14.md`  
 **Status:** `ARCHITECTURE_REVISION_V2_PROPOSED / 80_FUTURE_TESTS / 12_FUTURE_GATES / UNIMPLEMENTED / RUNTIME_UNQUALIFIED / DOCUMENT_PUBLISHED_TO_GITHUB`  
 **Publication:** Owner-approved v2 architecture revision published to `docs/design/` on `audit/lisp-foundation-reserve`, replacing the prior v1 document. Implementation, installation, credentials and deployment require separate authorization.
 
-> **Design decision:** P09-D04 is a standalone distributed coordination subsystem. Its Gerbil reference defines messaging, bounded work ownership, delivery evidence and recovery semantics on local ports. Transport, durable storage, consensus and host effects attach through separately qualified capability adapters. K0 supplies the shared contract vocabulary; K1 mechanisms and specialist integrations attach when selected. Reliability claims bind to the tested backend, topology, fault assumptions and authority host.
+> **Design decision:** P06-D04 is a standalone distributed coordination subsystem. Its Gerbil reference defines messaging, bounded work ownership, delivery evidence and recovery semantics on local ports. Transport, durable storage, consensus and host effects attach through separately qualified capability adapters. K0 supplies the shared contract vocabulary; K1 mechanisms and specialist integrations attach when selected. Reliability claims bind to the tested backend, topology, fault assumptions and authority host.
 
 ## 0. Objectives, first product and boundaries
 
@@ -23,7 +23,7 @@
 
 **Ownership:** D04 owns coordination state, message-delivery contracts, work leases, retry/reconciliation protocols and its internal recovery records. An integrating application owns domain facts, agent objectives, policy decisions and effects. The effect host decides admission and records actual commits. K0 supplies portable identity, validation and receipt vocabulary; K1 supplies selected reusable mechanisms.
 
-**Integration surface:** optional integrations may include P09-D01 (learning jobs), P09-D02 (agent interaction), P09-D03 (controller commands), P08 (world events), P02 (process health), P04 (effect policy), P05 (durable evidence), P06 (history) or unrelated applications. Each adapter translates an application-specific request into the D04 protocol and back. The core reference runs with zero specialist integration adapters.
+**Integration surface:** optional integrations may include P06-D01 (learning jobs), P06-D02 (agent interaction), P06-D03 (controller commands), P05 (world events), P02-D01 (process health), P02-D02 (effect policy), P04-D01 (durable evidence), P03-D02 (history) or unrelated applications. Each adapter translates an application-specific request into the D04 protocol and back. The core reference runs with zero specialist integration adapters.
 
 **Deployment classes:** `FINITE_MODEL`, `LOCAL_ACTOR`, `REMOTE_TRANSPORT`, `DURABLE_WORKFLOW`, `QUORUM_COORDINATION`, and `HOST_EFFECT_INTEGRATION`. Each class has an independent qualification boundary. Live external financial, robot, operating-system or network changes require their own host authorization.
 
@@ -60,7 +60,7 @@ Sources distinguish documented API behavior from proposed LFR semantics. `DOC` i
 | [Raft original paper](https://www.usenix.org/conference/atc14/technical-sessions/presentation/ongaro) (`RESEARCH`) | Consensus via leader election, replicated log and safe membership transition | Safety oracle/reference for quorum-backed profile selection | A paper alone is not a production consensus implementation |
 | [Tokio bounded MPSC](https://docs.rs/tokio/latest/tokio/sync/mpsc/fn.channel.html) (`DOC/SOURCE`) | Finite channel capacity introduces backpressure | Measured comparator for capacity, bounded waiting and send failure | Rust channel guarantees apply to that channel, not arbitrary distributed mailboxes |
 | LFR [K0-D01](LFR-K0-D01-gerbil-meta-foundation-minimal-contract-kernel-2026-11-13.md), [K1-D01](LFR-K1-D01-opt-in-generalized-mechanisms-detailed-design-2026-11-13.md) (`LFR`) | Typed identity, effects, authority, results; optional causal/time/reconciliation mechanisms | Portable boundary vocabulary and selected opt-in mechanisms | Both designs require independent runtime qualification |
-| LFR [P09-D01](LFR-P09-D01-reinforcement-learning-adaptive-intelligence-architecture-2026-11-13.md), [D02](LFR-P09-D02-multi-agent-behavioral-systems-architecture-2026-11-13.md), [D03](LFR-P09-D03-control-autonomous-systems-architecture-2026-11-13.md) (`LFR`) | Learner lifecycle, agent coordination, controller/supervisor timing and host effects have separate owners | Concrete request/receipt interoperability | A distributed adapter has no automatic learner, coordination policy or device authority |
+| LFR [P06-D01](LFR-P06-D01-reinforcement-learning-adaptive-intelligence-architecture-2026-11-13.md), [D02](LFR-P06-D02-multi-agent-behavioral-systems-architecture-2026-11-13.md), [D03](LFR-P06-D03-control-autonomous-systems-architecture-2026-11-13.md) (`LFR`) | Learner lifecycle, agent coordination, controller/supervisor timing and host effects have separate owners | Concrete request/receipt interoperability | A distributed adapter has no automatic learner, coordination policy or device authority |
 
 **Source qualification for later implementation:** pin source commit/tag, licensed components, protocol version, topology, server and client releases, config, persistence/fsync semantics, TLS/mTLS configuration, fault model, load profile and test harness. Compare actual execution results with the declared oracle.
 
@@ -68,7 +68,7 @@ Sources distinguish documented API behavior from proposed LFR semantics. `DOC` i
 
 ```text
   Application / domain owner
-        |  typed WorkSpec / Event / CommandIntent             P08, P09, P02...
+        |  typed WorkSpec / Event / CommandIntent             P05, P06, P02-D01...
         v
   +---------------- D04 PUBLIC PORT -----------------+
   | validate -> submit -> route -> claim -> reconcile|
@@ -106,12 +106,12 @@ Sources distinguish documented API behavior from proposed LFR semantics. `DOC` i
 | D04-owned core | Message, mailbox, local scheduler, task ledger, CAS, finite oracle, trace | Yes | Local deterministic reference and versioned state |
 | Capability provider | `ClockPort`, `TransportPort`, `StateStorePort`, `HostEffectPort` | Yes as interfaces; local mocks are sufficient | Separate clocks, retries, atomicity and effect truth |
 | Qualified extension | K1 M05/M09/M10/M11/M12/M13/M16 | No | Explicit import and independent qualification per mechanism |
-| Optional integration | P09-D01/D02/D03, P02/P04/P05/P06/P08, independent apps | No | Translate application requests/receipts while preserving domain ownership |
+| Optional integration | P06-D01/D02/D03, P02-D01/P02-D02/P04-D01/P03-D02/P05, independent apps | No | Translate application requests/receipts while preserving domain ownership |
 | Optional infrastructure | NATS, RabbitMQ, Kafka, etcd, Temporal, native libraries | No | Selected configuration and observed capability/claim ceiling |
 
-**Standalone acceptance:** the finite `PartitionedWorkLedger` must compile and execute its model tests with zero imports from P02–P09 specialist packages, zero K1 runtime mechanism imports, zero network access and zero external broker. It still uses the shared K0 contract surface. Failing this test is an architectural coupling defect even if every integration test passes.
+**Standalone acceptance:** the finite `PartitionedWorkLedger` must compile and execute its model tests with zero imports from P02-D01–P06 specialist packages, zero K1 runtime mechanism imports, zero network access and zero external broker. It still uses the shared K0 contract surface. Failing this test is an architectural coupling defect even if every integration test passes.
 
-**Control plane:** D04 owns routing tables, its coordinator membership and lease/epoch state. **Data plane:** D04 owns typed message movement and the evidence of delivery. **Coordination persistence:** D04 defines its own ledger/outbox/inbox/recovery formats and depends on the selected `StateStorePort` for actual persistence guarantees. An application's domain database or P05 evidence repository can integrate as a separate store provider under an explicit atomicity/transaction claim.
+**Control plane:** D04 owns routing tables, its coordinator membership and lease/epoch state. **Data plane:** D04 owns typed message movement and the evidence of delivery. **Coordination persistence:** D04 defines its own ledger/outbox/inbox/recovery formats and depends on the selected `StateStorePort` for actual persistence guarantees. An application's domain database or P04-D01 evidence repository can integrate as a separate store provider under an explicit atomicity/transaction claim.
 
 ### 2.2 Capability ports
 
@@ -130,20 +130,20 @@ HostEffectPort.query(host_ref, operation_id) -> AuthoritativeEffectReceipt | Unk
 
 Each capability record carries a provider identity, revision, scope, expiry and qualification evidence. `StateStorePort` explicitly distinguishes ephemeral, single-host transactional and quorum-linearizable stores; `HostEffectPort` declares deduplication atomicity and query capability. A local mock proves the finite-model contract, while a real provider's claims require fault injection against that provider.
 
-A `HostEffectPort` controls admission and effects. If an integration selects P04, its policy decision becomes one input to the host; otherwise the host may use its own qualified admission system. D04 transports the result without gaining the host's authority.
+A `HostEffectPort` controls admission and effects. If an integration selects P02-D02, its policy decision becomes one input to the host; otherwise the host may use its own qualified admission system. D04 transports the result without gaining the host's authority.
 
 ### 2.3 Integration boundaries and ownership
 
 | Integration | Its authoritative decision | D04 responsibility | Evidence handoff |
 |---|---|---|---|
-| P09-D01 | Policy identity, learning lifecycle and experiment evaluation | Deliver version-locked training/evaluation work | Scheduling, delivery and transport trace |
-| P09-D02 | Agent goals, joint-action arbitration, domain resource conflict | Deliver proposals and coordinate infrastructure task ownership | Delivery, stale claim and reservation receipts |
-| P09-D03 | Control feasibility, supervision, command validity | Route deadline-bound command to selected host | Fresh/late/unknown delivery and host receipts |
-| P08 | World truth, causal admission and generation | Route world-domain events or work | Message/host-effect evidence only |
-| P02/P04/P05/P06 | Local process supervision / permission / evidence / historical state respectively | Adapt to lifecycle, authority, storage or event interfaces when chosen | Scoped compatibility witnesses |
+| P06-D01 | Policy identity, learning lifecycle and experiment evaluation | Deliver version-locked training/evaluation work | Scheduling, delivery and transport trace |
+| P06-D02 | Agent goals, joint-action arbitration, domain resource conflict | Deliver proposals and coordinate infrastructure task ownership | Delivery, stale claim and reservation receipts |
+| P06-D03 | Control feasibility, supervision, command validity | Route deadline-bound command to selected host | Fresh/late/unknown delivery and host receipts |
+| P05 | World truth, causal admission and generation | Route world-domain events or work | Message/host-effect evidence only |
+| P02-D01/P02-D02/P04-D01/P03-D02 | Local process supervision / permission / evidence / historical state respectively | Adapt to lifecycle, authority, storage or event interfaces when chosen | Scoped compatibility witnesses |
 | Independent application | Domain truth and authorization | Standard work/task/message coordination | Same D04 protocol and test gates |
 
-**Conflict distinction:** an infrastructure `LEASE_CONFLICT`, `STALE_EPOCH` or `CAS_CONFLICT` describes task ownership and store revision. A domain `JOINT_ACTION_REJECTED` or disputed NPC resource belongs to the P09-D02 host and returns as an opaque domain outcome. D04 carries that outcome, without re-running behavioral arbitration.
+**Conflict distinction:** an infrastructure `LEASE_CONFLICT`, `STALE_EPOCH` or `CAS_CONFLICT` describes task ownership and store revision. A domain `JOINT_ACTION_REJECTED` or disputed NPC resource belongs to the P06-D02 host and returns as an opaque domain outcome. D04 carries that outcome, without re-running behavioral arbitration.
 
 **Coordinator identity:** `WorkerId` names a logical participant, `WorkerGeneration` its incarnation, `ClusterMembershipRevision` a configuration change, `CoordinatorEpoch` a grant/fencing revision, and `PolicyRef` an external decision-function reference. Equal display names or addresses never establish identity equality.
 
@@ -298,7 +298,7 @@ RecoveryAnchor {
 
 **Crash matrix:** (i) before source transaction, no outbox record; (ii) after source transaction but before publish, relay resumes; (iii) after publish before broker ACK, duplicate may appear; (iv) after consumer commit before consumer ACK, delivery repeats; (v) after external host effect before client receipt, reconcile with host. Every case requires its own repeatable fixture.
 
-**Snapshots:** distinguish local checkpoint, committed durable snapshot, broker cursor, domain event history and P06 causal history. A recovery claim specifies fsync/replication/retention conditions and the replay closure. Compacted watch streams trigger a fresh authoritative snapshot followed by a verified revision bridge, not silent use of a missing log segment.
+**Snapshots:** distinguish local checkpoint, committed durable snapshot, broker cursor, domain event history and P03-D02 causal history. A recovery claim specifies fsync/replication/retention conditions and the replay closure. Compacted watch streams trigger a fresh authoritative snapshot followed by a verified revision bridge, not silent use of a missing log segment.
 
 ## 7. Workflow orchestration, sagas and uncertain effects
 
@@ -386,7 +386,7 @@ Three profiles are selected by job, with distinct qualification tests and migrat
 ### 9.1 Proposed namespace
 
 ```text
-lfr/p09/distributed/
+lfr/p06/distributed/
   contract/{identity,message,delivery,effect,membership,lease,task}.ss
   protocol/{schema,codec,negotiation,validation}.ss
   reference/{virtual-clock,event-scheduler,fault-network,ledger,oracle}.ss
@@ -513,140 +513,140 @@ Each result records the relevant authoritative reference, correlation, revision,
 
 | ID | Fixture / injection | Required observation |
 |---|---|---|
-| **P09-D04-T01** | Wire schema round-trip | Canonical payload and digest preserved |
-| **P09-D04-T02** | Unknown schema revision | Typed schema rejection |
-| **P09-D04-T03** | Duplicate message identity | Same digest recognized as replay |
-| **P09-D04-T04** | Message ID with altered payload | Identity collision rejected |
-| **P09-D04-T05** | Operation versus message IDs | Multiple attempts map to one operation |
-| **P09-D04-T06** | Producer incarnation turnover | Old generation cannot impersonate current |
-| **P09-D04-T07** | Cross-tenant destination | Scope check rejects request |
-| **P09-D04-T08** | CloudEvents source plus id | Event identity map is collision-safe |
+| **P06-D04-T01** | Wire schema round-trip | Canonical payload and digest preserved |
+| **P06-D04-T02** | Unknown schema revision | Typed schema rejection |
+| **P06-D04-T03** | Duplicate message identity | Same digest recognized as replay |
+| **P06-D04-T04** | Message ID with altered payload | Identity collision rejected |
+| **P06-D04-T05** | Operation versus message IDs | Multiple attempts map to one operation |
+| **P06-D04-T06** | Producer incarnation turnover | Old generation cannot impersonate current |
+| **P06-D04-T07** | Cross-tenant destination | Scope check rejects request |
+| **P06-D04-T08** | CloudEvents source plus id | Event identity map is collision-safe |
 
 
 **Family 2: Delivery and ordering**
 
 | ID | Fixture / injection | Required observation |
 |---|---|---|
-| **P09-D04-T09** | At-most-once disconnected subscriber | Missing delivery recorded within claim scope |
-| **P09-D04-T10** | Unacked-at-least-once message | Redelivery and attempt count observed |
-| **P09-D04-T11** | Publisher confirmation before consumer | No host-effect claim inferred |
-| **P09-D04-T12** | ACK lost after host commit | Redelivery returns prior effect receipt |
-| **P09-D04-T13** | Two ordered messages one partition | Per-partition order preserved |
-| **P09-D04-T14** | Two producers different partitions | Cross-partition reorder accepted |
-| **P09-D04-T15** | Causal predecessor delayed | Causal-ready rule withholds successor |
-| **P09-D04-T16** | Message expires in queue | Deadline outcome and no late host apply |
+| **P06-D04-T09** | At-most-once disconnected subscriber | Missing delivery recorded within claim scope |
+| **P06-D04-T10** | Unacked-at-least-once message | Redelivery and attempt count observed |
+| **P06-D04-T11** | Publisher confirmation before consumer | No host-effect claim inferred |
+| **P06-D04-T12** | ACK lost after host commit | Redelivery returns prior effect receipt |
+| **P06-D04-T13** | Two ordered messages one partition | Per-partition order preserved |
+| **P06-D04-T14** | Two producers different partitions | Cross-partition reorder accepted |
+| **P06-D04-T15** | Causal predecessor delayed | Causal-ready rule withholds successor |
+| **P06-D04-T16** | Message expires in queue | Deadline outcome and no late host apply |
 
 
 **Family 3: Capacity and timing**
 
 | ID | Fixture / injection | Required observation |
 |---|---|---|
-| **P09-D04-T17** | Mailbox at exact capacity | Bounded enqueue succeeds within budget |
-| **P09-D04-T18** | Mailbox overflow | Backpressure is returned |
-| **P09-D04-T19** | Credit exhaustion | In-flight count never exceeds credits |
-| **P09-D04-T20** | Slow consumer and fast producer | Queue growth bounded |
-| **P09-D04-T21** | Expired retry work | No new attempt after deadline |
-| **P09-D04-T22** | Retry attempt cap | Final typed exhaustion with trace |
-| **P09-D04-T23** | Clock source mismatch | Wrong clock mapping rejected |
-| **P09-D04-T24** | Recovered consumer with future deadline | Liveness only under fairness assumptions |
+| **P06-D04-T17** | Mailbox at exact capacity | Bounded enqueue succeeds within budget |
+| **P06-D04-T18** | Mailbox overflow | Backpressure is returned |
+| **P06-D04-T19** | Credit exhaustion | In-flight count never exceeds credits |
+| **P06-D04-T20** | Slow consumer and fast producer | Queue growth bounded |
+| **P06-D04-T21** | Expired retry work | No new attempt after deadline |
+| **P06-D04-T22** | Retry attempt cap | Final typed exhaustion with trace |
+| **P06-D04-T23** | Clock source mismatch | Wrong clock mapping rejected |
+| **P06-D04-T24** | Recovered consumer with future deadline | Liveness only under fairness assumptions |
 
 
 **Family 4: Membership and fencing**
 
 | ID | Fixture / injection | Required observation |
 |---|---|---|
-| **P09-D04-T25** | Two workers contend for task | One current grant tuple, atomic owner revision |
-| **P09-D04-T26** | Partitioned owner replaced | Superseded grant rejected by authoritative host |
-| **P09-D04-T27** | Lease renewed before expiry | Same owner generation remains valid |
-| **P09-D04-T28** | Lease expires during delayed write | Host rejects stale epoch |
-| **P09-D04-T29** | Membership revision changes | Old configuration cannot silently write |
-| **P09-D04-T30** | Same epoch different worker | Owner binding rejects second worker |
-| **P09-D04-T31** | CAS expected revision mismatch | No mutation, conflict evidence |
-| **P09-D04-T32** | Epoch monotonicity over 50 turnovers | No decrease, wraparound policy tested |
+| **P06-D04-T25** | Two workers contend for task | One current grant tuple, atomic owner revision |
+| **P06-D04-T26** | Partitioned owner replaced | Superseded grant rejected by authoritative host |
+| **P06-D04-T27** | Lease renewed before expiry | Same owner generation remains valid |
+| **P06-D04-T28** | Lease expires during delayed write | Host rejects stale epoch |
+| **P06-D04-T29** | Membership revision changes | Old configuration cannot silently write |
+| **P06-D04-T30** | Same epoch different worker | Owner binding rejects second worker |
+| **P06-D04-T31** | CAS expected revision mismatch | No mutation, conflict evidence |
+| **P06-D04-T32** | Epoch monotonicity over 50 turnovers | No decrease, wraparound policy tested |
 
 
 **Family 5: Consistency and state**
 
 | ID | Fixture / injection | Required observation |
 |---|---|---|
-| **P09-D04-T33** | Quorum healthy linearizable write | Committed revision monotonic |
-| **P09-D04-T34** | Quorum unavailable | Required write refused |
-| **P09-D04-T35** | Stale serializable read | Freshness label retained |
-| **P09-D04-T36** | Watch event ordering | Revisions monotonic in watch |
-| **P09-D04-T37** | Watch does not imply read freshness | No linearizable claim via watch |
-| **P09-D04-T38** | Compacted watch resume | Snapshot plus verified bridge |
-| **P09-D04-T39** | Concurrent CRDT counter updates | Commutative merge reaches same value |
-| **P09-D04-T40** | CRDT used for scarce allocation | Invalid invariant configuration rejected |
+| **P06-D04-T33** | Quorum healthy linearizable write | Committed revision monotonic |
+| **P06-D04-T34** | Quorum unavailable | Required write refused |
+| **P06-D04-T35** | Stale serializable read | Freshness label retained |
+| **P06-D04-T36** | Watch event ordering | Revisions monotonic in watch |
+| **P06-D04-T37** | Watch does not imply read freshness | No linearizable claim via watch |
+| **P06-D04-T38** | Compacted watch resume | Snapshot plus verified bridge |
+| **P06-D04-T39** | Concurrent CRDT counter updates | Commutative merge reaches same value |
+| **P06-D04-T40** | CRDT used for scarce allocation | Invalid invariant configuration rejected |
 
 
 **Family 6: Durability and outbox**
 
 | ID | Fixture / injection | Required observation |
 |---|---|---|
-| **P09-D04-T41** | Crash before source transaction | No outbox/effect committed |
-| **P09-D04-T42** | Crash after state+outbox commit | Relay can resume |
-| **P09-D04-T43** | Publish receipt lost | Duplicate publication, one host commit |
-| **P09-D04-T44** | Consumer crashes before host commit | Redelivery can apply once |
-| **P09-D04-T45** | Consumer crashes after host commit | Idempotency receipt suppresses repeat |
-| **P09-D04-T46** | Corrupt recovery snapshot | Checksum rejects anchor |
-| **P09-D04-T47** | Outbox replay across restart | No lost committed source record |
-| **P09-D04-T48** | Durability unsupported backend | Claim stays below durable-qualified |
+| **P06-D04-T41** | Crash before source transaction | No outbox/effect committed |
+| **P06-D04-T42** | Crash after state+outbox commit | Relay can resume |
+| **P06-D04-T43** | Publish receipt lost | Duplicate publication, one host commit |
+| **P06-D04-T44** | Consumer crashes before host commit | Redelivery can apply once |
+| **P06-D04-T45** | Consumer crashes after host commit | Idempotency receipt suppresses repeat |
+| **P06-D04-T46** | Corrupt recovery snapshot | Checksum rejects anchor |
+| **P06-D04-T47** | Outbox replay across restart | No lost committed source record |
+| **P06-D04-T48** | Durability unsupported backend | Claim stays below durable-qualified |
 
 
 **Family 7: Workflow and effects**
 
 | ID | Fixture / injection | Required observation |
 |---|---|---|
-| **P09-D04-T49** | Activity completes with ACK lost | Host reconciliation finds applied |
-| **P09-D04-T50** | Activity never executed | Authoritative status shows absent |
-| **P09-D04-T51** | External host lacks status query | Unresolved effect remains explicit |
-| **P09-D04-T52** | Same operation with different digest | Operation conflict reported |
-| **P09-D04-T53** | Workflow code version changed | Replay contract/version mismatch |
-| **P09-D04-T54** | Compensation succeeds | New effect receipt recorded |
-| **P09-D04-T55** | Compensation fails | Failure preserved without fabricated rollback |
-| **P09-D04-T56** | Workflow timeout and retry | Task-specific retry cap obeyed |
+| **P06-D04-T49** | Activity completes with ACK lost | Host reconciliation finds applied |
+| **P06-D04-T50** | Activity never executed | Authoritative status shows absent |
+| **P06-D04-T51** | External host lacks status query | Unresolved effect remains explicit |
+| **P06-D04-T52** | Same operation with different digest | Operation conflict reported |
+| **P06-D04-T53** | Workflow code version changed | Replay contract/version mismatch |
+| **P06-D04-T54** | Compensation succeeds | New effect receipt recorded |
+| **P06-D04-T55** | Compensation fails | Failure preserved without fabricated rollback |
+| **P06-D04-T56** | Workflow timeout and retry | Task-specific retry cap obeyed |
 
 
 **Family 8: Security and isolation**
 
 | ID | Fixture / injection | Required observation |
 |---|---|---|
-| **P09-D04-T57** | Unsigned/unauthenticated remote message | Authentication failure |
-| **P09-D04-T58** | Forged actor capability | Host permission check rejects |
-| **P09-D04-T59** | Mutated payload digest | Message rejected before host |
-| **P09-D04-T60** | Unexpected nested payload depth | Decoder budget rejects |
-| **P09-D04-T61** | Expired auth credential | Re-authentication/denial recorded |
-| **P09-D04-T62** | Producer generation replay | Old producer fenced by namespace |
-| **P09-D04-T63** | Poison message repeated | Quarantine/retirement bounded |
-| **P09-D04-T64** | Private data in telemetry trace | Redacted evidence preserved |
+| **P06-D04-T57** | Unsigned/unauthenticated remote message | Authentication failure |
+| **P06-D04-T58** | Forged actor capability | Host permission check rejects |
+| **P06-D04-T59** | Mutated payload digest | Message rejected before host |
+| **P06-D04-T60** | Unexpected nested payload depth | Decoder budget rejects |
+| **P06-D04-T61** | Expired auth credential | Re-authentication/denial recorded |
+| **P06-D04-T62** | Producer generation replay | Old producer fenced by namespace |
+| **P06-D04-T63** | Poison message repeated | Quarantine/retirement bounded |
+| **P06-D04-T64** | Private data in telemetry trace | Redacted evidence preserved |
 
 
 **Family 9: Backend and benchmark**
 
 | ID | Fixture / injection | Required observation |
 |---|---|---|
-| **P09-D04-T65** | Gerbil local actor small messages | Actual compiled adapter trace matches model |
-| **P09-D04-T66** | Gerbil cross-process restart | Remote failure classification accurate |
-| **P09-D04-T67** | NATS ephemeral and durable variants | Distinct loss/retention profiles pass |
-| **P09-D04-T68** | RabbitMQ publisher and consumer ACK | Orthogonal receipt mapping preserved |
-| **P09-D04-T69** | Kafka transaction and external sink | Transaction scope/ceiling correct |
-| **P09-D04-T70** | etcd CAS and lease turnover | Revision/fencing parity with oracle |
-| **P09-D04-T71** | Temporal event-history replay | Activity/workflow receipts reconcile |
-| **P09-D04-T72** | Backpressure performance tour | p95/p99 and memory measured end-to-end |
+| **P06-D04-T65** | Gerbil local actor small messages | Actual compiled adapter trace matches model |
+| **P06-D04-T66** | Gerbil cross-process restart | Remote failure classification accurate |
+| **P06-D04-T67** | NATS ephemeral and durable variants | Distinct loss/retention profiles pass |
+| **P06-D04-T68** | RabbitMQ publisher and consumer ACK | Orthogonal receipt mapping preserved |
+| **P06-D04-T69** | Kafka transaction and external sink | Transaction scope/ceiling correct |
+| **P06-D04-T70** | etcd CAS and lease turnover | Revision/fencing parity with oracle |
+| **P06-D04-T71** | Temporal event-history replay | Activity/workflow receipts reconcile |
+| **P06-D04-T72** | Backpressure performance tour | p95/p99 and memory measured end-to-end |
 
 
 **Family 10: Integration and release**
 
 | ID | Fixture / injection | Required observation |
 |---|---|---|
-| **P09-D04-T73** | D04 core built with only K0 and Gerbil | No specialist, K1 or external-service runtime imports |
-| **P09-D04-T74** | Optional P09-D02 joint-action adapter | Domain arbitration and D04 lease conflict remain distinct |
-| **P09-D04-T75** | Optional P09-D03 control adapter | Deadline/admission checked by host clock and authority |
-| **P09-D04-T76** | HostEffectPort with or without P04 | Host enforces declared authority; P04 adapter optional |
-| **P09-D04-T77** | D04 ledger with standalone store port | Recovery works without P05; optional P05 store separately scoped |
-| **P09-D04-T78** | D04 recovery with no P06 history engine | Message replay reconstructs ledger without P06 imports |
-| **P09-D04-T79** | Independent model checker rerun | Same fixtures reproduce state hashes |
-| **P09-D04-T80** | Release matrix claim audit | Only qualified classes marked accepted |
+| **P06-D04-T73** | D04 core built with only K0 and Gerbil | No specialist, K1 or external-service runtime imports |
+| **P06-D04-T74** | Optional P06-D02 joint-action adapter | Domain arbitration and D04 lease conflict remain distinct |
+| **P06-D04-T75** | Optional P06-D03 control adapter | Deadline/admission checked by host clock and authority |
+| **P06-D04-T76** | HostEffectPort with or without P02-D02 | Host enforces declared authority; P02-D02 adapter optional |
+| **P06-D04-T77** | D04 ledger with standalone store port | Recovery works without P04-D01; optional P04-D01 store separately scoped |
+| **P06-D04-T78** | D04 recovery with no P03-D02 history engine | Message replay reconstructs ledger without P03-D02 imports |
+| **P06-D04-T79** | Independent model checker rerun | Same fixtures reproduce state hashes |
+| **P06-D04-T80** | Release matrix claim audit | Only qualified classes marked accepted |
 
 
 

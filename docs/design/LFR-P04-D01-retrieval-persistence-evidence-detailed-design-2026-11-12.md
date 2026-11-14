@@ -1,41 +1,42 @@
-# LFR-P05-D01 | Retrieval, Persistence & Evidence Reserve
+# LFR-P04-D01 | Retrieval, Persistent Memory & Evidence / Retrieval, Persistence & Evidence
 
-**Document class:** Detailed Design Proposal, specialized edition P05 only  
+**Document class:** Detailed Design Proposal, specialized edition P04-D01 only  
 **Date:** 12 November 2026  
 **Programme:** Lisp Foundation Reserve, current architecture LFR-C02  
-**Edition:** P05, Retrieval, Persistence & Evidence  
+**Edition:** P04 — Retrieval, Persistent Memory & Evidence  
+**Design slice:** D01 — Retrieval, Persistence & Evidence  
 **Target implementation:** Independent Gerbil Scheme, without Python retrieval or obligatory model API  
 **Primary source lineage:** AutoContext and Personal AI Assistant from `mark-watson/gerbil_scheme_book@1335cb2708926213ba62afd2998754358f655db1` (11 November 2026)  
 **Research baseline:** LFR-C02 and published source audits `08-autocontext-gerbil-source-code-review.md` and `05-personal-ai-assistant-gerbil-source-code-review.md`  
 **Status:** `DETAILED_DESIGN_PROPOSED / SOURCE_LINEAGE_MAPPED / DURABLE_MEMORY_REQUIRED / STORAGE_ADAPTERS_UNQUALIFIED / RETRIEVAL_UNBENCHMARKED`  
 **Publication:** Owner-approved documentation publication on 12 November 2026 under `docs/design/` in `vietcong73/alien-works`, branch `audit/lisp-foundation-reserve`. This publication does not authorize source implementation, deployment, indexing private files, or live model access.  
-**Isolation:** Does not modify P01–P04, the minimal Meta-Foundation, existing reviews, original sources, or isolated historical concept 04.  
-**Design correction:** Durable memory and evidence persistence are core P05 capabilities; particular database, logging and cloud integrations are interchangeable qualified adapters. The corrected D01 was approved for publication.
+**Isolation:** Does not modify P01-D01–P02-D02, the minimal Meta-Foundation, existing reviews, original sources, or isolated historical concept 04.  
+**Design correction:** Durable memory and evidence persistence are core P04-D01 capabilities; particular database, logging and cloud integrations are interchangeable qualified adapters. The corrected D01 was approved for publication.
 
 ---
 
 ## 0. Design decision and product purpose
 
-P05 is a **small, independently usable Gerbil retrieval and integrity-aware memory reserve**. It exists so applications can find bounded relevant passages in an owned document corpus, persist memory reliably, and explain exactly which source revision produced each piece of returned context. It does not assume a chat model; applications can search, audit and reuse factual extracts without creating prompts.
+P04-D01 is a **small, independently usable Gerbil retrieval and integrity-aware memory reserve**. It exists so applications can find bounded relevant passages in an owned document corpus, persist memory reliably, and explain exactly which source revision produced each piece of returned context. It does not assume a chat model; applications can search, audit and reuse factual extracts without creating prompts.
 
-Two **separately testable but jointly required P05 capabilities**:
+Two **separately testable but jointly required P04-D01 capabilities**:
 
-- **P05-A — Pure Retrieval:** tokenize; chunk with source locations; build in-memory BM25 and sparse TF-IDF indexes; rank/fuse results; construct evidence-bearing and budget-bounded context bundles. The pure retrieval library is independently importable and testable from immutable fixtures without a database or network.
-- **P05-B — Durable Memory & Evidence:** admit and durably commit validated source/memory/evidence records, preserve lineage and revisions, expose recoverable state, manage tombstones and retention, and rebuild indexes. A **complete P05 deployment MUST configure at least one qualified authoritative durable backend**. The backend can be file-based, a transactional database, an event store, or a qualifying cloud service; no specific implementation or provider is mandatory.
+- **P04-D01-A — Pure Retrieval:** tokenize; chunk with source locations; build in-memory BM25 and sparse TF-IDF indexes; rank/fuse results; construct evidence-bearing and budget-bounded context bundles. The pure retrieval library is independently importable and testable from immutable fixtures without a database or network.
+- **P04-D01-B — Durable Memory & Evidence:** admit and durably commit validated source/memory/evidence records, preserve lineage and revisions, expose recoverable state, manage tombstones and retention, and rebuild indexes. A **complete P04-D01 deployment MUST configure at least one qualified authoritative durable backend**. The backend can be file-based, a transactional database, an event store, or a qualifying cloud service; no specific implementation or provider is mandatory.
 
-**Qualification distinction:** `P05-A_PURE_RETRIEVAL_QUALIFIED` is possible before storage is built, but is *not* equivalent to `P05_FULL_RESERVE_QUALIFIED`. A running full P05 instance with no verified authoritative store must refuse durable writes and must not claim persistent memory. Conversely, P05-B can be tested without a model. Durable memory is required; **storage-provider choice is optional**.
+**Qualification distinction:** `P04-D01-A_PURE_RETRIEVAL_QUALIFIED` is possible before storage is built, but is *not* equivalent to `P05_FULL_RESERVE_QUALIFIED`. A running full P04-D01 instance with no verified authoritative store must refuse durable writes and must not claim persistent memory. Conversely, P04-D01-B can be tested without a model. Durable memory is required; **storage-provider choice is optional**.
 
-Evidence schema is common to A and B but **does not become a third all-purpose governance engine**. A P05 `EvidenceRef` records where text came from, not whether a claim is scientifically proven. Evaluation of truth and permission to act are out of scope; P04 remains the independent agent-authority design.
+Evidence schema is common to A and B but **does not become a third all-purpose governance engine**. A P04-D01 `EvidenceRef` records where text came from, not whether a claim is scientifically proven. Evaluation of truth and permission to act are out of scope; P02-D02 remains the independent agent-authority design.
 
 **Consumer examples:** an offline searchable research notebook; a source-linked documentation searcher; a bounded assistant memory store; and a deterministic local RAG context-builder. **Non-goals:** neural semantic embedding engine, knowledge graph database, universal data lake, autonomous agent, unrestricted web crawler, distributed database, LLM provider, general security monitor, or the Meta-Foundation itself.
 
-**Default architecture:** classical lexical retrieval over a **durably committed authoritative record store**, with in-memory or persisted **rebuildable** indexes. Choose one qualified backend according to the consumer environment: local file generations, SQLite, PostgreSQL, an existing event store, or a verified cloud-backed database/object store. Logging/provenance integration is first-class, but a telemetry log does not itself establish recoverable memory. Optional model API remains **outside** P05. Local-first is an implementation and qualification starting point, not an architectural constraint.
+**Default architecture:** classical lexical retrieval over a **durably committed authoritative record store**, with in-memory or persisted **rebuildable** indexes. Choose one qualified backend according to the consumer environment: local file generations, SQLite, PostgreSQL, an existing event store, or a verified cloud-backed database/object store. Logging/provenance integration is first-class, but a telemetry log does not itself establish recoverable memory. Optional model API remains **outside** P04-D01. Local-first is an implementation and qualification starting point, not an architectural constraint.
 
 ## 1. Source-lineage and defect-resolution register
 
 Source status `S`: directly inspected pinned source; `R`: prior static review; `D`: newly proposed Gerbil design, **not tested**. A source failure mode is not necessarily a failure reproduced in a live deployment.
 
-| ID | Original mechanism/problem | Strong part to learn | Source-grounded limitation | New P05 response | Required falsification evidence |
+| ID | Original mechanism/problem | Strong part to learn | Source-grounded limitation | New P04-D01 response | Required falsification evidence |
 |---|---|---|---|---|---|
 | **AC-01** | AutoContext `bm25.ss:46–65`: lexical scoring with term and length statistics | Transparent BM25 calculations (S) | Negative IDF combined with strictly-positive-score filtering in `autocontext.ss:125–135` can drop matching documents (S/R) | Explicit nonnegative IDF variant; separate `matched_terms` from numeric score | One-document exact match; common-term corpus; invariant that a lexical hit is not lost through sign filtering |
 | **AC-02** | `bm25.ss:32–65`: corpus-length normalization | Efficient per-document statistics (S) | All-zero-token corpus yields average document length zero and invalid denominator on scoring (S/R) | Empty-index guard; finite-parameter and denominator checks; no result on zero-token/no-match corpus | Empty, stop-word-only, zero-length and all-unknown-term fixtures |
@@ -55,15 +56,15 @@ Source status `S`: directly inspected pinned source; `R`: prior static review; `
 | **PA-08** | `main.ss:69–85`: parse response content | Simple HTTP/JSON handling (S) | Only first content block of last model output is retained (S/R) | Optional consumer adapter validates all relevant blocks and typed status | Multi-block, non-text-first, empty and error-only responses |
 | **PA-09** | `test-cache.ss`: properly failing test harness | Test returns nonzero on failure (S) | Only basic ranking scenarios; hard-coded temp path can collide (S/R) | Per-test isolated directories, crash-injection and independent index/property tests | Parallel tests, persistence reload, corrupted bytes, external state |
 
-**Legal note:** Source reuse licensing must be reviewed per actual file and dependency; no assumption that all examples share the Coding Harness's AGPL header. Prefer independently designed Gerbil contracts and original code, with source pins and attribution. No automatic copying of source into P05.
+**Legal note:** Source reuse licensing must be reviewed per actual file and dependency; no assumption that all examples share the Coding Harness's AGPL header. Prefer independently designed Gerbil contracts and original code, with source pins and attribution. No automatic copying of source into P04-D01.
 
 ## 2. Module architecture: retrieval plus mandatory durable evidence
 
 ```text
-P05 CORE [REQUIRED CONTRACTS]
+P04-D01 CORE [REQUIRED CONTRACTS]
   SourceRef / MemoryRecord / EvidenceRef / TrustClass / Revision
                |                                |
-          P05-A RETRIEVAL                 P05-B DURABLE MEMORY
+          P04-D01-A RETRIEVAL                 P04-D01-B DURABLE MEMORY
         tokenizer / chunker              admission / transaction / CAS
         BM25 / TF-IDF / RRF              authoritative record/event store
         bounded ContextBundle            recovery / retention / replay
@@ -83,7 +84,7 @@ An **authoritative durable store** holds accepted records and their commit histo
 
 ### 2.1 Provider-neutral contract, not provider-neutral guarantees
 
-A `StoreDriver` advertises its supported semantics; there is no weakest-common-denominator fiction. A full P05 deployment selects one authoritative driver and a **DurabilityProfile** specifying `PROCESS_CRASH_SAFE`, `POWER_LOSS_SAFE`, `REMOTE_ACKNOWLEDGED`, and required read consistency only when those properties have been qualified. The driver must refuse a profile it cannot fulfill.
+A `StoreDriver` advertises its supported semantics; there is no weakest-common-denominator fiction. A full P04-D01 deployment selects one authoritative driver and a **DurabilityProfile** specifying `PROCESS_CRASH_SAFE`, `POWER_LOSS_SAFE`, `REMOTE_ACKNOWLEDGED`, and required read consistency only when those properties have been qualified. The driver must refuse a profile it cannot fulfill.
 
 Candidate adapters:
 
@@ -93,13 +94,13 @@ Candidate adapters:
 - **Append-only event store / existing logging infrastructure:** adapter may persist accepted record events and reconstruct snapshots **if** it exposes reliable record ownership, ordering, integrity, durable acknowledgment, recovery, retention and idempotency semantics. A best-effort JSONL audit file or process log alone is *not* automatically the memory database.
 - **Cloud object store / managed database:** conditional on capability contracts for object versioning or compare-and-swap, conditional writes, read consistency, persistence acknowledgment, encryption, access policy and recovery. Async replicas and backups remain separate statuses rather than assumed synchronized.
 
-**Backend plurality is supported at the interface level, not promised as one universal distributed transaction.** Optional secondary sinks can receive events via a durable outbox and track independent acknowledgement/cursor watermarks. Memory remains locally or remotely committed only at the authoritative store's defined commit boundary. A secondary cloud copy being behind is `REPLICATION_LAG`, not loss of the primary commit. When the authoritative store itself is remote and unavailable, P05 must not acknowledge persistence merely because a local queue contains a proposal.
+**Backend plurality is supported at the interface level, not promised as one universal distributed transaction.** Optional secondary sinks can receive events via a durable outbox and track independent acknowledgement/cursor watermarks. Memory remains locally or remotely committed only at the authoritative store's defined commit boundary. A secondary cloud copy being behind is `REPLICATION_LAG`, not loss of the primary commit. When the authoritative store itself is remote and unavailable, P04-D01 must not acknowledge persistence merely because a local queue contains a proposal.
 
 ### 2.2 Logging integration, existing precedent, and ownership
 
-The user's existing project process-ledger precedent, e.g. `projects/usd-centric-cross-asset-risk-analysis/evidence/process/project_events.jsonl` in the separate `quant-risk-analytics-portfolio` repository, is a **project-owned research process log**. P05 may learn its append-only event, checkpoint, hash, and remote-readback discipline or provide a *consumer-configured adapter*; it must **not** open, append to, relocate, replace, or duplicate that canonical project log by default. Likewise, the previously discussed event/checkpoint/artifact ideas for other projects are precedents, not an already-installed generic P05 engine.
+The user's existing project process-ledger precedent, e.g. `projects/usd-centric-cross-asset-risk-analysis/evidence/process/project_events.jsonl` in the separate `quant-risk-analytics-portfolio` repository, is a **project-owned research process log**. P04-D01 may learn its append-only event, checkpoint, hash, and remote-readback discipline or provide a *consumer-configured adapter*; it must **not** open, append to, relocate, replace, or duplicate that canonical project log by default. Likewise, the previously discussed event/checkpoint/artifact ideas for other projects are precedents, not an already-installed generic P04-D01 engine.
 
-P05 records two related but separate event classes: `MemoryMutationEvent` (accepted durable state changes) and `AuditObservation` (requests, denials, failures, read/access traces). Auditing a failed write does **not** make that write committed; a committed record should have a traceable event and generation. A DB transaction can commit the record and outbox event atomically; an external logging sink is normally updated **afterward** with at-least-once delivery plus idempotent event IDs. If audit delivery fails, mark `AUDIT_DELIVERY_PENDING` without claiming either that the memory commit failed or that the audit was delivered.
+P04-D01 records two related but separate event classes: `MemoryMutationEvent` (accepted durable state changes) and `AuditObservation` (requests, denials, failures, read/access traces). Auditing a failed write does **not** make that write committed; a committed record should have a traceable event and generation. A DB transaction can commit the record and outbox event atomically; an external logging sink is normally updated **afterward** with at-least-once delivery plus idempotent event IDs. If audit delivery fails, mark `AUDIT_DELIVERY_PENDING` without claiming either that the memory commit failed or that the audit was delivered.
 
 ### 2.3 Proposed source structure (not created)
 
@@ -129,7 +130,7 @@ editions/retrieval-persistence/
       filters.ss
       context.ss
       diagnostics.ss
-    memory/                        # P05-B: required capability
+    memory/                        # P04-D01-B: required capability
       admission.ss
       journal.ss
       snapshot.ss
@@ -169,7 +170,7 @@ editions/retrieval-persistence/
     driver-evidence/
 ```
 
-The directory is a proposed topology; no new source code or integration exists yet. The first qualified primary backend is chosen during implementation; other adapters remain `NOT_IMPLEMENTED` or `UNQUALIFIED` until tested, without weakening the mandatory P05-B contract.
+The directory is a proposed topology; no new source code or integration exists yet. The first qualified primary backend is chosen during implementation; other adapters remain `NOT_IMPLEMENTED` or `UNQUALIFIED` until tested, without weakening the mandatory P04-D01-B contract.
 
 ## 3. Data and evidence contracts
 
@@ -205,7 +206,7 @@ Separate labels:
 - **Integrity status:** `HASH_VERIFIED`, `DECODED`, `CORRUPT`, `UNKNOWN`.
 - **Truth/evidence status:** `UNCHECKED_CLAIM`, `SOURCE_QUOTATION`, `EXTERNALLY_CHECKED`, `CONTRADICTED`, `WITHDRAWN` (if a consumer supplies genuine verification evidence).
 - **Freshness status:** `CURRENT_AS_OF`, `STALE_AS_OF`, `UNDATED`, `UNKNOWN` with an explicit evaluation timestamp.
-- **Visibility classification:** consumer-provided access label; P05 is *not* a kernel security boundary, and does not infer access rights from text.
+- **Visibility classification:** consumer-provided access label; P04-D01 is *not* a kernel security boundary, and does not infer access rights from text.
 
 `HASH_VERIFIED` means bytes match the snapshot, **not** that the text is true. `SOURCE_QUOTATION` establishes attribution to a record, **not** scientific or legal validity. A text fragment saying “ignore instructions” remains source data even when retrieved with high score.
 
@@ -232,7 +233,7 @@ bytes + SourceRef
 
 **Source spans:** maintain mapping to original decoded text offsets, including any Unicode transformations. When a mapping cannot be reconstructed, represent `OFFSET_UNVERIFIED` explicitly; a fabricated source location is worse than an honest unknown.
 
-## 5. P05-A: lexical scoring and ranking semantics
+## 5. P04-D01-A: lexical scoring and ranking semantics
 
 ### 5.1 BM25 baseline
 
@@ -254,7 +255,7 @@ For one document containing a single matching term, `N=df=1`, the selected IDF i
 
 Sparse term frequency and smoothed document frequency computed against one immutable index generation. Suggested weight `w(t,d)=(1+ln(tf(t,d)))*(1+ln((N+1)/(df(t)+1)))` when `tf>0`. Cosine similarity returns zero for either zero-norm vector; it never returns NaN/Infinity. Numeric overflows, nonfinite weights and damaged index tables must be explicit errors or safe refusal, not silently promoted.
 
-TF-IDF is **lexical vector-space retrieval**, not a neural semantic embedding. The original AutoContext documentation likewise distinguishes this; P05 must not market it as semantic search. Scores from TF-IDF and BM25 are different scales and should not be directly added without a calibrated method.
+TF-IDF is **lexical vector-space retrieval**, not a neural semantic embedding. The original AutoContext documentation likewise distinguishes this; P04-D01 must not market it as semantic search. Scores from TF-IDF and BM25 are different scales and should not be directly added without a calibrated method.
 
 ### 5.3 Hybrid ranking via reciprocal rank fusion
 
@@ -288,15 +289,15 @@ Algorithmic contract:
 6. Render for a consumer as clearly delimited **untrusted quoted source content**. Delimiters and prompt wording do not create a security boundary; the consuming agent must maintain its own instructions/policy.
 7. If no hit can fit the budget, return `NO_FITTING_CONTEXT` and a receipt; never silently exceed it.
 
-An optional external model renderer or local chat front end may use the bundle. P05's default tests require **no** model. The answer's factual support remains the responsibility of the consumer: a high-ranking passage is not evidence that its claims are true.
+An optional external model renderer or local chat front end may use the bundle. P04-D01's default tests require **no** model. The answer's factual support remains the responsibility of the consumer: a high-ranking passage is not evidence that its claims are true.
 
-## 7. P05-B: required durable record admission and storage
+## 7. P04-D01-B: required durable record admission and storage
 
 ### 7.1 Admission boundary
 
 Only typed, validated content is eligible to become a `MemoryRecord`. A `MODEL_OUTPUT` may be stored as **unverified historical output** with explicit owner acceptance; it may not automatically be converted into `VERIFIED_FACT`. A failed API call, timeout or transport error must result in `INGEST_FAILED` and may be kept in an error log, **not** in normal answer/context records. Explicit manual save is an acceptable consumer policy and should be preserved as an option.
 
-Input files must have a declared owner and import scope. P05 is not an unbounded scanner of a user's home directory. This design never requests collecting private files, credentials or conversation history into a new store without a consuming application's authority and user's own configuration.
+Input files must have a declared owner and import scope. P04-D01 is not an unbounded scanner of a user's home directory. This design never requests collecting private files, credentials or conversation history into a new store without a consuming application's authority and user's own configuration.
 
 ### 7.2 Store open states
 
@@ -315,7 +316,7 @@ RECOVERY_NEEDED -> inspect valid committed snapshots; no blind empty fallback
 
 ### 7.3 Authoritative commit protocol (provider-neutral)
 
-**A full P05 has one selected authoritative durable store per namespace**. All accepted memories and evidential revisions must be committed there before a successful `MemoryWriteReceipt` can be returned. The abstract protocol is:
+**A full P04-D01 has one selected authoritative durable store per namespace**. All accepted memories and evidential revisions must be committed there before a successful `MemoryWriteReceipt` can be returned. The abstract protocol is:
 
 1. Validate owner scope, record schema, origin/trust status, current revision and store capabilities.
 2. Begin an operation with a **stable idempotency key** and expected generation (optimistic CAS or an equivalent database transaction).
@@ -381,7 +382,7 @@ A record may be expired for ordinary retrieval without being deleted; retention 
 
 ### Slice A — Pure retrieval on an immutable fixture
 
-Corpus has (a) a single exact common-term match, (b) a zero-token document, (c) duplicate text across two independently identified sources, (d) a very long sentence, and (e) a query with repeated terms. P05-A produces finite scored hits, stable source-located citations, and a global top-K. No database, network or model call.
+Corpus has (a) a single exact common-term match, (b) a zero-token document, (c) duplicate text across two independently identified sources, (d) a very long sentence, and (e) a query with repeated terms. P04-D01-A produces finite scored hits, stable source-located citations, and a global top-K. No database, network or model call.
 
 ### Slice B — Crash-safe memory lifecycle (mock store first)
 
@@ -430,64 +431,64 @@ These are specification targets, not completed results. CI must exit nonzero on 
 
 | ID | Scenario | Expected contract |
 |---|---|---|
-| **P05-T01** | Build retrieval-only profile without store, model, network or Python | Pure dependency isolation |
-| **P05-T02** | Empty corpus and valid nonempty query | `EMPTY_CORPUS`, zero hits, no invalid arithmetic |
-| **P05-T03** | One document, one matching term | Positive, finite BM25 hit |
-| **P05-T04** | A term occurs in every document | Matches preserved, no negative-IDF filtering loss |
-| **P05-T05** | All documents tokenize to empty | No division by zero; zero lexical hits |
-| **P05-T06** | Query contains only stop words | Normal empty-query/no-match outcome |
-| **P05-T07** | Query term absent from corpus | No false match, no NaN |
-| **P05-T08** | BM25 score hand-worked two-document fixture | Formula/parameter golden |
-| **P05-T09** | Invalid `k1`, `b`, Infinity/NaN parameters | Reject before index creation |
-| **P05-T10** | Sparse TF-IDF hand-calculated document/query | Exact approximate cosine golden within tolerance |
-| **P05-T11** | Zero TF-IDF query/document norm | Zero similarity, never NaN/Infinity |
-| **P05-T12** | Query repeats identical token | Unique-term default prevents unintentional amplification |
-| **P05-T13** | Token `cat` vs word `education` | No arbitrary substring match |
-| **P05-T14** | `top_k=-1`, fraction or enormous value | Checked refusal |
-| **P05-T15** | `top_k=0` | Valid empty result without running unneeded ranking |
-| **P05-T16** | One retriever finds K, second finds disjoint K | Final fused output at most K, not 2K |
-| **P05-T17** | Tied RRF scores | Deterministic secondary ordering |
-| **P05-T18** | Duplicate chunk indices in multiple lists | One hit with both method receipts |
-| **P05-T19** | Identical text at different source locations | Distinct provenance identities |
-| **P05-T20** | Reordered source loading of same canonical corpus | Identical ordered results |
-| **P05-T21** | Single huge sentence | Chunk bounded and source text consumption progresses |
-| **P05-T22** | Zero/negative chunk size and illegal overlap | Fail before chunker loop |
-| **P05-T23** | Unicode casefold, multibyte offsets | Correct versioned normalization and source span mapping |
-| **P05-T24** | Decode failure / unsupported media type | Error, not valid empty document |
-| **P05-T25** | Retrieving old index after source revision | Explicit generation mismatch or labeled old snapshot |
-| **P05-T26** | Source span/revision digest tampered | Citation rejected or marked unverifiable |
-| **P05-T27** | Giant context hits under aggregate quota | Selected bundle stays below byte/char limits |
-| **P05-T28** | Rendering metadata overhead exceeds quota | `NO_FITTING_CONTEXT` with evidence |
-| **P05-T29** | Context truncation at Unicode boundary | Valid UTF-8 and recorded truncation |
-| **P05-T30** | Model-generated malicious instructions in a retrieved chunk | Trust label retained as data; no P05 policy elevation |
-| **P05-T31** | Expired source retained but stale | Correct freshness label; policy filter works |
-| **P05-T32** | Store absent vs committed zero-record snapshot | Distinct opening states |
-| **P05-T33** | Malformed s-expression/persisted snapshot then ordinary close | Bytes unchanged; quarantine/read-only state |
-| **P05-T34** | Format revision unsupported | Refuse writes until migration approved |
-| **P05-T35** | Failed API request proposed as memory | `RECORD_REJECTED`, not accepted answer |
-| **P05-T36** | Valid model response stored at owner request | `MODEL_OUTPUT` origin, unverified status, not trusted fact |
-| **P05-T37** | Prepare new generation then crash before manifest | Prior committed snapshot remains readable |
-| **P05-T38** | Interrupted manifest update | Recover last verified generation or report uncertainty |
-| **P05-T39** | Disk full during staged write | No silent replacement of prior valid data |
-| **P05-T40** | Two writers race on same generation | No lost update; one conflict or serialized commit |
-| **P05-T41** | Reopen after successful committed snapshot | Same records, hashes and manifest generation |
-| **P05-T42** | Index generation differs from store generation | Rebuild/refuse, never mix records |
-| **P05-T43** | Record corrected with superseding revision | Both lineage and current selection preserved |
-| **P05-T44** | Withdraw/delete record | Tombstone and index invalidation, no unsupported erasure claim |
-| **P05-T45** | Real Linux process is terminated during file/dir sync | Report honest durability result after recovery testing |
-| **P05-T46** | Labeled retrieval corpus compares BM25, TF-IDF, union, RRF | Reproducible MRR/nDCG/Recall@K with no unsupported superiority claim |
-| **P05-T47** | Full P05 starts with no authoritative backend | Refuse durable mode; pure retrieval remains usable |
-| **P05-T48** | An ordinary JSONL audit log is offered as the sole memory backend | Refuse unless qualified commit/replay capabilities exist |
-| **P05-T49** | SQLite primary commits record + event + outbox then reopens | One coherent committed generation, verified on qualified configuration |
-| **P05-T50** | PostgreSQL primary concurrent compare-and-swap writers | No lost revision or duplicate event; tested isolation contract |
-| **P05-T51** | Cloud primary loses response after conditional manifest write | Reconcile by event ID/object version; no blind duplicate commit |
-| **P05-T52** | Same idempotency key retried after unknown acknowledgement | Resolve original outcome or report unknown; never silently double-write |
-| **P05-T53** | Primary commits, external logging sink crashes before delivery | Memory committed; durable outbox remains pending and traceable |
-| **P05-T54** | Audit/cloud sink receives same event twice | Idempotent event identity, one logical observation at consumer |
-| **P05-T55** | Cloud replica lags authoritative generation | Read watermark and staleness visible; strong read routed or refused |
-| **P05-T56** | Replay committed event log after index loss | Recover correct record revisions and deterministic index generation |
-| **P05-T57** | PII/secrets present in memory records but audit sink enabled | Audit payload excludes restricted contents; policy failures visible |
-| **P05-T58** | Same conformance fixture across two qualified store drivers | Matching logical revisions/results; provider-specific durability separately reported |
+| **P04-D01-T01** | Build retrieval-only profile without store, model, network or Python | Pure dependency isolation |
+| **P04-D01-T02** | Empty corpus and valid nonempty query | `EMPTY_CORPUS`, zero hits, no invalid arithmetic |
+| **P04-D01-T03** | One document, one matching term | Positive, finite BM25 hit |
+| **P04-D01-T04** | A term occurs in every document | Matches preserved, no negative-IDF filtering loss |
+| **P04-D01-T05** | All documents tokenize to empty | No division by zero; zero lexical hits |
+| **P04-D01-T06** | Query contains only stop words | Normal empty-query/no-match outcome |
+| **P04-D01-T07** | Query term absent from corpus | No false match, no NaN |
+| **P04-D01-T08** | BM25 score hand-worked two-document fixture | Formula/parameter golden |
+| **P04-D01-T09** | Invalid `k1`, `b`, Infinity/NaN parameters | Reject before index creation |
+| **P04-D01-T10** | Sparse TF-IDF hand-calculated document/query | Exact approximate cosine golden within tolerance |
+| **P04-D01-T11** | Zero TF-IDF query/document norm | Zero similarity, never NaN/Infinity |
+| **P04-D01-T12** | Query repeats identical token | Unique-term default prevents unintentional amplification |
+| **P04-D01-T13** | Token `cat` vs word `education` | No arbitrary substring match |
+| **P04-D01-T14** | `top_k=-1`, fraction or enormous value | Checked refusal |
+| **P04-D01-T15** | `top_k=0` | Valid empty result without running unneeded ranking |
+| **P04-D01-T16** | One retriever finds K, second finds disjoint K | Final fused output at most K, not 2K |
+| **P04-D01-T17** | Tied RRF scores | Deterministic secondary ordering |
+| **P04-D01-T18** | Duplicate chunk indices in multiple lists | One hit with both method receipts |
+| **P04-D01-T19** | Identical text at different source locations | Distinct provenance identities |
+| **P04-D01-T20** | Reordered source loading of same canonical corpus | Identical ordered results |
+| **P04-D01-T21** | Single huge sentence | Chunk bounded and source text consumption progresses |
+| **P04-D01-T22** | Zero/negative chunk size and illegal overlap | Fail before chunker loop |
+| **P04-D01-T23** | Unicode casefold, multibyte offsets | Correct versioned normalization and source span mapping |
+| **P04-D01-T24** | Decode failure / unsupported media type | Error, not valid empty document |
+| **P04-D01-T25** | Retrieving old index after source revision | Explicit generation mismatch or labeled old snapshot |
+| **P04-D01-T26** | Source span/revision digest tampered | Citation rejected or marked unverifiable |
+| **P04-D01-T27** | Giant context hits under aggregate quota | Selected bundle stays below byte/char limits |
+| **P04-D01-T28** | Rendering metadata overhead exceeds quota | `NO_FITTING_CONTEXT` with evidence |
+| **P04-D01-T29** | Context truncation at Unicode boundary | Valid UTF-8 and recorded truncation |
+| **P04-D01-T30** | Model-generated malicious instructions in a retrieved chunk | Trust label retained as data; no P04-D01 policy elevation |
+| **P04-D01-T31** | Expired source retained but stale | Correct freshness label; policy filter works |
+| **P04-D01-T32** | Store absent vs committed zero-record snapshot | Distinct opening states |
+| **P04-D01-T33** | Malformed s-expression/persisted snapshot then ordinary close | Bytes unchanged; quarantine/read-only state |
+| **P04-D01-T34** | Format revision unsupported | Refuse writes until migration approved |
+| **P04-D01-T35** | Failed API request proposed as memory | `RECORD_REJECTED`, not accepted answer |
+| **P04-D01-T36** | Valid model response stored at owner request | `MODEL_OUTPUT` origin, unverified status, not trusted fact |
+| **P04-D01-T37** | Prepare new generation then crash before manifest | Prior committed snapshot remains readable |
+| **P04-D01-T38** | Interrupted manifest update | Recover last verified generation or report uncertainty |
+| **P04-D01-T39** | Disk full during staged write | No silent replacement of prior valid data |
+| **P04-D01-T40** | Two writers race on same generation | No lost update; one conflict or serialized commit |
+| **P04-D01-T41** | Reopen after successful committed snapshot | Same records, hashes and manifest generation |
+| **P04-D01-T42** | Index generation differs from store generation | Rebuild/refuse, never mix records |
+| **P04-D01-T43** | Record corrected with superseding revision | Both lineage and current selection preserved |
+| **P04-D01-T44** | Withdraw/delete record | Tombstone and index invalidation, no unsupported erasure claim |
+| **P04-D01-T45** | Real Linux process is terminated during file/dir sync | Report honest durability result after recovery testing |
+| **P04-D01-T46** | Labeled retrieval corpus compares BM25, TF-IDF, union, RRF | Reproducible MRR/nDCG/Recall@K with no unsupported superiority claim |
+| **P04-D01-T47** | Full P04-D01 starts with no authoritative backend | Refuse durable mode; pure retrieval remains usable |
+| **P04-D01-T48** | An ordinary JSONL audit log is offered as the sole memory backend | Refuse unless qualified commit/replay capabilities exist |
+| **P04-D01-T49** | SQLite primary commits record + event + outbox then reopens | One coherent committed generation, verified on qualified configuration |
+| **P04-D01-T50** | PostgreSQL primary concurrent compare-and-swap writers | No lost revision or duplicate event; tested isolation contract |
+| **P04-D01-T51** | Cloud primary loses response after conditional manifest write | Reconcile by event ID/object version; no blind duplicate commit |
+| **P04-D01-T52** | Same idempotency key retried after unknown acknowledgement | Resolve original outcome or report unknown; never silently double-write |
+| **P04-D01-T53** | Primary commits, external logging sink crashes before delivery | Memory committed; durable outbox remains pending and traceable |
+| **P04-D01-T54** | Audit/cloud sink receives same event twice | Idempotent event identity, one logical observation at consumer |
+| **P04-D01-T55** | Cloud replica lags authoritative generation | Read watermark and staleness visible; strong read routed or refused |
+| **P04-D01-T56** | Replay committed event log after index loss | Recover correct record revisions and deterministic index generation |
+| **P04-D01-T57** | PII/secrets present in memory records but audit sink enabled | Audit payload excludes restricted contents; policy failures visible |
+| **P04-D01-T58** | Same conformance fixture across two qualified store drivers | Matching logical revisions/results; provider-specific durability separately reported |
 
 ## 12. Qualification gates
 
@@ -498,12 +499,12 @@ These are specification targets, not completed results. CI must exit nonzero on 
 | **Q2 — Ranking correctness** | BM25, TF-IDF, fusion, deterministic ordering | T02–T20; hand-computed and differential goldens |
 | **Q3 — Evidence/context** | Trust and truth labels, source integrity, quotas, freshness | T25–T31; negative injection and oversized-content tests |
 | **Q4 — Durable store model** | Core admission, revision, event identities, CAS, recovery and outbox | T32–T44 plus T47–T48 and T52–T56 in fault-injection model |
-| **Q5 — One real primary backend (mandatory for full P05)** | Real DB/filesystem/cloud durability, authoritative acknowledgment and corruption handling | T37–T45 plus the applicable backend conformance cases (T49–T51); `QUALIFIED` only for tested profile |
+| **Q5 — One real primary backend (mandatory for full P04-D01)** | Real DB/filesystem/cloud durability, authoritative acknowledgment and corruption handling | T37–T45 plus the applicable backend conformance cases (T49–T51); `QUALIFIED` only for tested profile |
 | **Q6 — Adapter/interoperability (per backend)** | Logging, database/cloud sync, consistency watermarks, idempotent outbox, privacy | T49–T58; each optional adapter qualifies independently; no unqualified multi-backend claim |
 | **Q7 — Retrieval quality & budget** | Relevance and performance vs source baselines | Labeled corpora T46, memory/latency bounds, regression analysis |
 | **Q8 — Independent audit** | Reproducibility, negative tests, licensing, statuses | Independent rerun and PASS/REJECTED/UNQUALIFIED by component |
 
-Q2 can pass for **P05-A alone** while durable storage remains unimplemented. **Full P05 may not pass without Q5**, at least one real qualified authoritative durable backend. Q4 mock correctness does not qualify Q5 power-loss durability. Q6 can remain partial for unimplemented PostgreSQL or cloud providers without blocking a fully qualified single-backend P05; nevertheless those adapters may not be advertised as implemented. Q7 may reject RRF if the evidence supports a simpler retriever. Neither richer algorithms nor more storage providers inherently improve reliability.
+Q2 can pass for **P04-D01-A alone** while durable storage remains unimplemented. **Full P04-D01 may not pass without Q5**, at least one real qualified authoritative durable backend. Q4 mock correctness does not qualify Q5 power-loss durability. Q6 can remain partial for unimplemented PostgreSQL or cloud providers without blocking a fully qualified single-backend P04-D01; nevertheless those adapters may not be advertised as implemented. Q7 may reject RRF if the evidence supports a simpler retriever. Neither richer algorithms nor more storage providers inherently improve reliability.
 
 ### Quality metrics (explicit evaluation definitions)
 
@@ -511,18 +512,18 @@ For a fixed relevance-labeled corpus, report `Recall@K`, `MRR@K` and `nDCG@K` wi
 
 ## 13. Proposed implementation sequence if later authorized
 
-1. **P05-00:** pin source/licensing evidence; freeze corpus fixtures, durability contract, and numerical reference oracles.
-2. **P05-01:** implement common identity/source/evidence records, `StoreDriver` capability descriptions, mutation event IDs and typed storage results.
-3. **P05-02:** implement pure tokenizer/chunker, guarded BM25, sparse TF-IDF, deterministic fusion and context quotas. Qualify **P05-A only**.
-4. **P05-03:** implement the mandatory P05-B in-memory state/transaction model with revisions, idempotency keys, tombstones, a mock authoritative store and fake crash/replay tests.
-5. **P05-04:** implement and qualify **one** real durable primary backend, initially selected by deployment need (local generations or SQLite are natural low-complexity candidates, not architectural mandates).
-6. **P05-05:** verify coherent retrieval over exact committed generations, indexing/rebuild/recovery, and read-your-writes semantics.
-7. **P05-06:** add durable outbox, audit-logging adapter contract and export receipts; preserve existing project-owned canonical logging schemes without unauthorized mutation.
-8. **P05-07:** add PostgreSQL, event-store or cloud adapters **only as applicable**, with individual conformance, privacy, consistency and failure-injection gates.
-9. **P05-08:** run relevance, latency, memory, storage and recovery benchmarks, including negative tests. Select actual default ranking and storage profiles on evidence.
-10. **P05-Q01:** independent qualification report, separately distinguishing P05-A, full P05, each backend and every replication/audit adapter.
+1. **P04-D01-00:** pin source/licensing evidence; freeze corpus fixtures, durability contract, and numerical reference oracles.
+2. **P04-D01-01:** implement common identity/source/evidence records, `StoreDriver` capability descriptions, mutation event IDs and typed storage results.
+3. **P04-D01-02:** implement pure tokenizer/chunker, guarded BM25, sparse TF-IDF, deterministic fusion and context quotas. Qualify **P04-D01-A only**.
+4. **P04-D01-03:** implement the mandatory P04-D01-B in-memory state/transaction model with revisions, idempotency keys, tombstones, a mock authoritative store and fake crash/replay tests.
+5. **P04-D01-04:** implement and qualify **one** real durable primary backend, initially selected by deployment need (local generations or SQLite are natural low-complexity candidates, not architectural mandates).
+6. **P04-D01-05:** verify coherent retrieval over exact committed generations, indexing/rebuild/recovery, and read-your-writes semantics.
+7. **P04-D01-06:** add durable outbox, audit-logging adapter contract and export receipts; preserve existing project-owned canonical logging schemes without unauthorized mutation.
+8. **P04-D01-07:** add PostgreSQL, event-store or cloud adapters **only as applicable**, with individual conformance, privacy, consistency and failure-injection gates.
+9. **P04-D01-08:** run relevance, latency, memory, storage and recovery benchmarks, including negative tests. Select actual default ranking and storage profiles on evidence.
+10. **P04-D01-Q01:** independent qualification report, separately distinguishing P04-D01-A, full P04-D01, each backend and every replication/audit adapter.
 
-Only **P05** is in scope. No LLM integration is a prerequisite; no changes to P01–P04, Meta-Foundation design, source-preservation vault, system configuration, or other GitHub files are authorized by this design document. Documentation publication was separately approved.
+Only **P04-D01** is in scope. No LLM integration is a prerequisite; no changes to P01-D01–P02-D02, Meta-Foundation design, source-preservation vault, system configuration, or other GitHub files are authorized by this design document. Documentation publication was separately approved.
 
 ## 14. Open questions and decisions not to conceal
 
@@ -530,23 +531,23 @@ Only **P05** is in scope. No LLM integration is a prerequisite; no changes to P0
 2. **Source formats:** first release is UTF-8 text; PDFs/HTML and extracted offsets need independently qualified adapters.
 3. **RRF vs union:** RRF is the chosen default *candidate*, subject to rejection if the relevance corpus supports a simpler option.
 4. **Query policy:** should stopword-only queries be reported as `EMPTY_QUERY_AFTER_FILTER` or trigger an explicitly configured non-stopword fallback? Default is transparent empty.
-5. **Source access filtering:** P05 relies on consumer-provided access labels, not a security kernel. A mixed-trust multi-tenant service would require a separate security boundary.
+5. **Source access filtering:** P04-D01 relies on consumer-provided access labels, not a security kernel. A mixed-trust multi-tenant service would require a separate security boundary.
 6. **Store format and drivers:** use a strictly versioned data-only logical schema and canonical digest grammar. SQLite/PostgreSQL/cloud physical formats differ; never execute imported serialized code.
 7. **Durability and consistency:** define precisely the acknowledged commit boundary, process-crash/power-loss/remote-ack classes, reader consistency and reconciliation semantics for each driver and deployment.
 8. **Backup and privacy:** deletion of active indexes does not prove secure erasure of old generations, backups or flash devices.
 9. **Freshness:** ordinary retrieval must not silently present historical snapshots as live facts; timestamps are labels and filters, not proofs.
-10. **Evidence truth:** source identity + hash is provenance/integrity, not factual validation; any independent fact-checking workflow is outside P05.
+10. **Evidence truth:** source identity + hash is provenance/integrity, not factual validation; any independent fact-checking workflow is outside P04-D01.
 11. **Model outputs:** whether any should enter persistent memory by default must be a consumer policy; design default is explicit owner acceptance and unverified trust label.
-12. **Logging integration ownership:** existing project process logs/checkpoints remain under their project governance; P05 has no implicit permission to change a canonical event log. An adapter contract must name the owner, schema, sink cursor and permitted mutations.
+12. **Logging integration ownership:** existing project process logs/checkpoints remain under their project governance; P04-D01 has no implicit permission to change a canonical event log. An adapter contract must name the owner, schema, sink cursor and permitted mutations.
 13. **Cloud deployment:** choose remote primary vs optional replica explicitly. Network failure, lag, privacy retention, encryption, access controls and data-residency policies require consumer configuration and qualification.
 14. **Backend scope:** qualifying local durable memory does not make SQLite, PostgreSQL, event-store or cloud adapters automatically functional; each gets a separate verdict.
-15. **Cross-edition promotion:** P05 records may inspire shared K0 `Identity`, `Evidence`, and `Result` interfaces only after genuine independent cross-domain tests; no premature Meta-Foundation dependency.
+15. **Cross-edition promotion:** P04-D01 records may inspire shared K0 `Identity`, `Evidence`, and `Result` interfaces only after genuine independent cross-domain tests; no premature Meta-Foundation dependency.
 
 ## 15. Verdict
 
 `P05_D01_DETAILED_DESIGN_PROPOSED / AUTOCONTEXT_BM25_TFIDF_LINEAGE / PERSONAL_AI_MEMORY_LINEAGE / GERBIL_NATIVE / PURE_RETRIEVAL_INDEPENDENT / DURABLE_MEMORY_REQUIRED / PLUGGABLE_STORAGE_AND_LOGGING / EXPLICIT_PROVENANCE_AND_TRUST / SCORE_AND_CORRUPTION_GUARDS / MODEL_OPTIONAL / NO_RUNTIME_QUALIFICATION / P01_P02_P03_P04_UNTOUCHED / DOCUMENT_PUBLISHED`
 
-P05's distinct role is to **remember durably and retrieve without losing, fabricating or silently elevating evidence**. Full P05 requires a qualified authoritative persistent store; logging, databases and cloud providers can be integrated through validated adapters, with explicit distinctions between authoritative commits and observability/replication. AutoContext contributes lexical retrieval architecture and its identifiable edge cases; Personal AI contributes lightweight explicit memory and a concrete failure path demonstrating why persistence needs correctness contracts. The result is a proposed specialized Gerbil edition, not a claim that existing source code is safe, ported or benchmarked.
+P04-D01's distinct role is to **remember durably and retrieve without losing, fabricating or silently elevating evidence**. Full P04-D01 requires a qualified authoritative persistent store; logging, databases and cloud providers can be integrated through validated adapters, with explicit distinctions between authoritative commits and observability/replication. AutoContext contributes lexical retrieval architecture and its identifiable edge cases; Personal AI contributes lightweight explicit memory and a concrete failure path demonstrating why persistence needs correctness contracts. The result is a proposed specialized Gerbil edition, not a claim that existing source code is safe, ported or benchmarked.
 
 ---
 
@@ -562,4 +563,4 @@ P05's distinct role is to **remember durably and retrieve without losing, fabric
 - [Existing AutoContext review](https://github.com/vietcong73/alien-works/blob/audit/lisp-foundation-reserve/docs/reviews/gerbil-projects/08-autocontext-gerbil-source-code-review.md)
 - [Existing Personal AI review](https://github.com/vietcong73/alien-works/blob/audit/lisp-foundation-reserve/docs/reviews/gerbil-projects/05-personal-ai-assistant-gerbil-source-code-review.md)
 - [LFR-C02 concept](https://github.com/vietcong73/alien-works/blob/audit/lisp-foundation-reserve/docs/concept/LFR-C02-source-lineage-gerbil-reserve-concept-2026-11-12.md)
-- [Previous P04 design](https://github.com/vietcong73/alien-works/blob/audit/lisp-foundation-reserve/docs/design/LFR-P04-D01-agent-authority-controlled-execution-detailed-design-2026-11-12.md)
+- [Previous P02-D02 design](https://github.com/vietcong73/alien-works/blob/audit/lisp-foundation-reserve/docs/design/LFR-P02-D02-agent-authority-controlled-execution-detailed-design-2026-11-12.md)

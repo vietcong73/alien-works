@@ -1,17 +1,17 @@
-# LFR-P08-D03 | Game World Procedural Generation Architecture
+# LFR-P05-D03 | Symbolic Computation & Interactive Worlds / Game World Procedural Generation
 
 **Document class:** Source-grounded detailed design proposal for one gaming specialist slice  
 **Date:** 13 November 2026  
 **Programme:** Lisp Foundation Reserve (LFR-C02)  
 **Domain track:** `GAMING` — Gaming & Interactive Worlds  
-**Edition:** P08 — World, Scene & Spacetime Decision Systems  
-**Design slice:** D03 — Game World Procedural Generation Architecture  
+**Edition:** P05 — Symbolic Computation & Interactive Worlds  
+**Design slice:** D03 — Game World Procedural Generation  
 **Primary design language:** Gerbil Scheme; qualified native or remote compute adapters selected by measured need  
-**Repository context:** `vietcong73/alien-works`, branch `audit/lisp-foundation-reserve`, path `docs/design/LFR-P08-D03-game-world-procedural-generation-architecture-2026-11-13.md`  
+**Repository context:** `vietcong73/alien-works`, branch `audit/lisp-foundation-reserve`, path `docs/design/LFR-P05-D03-game-world-procedural-generation-architecture-2026-11-13.md`  
 **Status:** `DESIGN_PROPOSED / SOURCE_GROUNDED / GAMING / NO_IMPLEMENTATION / NO_RUNTIME_QUALIFICATION / DOCUMENT_PUBLISHED_TO_GITHUB`  
 **Publication:** Owner-approved publication of this design document to `docs/design/` on `audit/lisp-foundation-reserve`. Source implementation, backend installation, and deployment remain separately authorized steps.
 
-> **Design decision:** P08-D03 supplies a **versioned procedural-content pipeline** capable of representing and, once separately implemented, generating world regions without owning world causality or authoritative scene/entity state. A **pure Gerbil implementation (A)**, **Gerbil-governed native execution (B)**, and **Gerbil-coordinated external generation service (C)** are equally legitimate profiles. Select per workload using verified semantic parity and measured end-to-end performance. Never force a single language across all generation stages.
+> **Design decision:** P05-D03 supplies a **versioned procedural-content pipeline** capable of representing and, once separately implemented, generating world regions without owning world causality or authoritative scene/entity state. A **pure Gerbil implementation (A)**, **Gerbil-governed native execution (B)**, and **Gerbil-coordinated external generation service (C)** are equally legitimate profiles. Select per workload using verified semantic parity and measured end-to-end performance. Never force a single language across all generation stages.
 
 ## 0. Objectives and boundaries
 
@@ -19,18 +19,18 @@
 
 **Useful first deliverable:** a deterministic 2D region generator and reference materialization adapter, able to generate repeatable terrain/biome/placement descriptors; later opt-in profiles add 3D density fields, mesh extraction, planetary coordinate charts, ecological growth and more demanding backends. Each profile has its own qualification and does not make every world dependent on a renderer or physics engine.
 
-**In scope:** algorithm manifests; typed generation recipes and intermediate representations; coordinate-addressable randomness; stage graphs; field sampling; region boundaries; 2D/3D/planet profiles; geometry/biome/population descriptors; LOD, caching and generation revisions; controlled backend dispatch; correctness and performance benchmarks; explicit optional P08-D01/D02 integration.
+**In scope:** algorithm manifests; typed generation recipes and intermediate representations; coordinate-addressable randomness; stage graphs; field sampling; region boundaries; 2D/3D/planet profiles; geometry/biome/population descriptors; LOD, caching and generation revisions; controlled backend dispatch; correctness and performance benchmarks; explicit optional P05-D01/D02 integration.
 
-**Out of scope:** ownership of world consequences (D01); canonical scene/entity storage, streaming and residency (D02); P06 branching/retention/synthesis; physics integration and evolving agents; graphics rendering; nonlocal world-causal inference; autonomous RL training; reproducing or redistributing *No Man's Sky* source; guaranteeing universal procedural aesthetics; arbitrary Scheme evaluation from untrusted recipes; claiming a production game or a qualified generator exists.
+**Out of scope:** ownership of world consequences (D01); canonical scene/entity storage, streaming and residency (D02); P03-D02 branching/retention/synthesis; physics integration and evolving agents; graphics rendering; nonlocal world-causal inference; autonomous RL training; reproducing or redistributing *No Man's Sky* source; guaranteeing universal procedural aesthetics; arbitrary Scheme evaluation from untrusted recipes; claiming a production game or a qualified generator exists.
 
 ### 0.1 Separation of responsibilities
 
 | Owner | Receives | Must not take over |
 |---|---|---|
-| **P08-D01** | Generation suggestions relevant to a candidate world transition | Geometry calculations, mesh extraction, native accelerator ownership |
-| **P08-D02** | Validated region artifacts under exact world/materialization locks | Procedural algorithms, causal admission or semantic interpretation of an unknown output |
-| **P08-D03** | A bounded region/recipe request with explicit algorithm and backend profiles | Changing authoritative world state, deciding historical ancestry or granting visibility |
-| **P06** (optional) | Versioned history references from the application | Generation algorithm identity or materialized asset caches |
+| **P05-D01** | Generation suggestions relevant to a candidate world transition | Geometry calculations, mesh extraction, native accelerator ownership |
+| **P05-D02** | Validated region artifacts under exact world/materialization locks | Procedural algorithms, causal admission or semantic interpretation of an unknown output |
+| **P05-D03** | A bounded region/recipe request with explicit algorithm and backend profiles | Changing authoritative world state, deciding historical ancestry or granting visibility |
+| **P03-D02** (optional) | Versioned history references from the application | Generation algorithm identity or materialized asset caches |
 | **K0/K1** | Typed identity, validation, outcomes, optional pure mechanisms | A mandatory game engine, RNG policy, GPU runner or universal simulator |
 
 Two worlds can use the same generator and seed but possess different causal overlays, histories, scene identities or world-model revisions. Their **materialization cache keys are different unless a separately qualified equivalence witness permits reuse**.
@@ -49,7 +49,7 @@ Two worlds can use the same generator and seed but possess different causal over
 | **Epic Games**, Unreal World Partition HLOD (`DIRECT_DOC`) | Represent distant/unloaded cells with lower-cost proxies; view residency differs from authority | A renderer-specific HLOD system cannot be equated to causal world state |
 | **Godot**, procedural geometry docs (`DIRECT_DOC`) | Different tradeoffs for ArrayMesh, SurfaceTool, ImmediateMesh, MeshDataTool | CPU mesh API choices are engine-specific; no Gerbil counterpart is assumed |
 | **Gerbil/Gambit** official FFI/build docs (`DIRECT_DOC`) | Source-level Gerbil/Gambit-to-C interop, build and generated native interface possibilities | FFI existence proves neither native thread safety nor zero-copy transfer/performance |
-| **P08-D01**, **P08-D02**, **P06**, **K0**, **K1** (`LFR_DESIGN`) | Exact contracts for decision/world identity, region requests, version locks, historical roles and generalized mechanisms | No implemented runtime, no generator benchmark PASS, no native ABI qualification |
+| **P05-D01**, **P05-D02**, **P03-D02**, **K0**, **K1** (`LFR_DESIGN`) | Exact contracts for decision/world identity, region requests, version locks, historical roles and generalized mechanisms | No implemented runtime, no generator benchmark PASS, no native ABI qualification |
 
 **Primary references** (source claims above are bounded to these public artifacts):
 
@@ -60,7 +60,7 @@ Two worlds can use the same generator and seed but possess different causal over
 5. [Unreal Engine — World Partition HLOD](https://dev.epicgames.com/documentation/en-us/unreal-engine/world-partition---hierarchical-level-of-detail-in-unreal-engine).
 6. [Godot — Procedural Geometry](https://docs.godotengine.org/en/stable/tutorials/3d/procedural_geometry/index.html).
 7. [Gerbil Scheme — FFI guide](https://gerbil.scheme.org/guide/ffi.html), [introduction](https://gerbil.scheme.org/guide/intro.html), [build tool](https://gerbil.scheme.org/reference/dev/build), and [Gambit manual](https://gambitscheme.org/latest/gambit.pdf).
-8. `docs/design/LFR-P08-D01-spacetime-decision-causal-consequence-design-2026-11-13.md`, `docs/design/LFR-P08-D02-game-world-scene-architecture-2026-11-13.md`, `docs/design/LFR-K0-D01-gerbil-meta-foundation-minimal-contract-kernel-2026-11-13.md`, and `docs/design/LFR-K1-D01-opt-in-generalized-mechanisms-detailed-design-2026-11-13.md` on branch `audit/lisp-foundation-reserve`.
+8. `docs/design/LFR-P05-D01-spacetime-decision-causal-consequence-design-2026-11-13.md`, `docs/design/LFR-P05-D02-game-world-scene-architecture-2026-11-13.md`, `docs/design/LFR-K0-D01-gerbil-meta-foundation-minimal-contract-kernel-2026-11-13.md`, and `docs/design/LFR-K1-D01-opt-in-generalized-mechanisms-detailed-design-2026-11-13.md` on branch `audit/lisp-foundation-reserve`.
 
 ### 1.1 What may be ported into Gerbil?
 
@@ -79,7 +79,7 @@ AUTHOR / GAME DESIGN / TOOLING (trusted rule authoring)
           |
     typed GenerationRecipe, revision-pinned world anchor
           v
-GERBIL GENERATION COORDINATOR (P08-D03)
+GERBIL GENERATION COORDINATOR (P05-D03)
   validate recipe -> lower to GenerationIR -> select stage graph
   exact input closure -> budget & capability checks -> admit jobs
           |
@@ -103,9 +103,9 @@ No generated *representation* can silently promote itself into a canonical world
 
 **Input closure:** an output is a function of the recipe and all declared inputs, not just a 32-bit seed. The full context includes algorithm revision, canonical coordinate frame, region boundaries, time/branch context when semantically relevant, causal overlay revision, sampled RNG streams, precision profile and any external asset/model dependencies.
 
-## 3. Public contract parity with P08-D01 and P08-D02
+## 3. Public contract parity with P05-D01 and P05-D02
 
-P08-D03 adopts the materialization request/response contract defined by P08-D01 and consumed by P08-D02 as its public compatibility floor. The contract's field meanings, revision locks, admissibility and receipt semantics must remain consistent across all three designs.
+P05-D03 adopts the materialization request/response contract defined by P05-D01 and consumed by P05-D02 as its public compatibility floor. The contract's field meanings, revision locks, admissibility and receipt semantics must remain consistent across all three designs.
 
 ### 3.1 Input and output records
 
@@ -304,7 +304,7 @@ Stages include `recipe-normalize`, `field-generate`, `biome-classify`, `geometry
 
 Profile limits: `max_stage_count`, `max_algorithm_recursion`, `max_region_samples`, `max_volumetric_cells`, `max_octaves`, `max_population_candidates`, `max_mesh_vertices`, `max_bytes_resident`, `max_bytes_staged`, `max_concurrent_jobs`, `max_output_bytes`, `max_wall_duration_if_enforced`, `max_gpu_allocation_if_supported` and `max_external_service_bytes/cost`. Do not claim a process/GPU budget the backend cannot enforce.
 
-**Do not call FFI per voxel** for large hot loops by default. Batch per tile, field block, volume slab or complete stage with a typed descriptor; qualify copy cost, ownership, lifetime, pinning, alignment, thread affinity, cancellation and release. Native handles remain optional P01-qualified bindings; a generated buffer pointer is not permitted as a durable/world identity.
+**Do not call FFI per voxel** for large hot loops by default. Batch per tile, field block, volume slab or complete stage with a typed descriptor; qualify copy cost, ownership, lifetime, pinning, alignment, thread affinity, cancellation and release. Native handles remain optional P01-D01-qualified bindings; a generated buffer pointer is not permitted as a durable/world identity.
 
 ## 9. Three execution profiles and admission policy
 
@@ -428,7 +428,7 @@ Sample workloads: (1) small `64x64` 2D field; (2) medium `512x512` mixed biome+p
 
 ### 13.1 Invariants I01–I24
 
-1. **I01 — Ownership separation:** generation produces artifacts; D01 governs consequences; D02 owns world-state/residency; P06 owns history.
+1. **I01 — Ownership separation:** generation produces artifacts; D01 governs consequences; D02 owns world-state/residency; P03-D02 owns history.
 2. **I02 — Exact public port:** D03 accepts D01/D02's materialization request/result field semantics without a hidden incompatible replacement.
 3. **I03 — Identity separation:** world/branch/region/artifact/generator/overlay/scene identity are never inferred from labels or one seed.
 4. **I04 — Version closure:** algorithm, numeric, RNG, coordinate, schema, material/asset and dependency revisions are pinned when relevant.
@@ -495,135 +495,135 @@ Sample workloads: (1) small `64x64` 2D field; (2) medium `512x512` mixed biome+p
 
 | Test | Challenge | Pass oracle |
 |---|---|---|
-| **P08-D03-T01** | Same seed, different world refs | Different identity and cache scope |
-| **P08-D03-T02** | Same coordinates, different partition/frame revision | No stale region alias |
-| **P08-D03-T03** | D01 public MaterializationRequest exact fixture | D03 parses without hidden mandatory fields |
-| **P08-D03-T04** | D02 receipt response fixture | All required output fields preserved |
-| **P08-D03-T05** | Missing generator revision | Typed refusal before dispatch |
-| **P08-D03-T06** | Unknown required recipe tag | Strict inert-data rejection |
-| **P08-D03-T07** | Duplicate canonical identifiers | No ambiguous construction |
-| **P08-D03-T08** | Old result rebinds to reused request generation | Stale token rejected |
+| **P05-D03-T01** | Same seed, different world refs | Different identity and cache scope |
+| **P05-D03-T02** | Same coordinates, different partition/frame revision | No stale region alias |
+| **P05-D03-T03** | D01 public MaterializationRequest exact fixture | D03 parses without hidden mandatory fields |
+| **P05-D03-T04** | D02 receipt response fixture | All required output fields preserved |
+| **P05-D03-T05** | Missing generator revision | Typed refusal before dispatch |
+| **P05-D03-T06** | Unknown required recipe tag | Strict inert-data rejection |
+| **P05-D03-T07** | Duplicate canonical identifiers | No ambiguous construction |
+| **P05-D03-T08** | Old result rebinds to reused request generation | Stale token rejected |
 
 #### Family 2 — RNG & reference fields
 
 | Test | Challenge | Pass oracle |
 |---|---|---|
-| **P08-D03-T09** | Same 2D region and full seed closure repeated | Exact reference field equality |
-| **P08-D03-T10** | Regions generated A/B versus B/A | Each output invariant to scheduling order |
-| **P08-D03-T11** | Random cancellation then regeneration | Unchanged region identity/results |
-| **P08-D03-T12** | Stage-specific stream names overlap | Domain separation preserves independence |
-| **P08-D03-T13** | Negative coordinates and region boundaries | Canonical sample agreement |
-| **P08-D03-T14** | Invalid octave/scale or non-finite input | Reject before sampling |
-| **P08-D03-T15** | Golden field values across compiled/interpreted qualified profile | Named numeric oracle passes |
-| **P08-D03-T16** | Tiny-budget cellular/grammar growth | Terminates with typed bounded status |
+| **P05-D03-T09** | Same 2D region and full seed closure repeated | Exact reference field equality |
+| **P05-D03-T10** | Regions generated A/B versus B/A | Each output invariant to scheduling order |
+| **P05-D03-T11** | Random cancellation then regeneration | Unchanged region identity/results |
+| **P05-D03-T12** | Stage-specific stream names overlap | Domain separation preserves independence |
+| **P05-D03-T13** | Negative coordinates and region boundaries | Canonical sample agreement |
+| **P05-D03-T14** | Invalid octave/scale or non-finite input | Reject before sampling |
+| **P05-D03-T15** | Golden field values across compiled/interpreted qualified profile | Named numeric oracle passes |
+| **P05-D03-T16** | Tiny-budget cellular/grammar growth | Terminates with typed bounded status |
 
 #### Family 3 — Geometry & region seams
 
 | Test | Challenge | Pass oracle |
 |---|---|---|
-| **P08-D03-T17** | Adjacent 2D tile halo samples | Identical edge values |
-| **P08-D03-T18** | Heightfield output has NaN/Inf | Invalid geometry rejected |
-| **P08-D03-T19** | 3D density tile with cave cross-boundary | Correct sign/boundary convention |
-| **P08-D03-T20** | Mesh index exceeds vertex array | Reject invalid mesh |
-| **P08-D03-T21** | Degenerate triangles under strict mesh profile | Detected and policy-handled |
-| **P08-D03-T22** | Different LOD volume seam | Qualified stitching or explicit SEAM_PENDING |
-| **P08-D03-T23** | Mixed generator revisions at neighbor boundary | Reject without migration/seam witness |
-| **P08-D03-T24** | Planet chart face transition | Transform/continuity within declared error |
+| **P05-D03-T17** | Adjacent 2D tile halo samples | Identical edge values |
+| **P05-D03-T18** | Heightfield output has NaN/Inf | Invalid geometry rejected |
+| **P05-D03-T19** | 3D density tile with cave cross-boundary | Correct sign/boundary convention |
+| **P05-D03-T20** | Mesh index exceeds vertex array | Reject invalid mesh |
+| **P05-D03-T21** | Degenerate triangles under strict mesh profile | Detected and policy-handled |
+| **P05-D03-T22** | Different LOD volume seam | Qualified stitching or explicit SEAM_PENDING |
+| **P05-D03-T23** | Mixed generator revisions at neighbor boundary | Reject without migration/seam witness |
+| **P05-D03-T24** | Planet chart face transition | Transform/continuity within declared error |
 
 #### Family 4 — Biomes, growth & population
 
 | Test | Challenge | Pass oracle |
 |---|---|---|
-| **P08-D03-T25** | Biome threshold on exact boundary | Stable tie-break and classification |
-| **P08-D03-T26** | Conflicting biome rules | Typed conflict or named priority |
-| **P08-D03-T27** | Placement within forbidden/occupied site | Candidate rejected; no silent relocation |
-| **P08-D03-T28** | Placement at tile edges generated in reverse order | No duplicate/omitted canonical owner |
-| **P08-D03-T29** | Over-cap population candidate request | Bounded failure or declared partial output |
-| **P08-D03-T30** | Growth grammar recursive without progress | Fuel exhaustion, not infinite loop |
-| **P08-D03-T31** | Shared asset definition in different scenes | Distinct placement/world identities |
-| **P08-D03-T32** | Geometric prop mistakenly treated as canonical NPC | World mutation refused |
+| **P05-D03-T25** | Biome threshold on exact boundary | Stable tie-break and classification |
+| **P05-D03-T26** | Conflicting biome rules | Typed conflict or named priority |
+| **P05-D03-T27** | Placement within forbidden/occupied site | Candidate rejected; no silent relocation |
+| **P05-D03-T28** | Placement at tile edges generated in reverse order | No duplicate/omitted canonical owner |
+| **P05-D03-T29** | Over-cap population candidate request | Bounded failure or declared partial output |
+| **P05-D03-T30** | Growth grammar recursive without progress | Fuel exhaustion, not infinite loop |
+| **P05-D03-T31** | Shared asset definition in different scenes | Distinct placement/world identities |
+| **P05-D03-T32** | Geometric prop mistakenly treated as canonical NPC | World mutation refused |
 
 #### Family 5 — World overlays & preservation
 
 | Test | Challenge | Pass oracle |
 |---|---|---|
-| **P08-D03-T33** | D01 decision changes economy but not geology | Qualified geometry reuse; overlay remains separate |
-| **P08-D03-T34** | D01 decision changes terrain semantics | Old representation invalidated/revalidated |
-| **P08-D03-T35** | Inhabited world retains g1 during g2 expansion | Old region reconstructed under g1 |
-| **P08-D03-T36** | Old generator artifact missing after upgrade | RECONSTRUCTION_UNAVAILABLE |
-| **P08-D03-T37** | Seed same but branch/overlay differs | No unsafe cache alias |
-| **P08-D03-T38** | Late g1 completion after world g2/o6 | Quarantine stale result |
-| **P08-D03-T39** | Visual LOD downgrade during interaction | Authoritative collision/topology unchanged |
-| **P08-D03-T40** | Unknown nonlocal causal input changes recipe dependency | No false unaffected claim |
+| **P05-D03-T33** | D01 decision changes economy but not geology | Qualified geometry reuse; overlay remains separate |
+| **P05-D03-T34** | D01 decision changes terrain semantics | Old representation invalidated/revalidated |
+| **P05-D03-T35** | Inhabited world retains g1 during g2 expansion | Old region reconstructed under g1 |
+| **P05-D03-T36** | Old generator artifact missing after upgrade | RECONSTRUCTION_UNAVAILABLE |
+| **P05-D03-T37** | Seed same but branch/overlay differs | No unsafe cache alias |
+| **P05-D03-T38** | Late g1 completion after world g2/o6 | Quarantine stale result |
+| **P05-D03-T39** | Visual LOD downgrade during interaction | Authoritative collision/topology unchanged |
+| **P05-D03-T40** | Unknown nonlocal causal input changes recipe dependency | No false unaffected claim |
 
 #### Family 6 — Stage graph & resource limits
 
 | Test | Challenge | Pass oracle |
 |---|---|---|
-| **P08-D03-T41** | Cycle in stage dependency graph | Reject before execution |
-| **P08-D03-T42** | Unknown stage implementation revision | No fallback without qualified profile |
-| **P08-D03-T43** | Intermediate output exceeds byte quota | Stopped and typed partial/failed |
-| **P08-D03-T44** | Max volumetric samples exceeded | No unchecked allocation |
-| **P08-D03-T45** | Request cancellation during field sampling | Cancellation recorded, release separately observed |
-| **P08-D03-T46** | Concurrent duplicate region requests | Coalesced only under exact lock/scope parity |
-| **P08-D03-T47** | Low-priority jobs starved by high-priority stream | Fairness policy detected/qualified or limitation declared |
-| **P08-D03-T48** | D02 evicts region with dirty canonical changes | No data loss or false success |
+| **P05-D03-T41** | Cycle in stage dependency graph | Reject before execution |
+| **P05-D03-T42** | Unknown stage implementation revision | No fallback without qualified profile |
+| **P05-D03-T43** | Intermediate output exceeds byte quota | Stopped and typed partial/failed |
+| **P05-D03-T44** | Max volumetric samples exceeded | No unchecked allocation |
+| **P05-D03-T45** | Request cancellation during field sampling | Cancellation recorded, release separately observed |
+| **P05-D03-T46** | Concurrent duplicate region requests | Coalesced only under exact lock/scope parity |
+| **P05-D03-T47** | Low-priority jobs starved by high-priority stream | Fairness policy detected/qualified or limitation declared |
+| **P05-D03-T48** | D02 evicts region with dirty canonical changes | No data loss or false success |
 
 #### Family 7 — Backend A & numeric portability
 
 | Test | Challenge | Pass oracle |
 |---|---|---|
-| **P08-D03-T49** | Gerbil compiled reference field fixture | Exact version-locked sample/output oracle |
-| **P08-D03-T50** | Gerbil pure reference under controlled memory pressure | Memory cap or explicit unsupported enforcement |
-| **P08-D03-T51** | Alternative numeric reduction order | No fabricated bitwise identity |
-| **P08-D03-T52** | Cross-platform float values near mesh threshold | Topology rechecked independently |
-| **P08-D03-T53** | Golden result under different Gerbil compiler lock | Requalification or compatible revision witness |
-| **P08-D03-T54** | Nontrivial workload all stages enabled | End-to-end time and peak memory recorded |
-| **P08-D03-T55** | No external libraries installed | Pure Gerbil reference still importable |
-| **P08-D03-T56** | Pure generator attempts forbidden IO | Effect neutrality failure detected |
+| **P05-D03-T49** | Gerbil compiled reference field fixture | Exact version-locked sample/output oracle |
+| **P05-D03-T50** | Gerbil pure reference under controlled memory pressure | Memory cap or explicit unsupported enforcement |
+| **P05-D03-T51** | Alternative numeric reduction order | No fabricated bitwise identity |
+| **P05-D03-T52** | Cross-platform float values near mesh threshold | Topology rechecked independently |
+| **P05-D03-T53** | Golden result under different Gerbil compiler lock | Requalification or compatible revision witness |
+| **P05-D03-T54** | Nontrivial workload all stages enabled | End-to-end time and peak memory recorded |
+| **P05-D03-T55** | No external libraries installed | Pure Gerbil reference still importable |
+| **P05-D03-T56** | Pure generator attempts forbidden IO | Effect neutrality failure detected |
 
 #### Family 8 — Backend B & FFI
 
 | Test | Challenge | Pass oracle |
 |---|---|---|
-| **P08-D03-T57** | Native ABI version mismatch | Reject before buffer access |
-| **P08-D03-T58** | Buffer size/alignment claim false | Reject unsafe input |
-| **P08-D03-T59** | Native worker fails mid-batch | Partial result/lease uncertainty preserved |
-| **P08-D03-T60** | Native cancellation races with completion | No double release or stale output activation |
-| **P08-D03-T61** | Wrong-thread native release | Affinity violation/refused |
-| **P08-D03-T62** | Gerbil/native exact-reference small fixture | Named parity or clear disqualification |
-| **P08-D03-T63** | Faster kernel but slower total marshaled region | End-to-end selection does not misrank |
-| **P08-D03-T64** | Native output valid geometry but altered semantic occupancy | Refuse stronger semantic parity |
+| **P05-D03-T57** | Native ABI version mismatch | Reject before buffer access |
+| **P05-D03-T58** | Buffer size/alignment claim false | Reject unsafe input |
+| **P05-D03-T59** | Native worker fails mid-batch | Partial result/lease uncertainty preserved |
+| **P05-D03-T60** | Native cancellation races with completion | No double release or stale output activation |
+| **P05-D03-T61** | Wrong-thread native release | Affinity violation/refused |
+| **P05-D03-T62** | Gerbil/native exact-reference small fixture | Named parity or clear disqualification |
+| **P05-D03-T63** | Faster kernel but slower total marshaled region | End-to-end selection does not misrank |
+| **P05-D03-T64** | Native output valid geometry but altered semantic occupancy | Refuse stronger semantic parity |
 
 #### Family 9 — Backend C & observer boundary
 
 | Test | Challenge | Pass oracle |
 |---|---|---|
-| **P08-D03-T65** | Remote response after timeout | Unknown/reconciled by exact job ID |
-| **P08-D03-T66** | Service changes algorithm revision mid-run | Version drift rejected |
-| **P08-D03-T67** | Network duplicate delivery | No duplicate authoritative publication |
-| **P08-D03-T68** | Remote job exceeds cost/byte quota | Typed refusal and bounded usage |
-| **P08-D03-T69** | Untrusted recipe contains Scheme evaluation form | Treated as inert data, no eval |
-| **P08-D03-T70** | Hidden-region generation returned to public observer | D02 scope boundary prevents disclosure |
-| **P08-D03-T71** | Remote payload forged under untrusted channel | Authenticated validation failure |
-| **P08-D03-T72** | Service says accepted but no final result | No completed or durable claim |
+| **P05-D03-T65** | Remote response after timeout | Unknown/reconciled by exact job ID |
+| **P05-D03-T66** | Service changes algorithm revision mid-run | Version drift rejected |
+| **P05-D03-T67** | Network duplicate delivery | No duplicate authoritative publication |
+| **P05-D03-T68** | Remote job exceeds cost/byte quota | Typed refusal and bounded usage |
+| **P05-D03-T69** | Untrusted recipe contains Scheme evaluation form | Treated as inert data, no eval |
+| **P05-D03-T70** | Hidden-region generation returned to public observer | D02 scope boundary prevents disclosure |
+| **P05-D03-T71** | Remote payload forged under untrusted channel | Authenticated validation failure |
+| **P05-D03-T72** | Service says accepted but no final result | No completed or durable claim |
 
 #### Family 10 — Qualification & migration audit
 
 | Test | Challenge | Pass oracle |
 |---|---|---|
-| **P08-D03-T73** | A/B/C runs have differing output equivalence grades | No false single PASS across all stages |
-| **P08-D03-T74** | Bench cold/warm mismatch or fixture drift | Reject comparison as non-comparable |
-| **P08-D03-T75** | High p95 tail despite low average | Reported selection risk, not hidden |
-| **P08-D03-T76** | Old scene/asset revision required on revisit | Original lock or explicit incompatibility |
-| **P08-D03-T77** | License missing for imported lookup table | Admission blocked pending provenance |
-| **P08-D03-T78** | NMS GDC talk cited as shipped code proof | Source-lineage claim rejected |
-| **P08-D03-T79** | One rejected backend mixed into qualified set | Partial qualification only, no blanket release |
-| **P08-D03-T80** | Independent game + non-game fixture consume same reference stage | Declared shared law holds; domain claims remain distinct |
+| **P05-D03-T73** | A/B/C runs have differing output equivalence grades | No false single PASS across all stages |
+| **P05-D03-T74** | Bench cold/warm mismatch or fixture drift | Reject comparison as non-comparable |
+| **P05-D03-T75** | High p95 tail despite low average | Reported selection risk, not hidden |
+| **P05-D03-T76** | Old scene/asset revision required on revisit | Original lock or explicit incompatibility |
+| **P05-D03-T77** | License missing for imported lookup table | Admission blocked pending provenance |
+| **P05-D03-T78** | NMS GDC talk cited as shipped code proof | Source-lineage claim rejected |
+| **P05-D03-T79** | One rejected backend mixed into qualified set | Partial qualification only, no blanket release |
+| **P05-D03-T80** | Independent game + non-game fixture consume same reference stage | Declared shared law holds; domain claims remain distinct |
 
 ### 14.3 Qualification reporting matrix
 
-`DESIGN_ONLY` means no tests run. `MOCK_QUALIFIED` means only exact reference/mock fixtures passed; it does not establish native throughput or service security. `GERBIL_REFERENCE_QUALIFIED` is available only after executing the exact Gerbil toolchain Q0/Q1/Q2/Q4/Q6/Q9 subset with all required negative tests. `NATIVE_ADAPTER_QUALIFIED` additionally requires Q7 and corresponding B fixtures; `SERVICE_ADAPTER_QUALIFIED` requires Q8 and corresponding C fixtures. `PERFORMANCE_PROFILE_QUALIFIED` requires Q10 under declared targets. `RELEASE_QUALIFIED` requires Q11 and an explicitly declared limited module set, not blanket P08-D03 qualification.
+`DESIGN_ONLY` means no tests run. `MOCK_QUALIFIED` means only exact reference/mock fixtures passed; it does not establish native throughput or service security. `GERBIL_REFERENCE_QUALIFIED` is available only after executing the exact Gerbil toolchain Q0/Q1/Q2/Q4/Q6/Q9 subset with all required negative tests. `NATIVE_ADAPTER_QUALIFIED` additionally requires Q7 and corresponding B fixtures; `SERVICE_ADAPTER_QUALIFIED` requires Q8 and corresponding C fixtures. `PERFORMANCE_PROFILE_QUALIFIED` requires Q10 under declared targets. `RELEASE_QUALIFIED` requires Q11 and an explicitly declared limited module set, not blanket P05-D03 qualification.
 
 Every verdict binds an exact `GeneratorManifest`, backend implementation, output/profile and observed evidence. Failure of C is not failure of A, and success of A is not automatic validation of B/C.
 
@@ -634,7 +634,7 @@ Every verdict binds an exact `GeneratorManifest`, backend implementation, output
 1. **D03-00 — Source/license ledger:** exact NMS public evidence; inspect available open noise/mesh implementations; Gerbil/Gambit version lock, portability and owned provenance.
 2. **D03-01 — Inert contracts + manifest:** compile/public-port parity with D01/D02, canonical identity, RNG/numeric/recipe validators and negative cases.
 3. **D03-02 — Gerbil 2D reference:** one small noise/cellular stage, one biome classifier, one bounded placement stage; prove exact region order-independence and edge seams.
-4. **D03-03 — D02 fake region integration:** request, generate, version-check, observe, evict and reconstruct without P06 or rendering engine.
+4. **D03-03 — D02 fake region integration:** request, generate, version-check, observe, evict and reconstruct without P03-D02 or rendering engine.
 5. **D03-04 — Fair algorithm tour:** identify actual hotspots and compare A versus available B with equal outputs, both kernel-level and end-to-end, using the same fixtures. No native port mandated.
 6. **D03-05 — Optional 3D/planet profiles:** density, meshing, LOD/seams, chart transforms and planetary variety only after independent correctness/budget evidence.
 7. **D03-06 — C only if justified:** remote generation and failure/ack reconciliation if real workload scale requires it. Do not create a service for a tiny single-host game.

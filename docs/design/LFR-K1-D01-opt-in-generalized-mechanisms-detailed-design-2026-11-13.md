@@ -47,11 +47,11 @@ These are **targets for capability coverage**, not mandatory runtime dependencie
 
 - **Native/graphics:** Trial, CEPL, Varjo, Gerbil SDL2, Gambit Raylib and comparative resource studies. Their mechanisms serve as portability counterexamples as much as inspiration.
 - **Declarative systems:** GNU Guix/Guile and GNU Shepherd: graphs, staged descriptions, generations, services and process life cycles. These are *research* sources, not runtime dependencies or an automatic Guile bridge.
-- **Semantic programming:** Glow compiler/IR and Uncharted public evidence, plus P03; source-level liveness/fixed-point concerns are retained as negative test material.
-- **Governed effects:** Gerbil Coding Harness and P04; typed authorization decisions are not OS-level containment.
-- **Memory/evidence:** AutoContext, Personal AI CLI and P05; authoritative durable storage is P05-specific, never a universal guarantee of K1.
-- **Search and causal histories:** Chess AI, Guix generations, Git graph and P06; scoped undo, historical branch heads and real-world causal identification remain distinct.
-- **UI/interop:** GloUI and P07; entity identity, task-truth vs UI-observation, typed messages and effect permissions.
+- **Semantic programming:** Glow compiler/IR and Uncharted public evidence, plus P03-D01; source-level liveness/fixed-point concerns are retained as negative test material.
+- **Governed effects:** Gerbil Coding Harness and P02-D02; typed authorization decisions are not OS-level containment.
+- **Memory/evidence:** AutoContext, Personal AI CLI and P04-D01; authoritative durable storage is P04-D01-specific, never a universal guarantee of K1.
+- **Search and causal histories:** Chess AI, Guix generations, Git graph and P03-D02; scoped undo, historical branch heads and real-world causal identification remain distinct.
+- **UI/interop:** GloUI and P01-D02; entity identity, task-truth vs UI-observation, typed messages and effect permissions.
 - **K0:** six published contract families (identity/version, schema/validation, effects, authority records, ownership/lease, results/receipts) define the only proposed mandatory contract dependency. They do not execute anything.
 
 The seven P01–P07 designs have **not been implemented or independently runtime-qualified** as a group; K1 does not count them as executed proofs.
@@ -84,12 +84,12 @@ The seven P01–P07 designs have **not been implemented or independently runtime
                  K0 CONTRACT KERNEL
         identity | schema | effects | decisions | lease | result
 
- P01..P07 AND FUTURE SPECIALISTS: optional peers/consumers of K0/K1.
+ P01–P07 AND FUTURE SPECIALISTS: optional peers/consumers of K0/K1.
  Source vault and public reference material: research evidence ONLY.
  No runtime import from K1 into any source specimen or vice versa.
 ```
 
-**Import rules:** `application -> chosen K1 profiles -> K0`, with optional specialist packages imported by the application or opt-in adapters. `K0 -> K1` is forbidden; `K1 general-purpose core -> P01..P07` is forbidden. An independently qualified K1-to-specialist integration adapter may import both public interfaces. K1 must also be usable without *any* specialist installed.
+**Import rules:** `application -> chosen K1 profiles -> K0`, with optional specialist packages imported by the application or opt-in adapters. `K0 -> K1` is forbidden; `K1 general-purpose core -> P01–P07` is forbidden. An independently qualified K1-to-specialist integration adapter may import both public interfaces. K1 must also be usable without *any* specialist installed.
 
 **No universal scheduler, engine, trainer, world model, policy authority, actor runtime, RPC bus, persistence provider, machine-learning framework or generic native execution dispatcher.** Different mechanisms can be composed by an application with an explicit integration contract rather than hidden orchestration.
 
@@ -131,37 +131,37 @@ Each candidate below is a **design proposition**. None is `MOCK_QUALIFIED`, `ADA
 
 ### M01 — Typed dependency and relation graphs
 
-**Disposition:** `PURE candidate`. **Witnesses:** P02 Guix/service graphs; P03 pass CFGs; P06 causal incidence; procedural-generation dependency graphs.  
+**Disposition:** `PURE candidate`. **Witnesses:** P02-D01 Guix/service graphs; P03-D01 pass CFGs; P03-D02 causal incidence; procedural-generation dependency graphs.  
 **Transferable contract:** Graph node/edge identities, labeled relation types, cycle/closure/topological algorithms with graph-specific assumptions; never unify all graphs' semantics.  
 **Explicit non-equivalence:** A service dependency cycle, a temporal cycle and a causal ancestry cycle are not the same failure.
 
 ### M02 — Staged transformation and normalized IR
 
-**Disposition:** `PURE candidate`. **Witnesses:** Alien-Works material DSL; Uncharted Scheme authorship; Glow P03 passes; GloUI P07 generated bindings; Gerbil macro docs.  
+**Disposition:** `PURE candidate`. **Witnesses:** Alien-Works material DSL; Uncharted Scheme authorship; Glow P03-D01 passes; GloUI P01-D02 generated bindings; Gerbil macro docs.  
 **Transferable contract:** A validated data-only IR, phase locks, pass contracts, provenance and code/data separation; allow trusted macro authoring without treating serialized data as executable code.  
 **Explicit non-equivalence:** Macro expansion is not authorization or proof of behavior; no imported proprietary VM.
 
 ### M03 — State transition and finite decision traces
 
-**Disposition:** `PURE/STOCHASTIC profiles`. **Witnesses:** Uncharted state scripting; Chess AI/P06; P03 machine; Gymnasium; ROS lifecycle.  
+**Disposition:** `PURE/STOCHASTIC profiles`. **Witnesses:** Uncharted state scripting; Chess AI/P03-D02; P03-D01 machine; Gymnasium; ROS lifecycle.  
 **Transferable contract:** Transition contract with before/action/input/model/after, explicit nondeterministic witnesses and typed invalid steps.  
 **Explicit non-equivalence:** Discrete game turn is not continuous integration; state equality is not historical identity.
 
 ### M04 — Observation and projection
 
-**Disposition:** `PURE profile`. **Witnesses:** P07 interface projection; P05 retrieval observables; Gymnasium/RL partial observation; control state estimators.  
+**Disposition:** `PURE profile`. **Witnesses:** P01-D02 interface projection; P04-D01 retrieval observables; Gymnasium/RL partial observation; control state estimators.  
 **Transferable contract:** Separate latent/model state, observable view, observer identity, source locks, staleness, missingness and admissible equivalence.  
 **Explicit non-equivalence:** Observation is not full state or proof of causality; reward is not an observation by default.
 
 ### M05 — Logical/physical/simulation time contracts
 
-**Disposition:** `PURE + adapter profiles`. **Witnesses:** Uncharted directors; P03 timers; Godot variable render/fixed physics ticks; FMI; ROS lifecycle.  
+**Disposition:** `PURE + adapter profiles`. **Witnesses:** Uncharted directors; P03-D01 timers; Godot variable render/fixed physics ticks; FMI; ROS lifecycle.  
 **Transferable contract:** Clock domain IDs, event ordering, simulation stepping, timestamp uncertainty and explicit synchronization/adaptation.  
 **Explicit non-equivalence:** No conversion from logical step to wall-clock deadline or between solver integrators without a profile.
 
 ### M06 — Bounded exploration and candidate generation
 
-**Disposition:** `PURE candidate`. **Witnesses:** Chess AI/P06 search; procedural worlds; RL exploration; risk scenario generation; P03 analysis.  
+**Disposition:** `PURE candidate`. **Witnesses:** Chess AI/P03-D02 search; procedural worlds; RL exploration; risk scenario generation; P03-D01 analysis.  
 **Transferable contract:** Frontiers, budgets, completeness flags, candidate witnesses and objective-specific search oracle.  
 **Explicit non-equivalence:** Search is not an optimizer, PPO trainer, proof of optimality, or complete enumeration by default.
 
@@ -179,49 +179,49 @@ Each candidate below is a **design proposition**. None is `MOCK_QUALIFIED`, `ADA
 
 ### M09 — Resource scope and lease operations
 
-**Disposition:** `MOCK + backend profiles`. **Witnesses:** Alien-Works/Trial; P01 foreign handles; P02 process handles; FMI model instances.  
+**Disposition:** `MOCK + backend profiles`. **Witnesses:** Alien-Works/Trial; P01-D01 foreign handles; P02-D01 process handles; FMI model instances.  
 **Transferable contract:** Acquisition/ownership/generation/release intent, scoped cleanup ordering, stale handle and partial-init records.  
 **Explicit non-equivalence:** Mock cleanup != real native destructor/ABI safety or GPU affinity.
 
 ### M10 — Bounded operation and effects interface
 
-**Disposition:** `MOCK + backend profiles`. **Witnesses:** P04 command executor; Alien-Works render queue; P02 supervised child; robotics actuators.  
+**Disposition:** `MOCK + backend profiles`. **Witnesses:** P02-D02 command executor; Alien-Works render queue; P02-D01 supervised child; robotics actuators.  
 **Transferable contract:** Declared budgets, explicit admission, capability checks, async status and receipts through injected executor contracts.  
 **Explicit non-equivalence:** Accepted != started != completed != reversible; no universal handler or OS sandbox.
 
 ### M11 — Commit, compensation and reconciliation contracts
 
-**Disposition:** `MOCK + backend profiles`. **Witnesses:** P05 durable commit; P04 staged edit; P06 branch commit; Guix rollback limitation.  
+**Disposition:** `MOCK + backend profiles`. **Witnesses:** P04-D01 durable commit; P02-D02 staged edit; P03-D02 branch commit; Guix rollback limitation.  
 **Transferable contract:** Separate pure transaction, durable atomic commit, compensating effect and unknown external outcome; scope guarantees individually.  
 **Explicit non-equivalence:** Undoing a simulation step != reversing a financial trade or physical actuator command.
 
 ### M12 — Checkpoint, snapshot and history reconstruction
 
-**Disposition:** `PURE + durable-adapter profiles`. **Witnesses:** Guix generations; P06 causal histories; P05 durability; RL rollouts.  
+**Disposition:** `PURE + durable-adapter profiles`. **Witnesses:** Guix generations; P03-D02 causal histories; P04-D01 durability; RL rollouts.  
 **Transferable contract:** Explicit snapshot closure, revision locks, stream checkpoints, lineage, replayability grade and durable anchor contract.  
 **Explicit non-equivalence:** State snapshot != environment reset, exact replay, empirical counterfactual or crash durability.
 
 ### M13 — Structured interop and semantic adapters
 
-**Disposition:** `PURE + client-adapter profiles`. **Witnesses:** GloUI/P07; P03 generated artifacts; Gymnasium/PettingZoo; FMI interfaces.  
+**Disposition:** `PURE + client-adapter profiles`. **Witnesses:** GloUI/P01-D02; P03-D01 generated artifacts; Gymnasium/PettingZoo; FMI interfaces.  
 **Transferable contract:** Typed messages, schema migration, parity oracles, ownership and version negotiation between chosen implementations.  
 **Explicit non-equivalence:** A protocol shape match does not ensure semantic equivalence or effect permission.
 
 ### M14 — Experiment/policy lifecycle
 
-**Disposition:** `DOMAIN-SEMANTIC candidate`. **Witnesses:** RL policies and rollouts; quantitative backtests; simulation experiments; P06 rule revisions.  
+**Disposition:** `DOMAIN-SEMANTIC candidate`. **Witnesses:** RL policies and rollouts; quantitative backtests; simulation experiments; P03-D02 rule revisions.  
 **Transferable contract:** Separate policy model, environment revision, evaluation/learning data, RNG streams, dataset partitions and claim receipts.  
 **Explicit non-equivalence:** Training success != validation success; seeds don't certify deterministic hardware.
 
 ### M15 — Constraints, supervisors and admissibility
 
-**Disposition:** `PURE + qualified-domain profiles`. **Witnesses:** P04 authorization; P06 synthesis constraints; control viability; RL action masks.  
+**Disposition:** `PURE + qualified-domain profiles`. **Witnesses:** P02-D02 authorization; P03-D02 synthesis constraints; control viability; RL action masks.  
 **Transferable contract:** Named invariant, admissibility verdict, fallback/refusal and independent policy/authority boundaries.  
 **Explicit non-equivalence:** Constraint satisfiability, action legality, security permission and real-world safety are distinct claims.
 
 ### M16 — Observability and provenance traces
 
-**Disposition:** `PURE candidate`. **Witnesses:** P04/P05 receipts; P07 async task truth; P06 ancestry; RL trajectories; game traces.  
+**Disposition:** `PURE candidate`. **Witnesses:** P02-D02/P04-D01 receipts; P01-D02 async task truth; P03-D02 ancestry; RL trajectories; game traces.  
 **Transferable contract:** Typed events, correlation/cause IDs, model/data versions, partial unknowns, redaction and evidence scope.  
 **Explicit non-equivalence:** Trace links are not automatic causal identification; observation is not a durable log.
 
@@ -387,7 +387,7 @@ Candidate adapters may compose the same mechanisms differently for a turn-based 
 
 ### 7.1 Same graph algorithm, different graph ontology
 
-P02 dependencies, P03 compiler graphs, P06 causal events and procedural-generation dependency graphs can reuse a **parameterized graph traversal kernel** where they share an actual law. Their edge meanings and cycle acceptance policies remain independent. Tests must demonstrate that a cycle admissible in a control-flow graph is refused where a causal-history DAG forbids cycles, without modifying the graph algorithm.
+P02-D01 dependencies, P03-D01 compiler graphs, P03-D02 causal events and procedural-generation dependency graphs can reuse a **parameterized graph traversal kernel** where they share an actual law. Their edge meanings and cycle acceptance policies remain independent. Tests must demonstrate that a cycle admissible in a control-flow graph is refused where a causal-history DAG forbids cycles, without modifying the graph algorithm.
 
 ### 7.2 Game director, RL agent and robotic controller
 
@@ -399,7 +399,7 @@ A procedural terrain generator and a financial scenario generator can both use s
 
 ### 7.4 Multi-agent and concurrent workflows
 
-A multi-agent game's simultaneous update and a P04 concurrent tool workflow both need ordering, actor identity and conflict handling. But game transition atomicity does not imply a transaction spanning two files, network services or physical actuators. The shared primitive can report a conflict and retain evidence; specialized adapters decide effect commit/compensation.
+A multi-agent game's simultaneous update and a P02-D02 concurrent tool workflow both need ordering, actor identity and conflict handling. But game transition atomicity does not imply a transaction spanning two files, network services or physical actuators. The shared primitive can report a conflict and retain evidence; specialized adapters decide effect commit/compensation.
 
 ## 8. Implementation packaging if separately authorized
 
@@ -652,7 +652,7 @@ IDs `K1-T01` through `K1-T96` are **future tests only**, not executed. Tests are
 
 | K1-T59 | Compensation fails after partial effect | Original effect and new failed compensating effect both recorded |
 
-| K1-T60 | P06 branch checkout after live external mutation | No claim of external rollback |
+| K1-T60 | P03-D02 branch checkout after live external mutation | No claim of external rollback |
 
 | K1-T61 | Two histories share snapshot but not ancestry | Distinct historical identity retained |
 
@@ -788,7 +788,7 @@ This order is illustrative and may change after audit evidence. The **first K1 r
 5. **Research/control:** no physical-safety certification, constrained RL proof, scientific-calibration claim, historical-causal estimate or financial alpha proof follows from contract compatibility.
 6. **Distributed systems:** no exactly-once delivery, global ordering, consensus or cross-service ACID claims without explicitly scoped independent evidence.
 7. **Metaprogramming:** no arbitrary untrusted Scheme evaluation, macro self-authorization or automatic trusted-kernel upgrade.
-8. **Durability:** no assumption that an in-memory profile has crash persistence; P05's independently qualified backend remains available through optional explicit composition.
+8. **Durability:** no assumption that an in-memory profile has crash persistence; P04-D01's independently qualified backend remains available through optional explicit composition.
 9. **Licensing:** conceptual lineage does not authorize copying Alien-Works/Uncharted/external source; independently review license/compatibility for any reused code.
 10. **Portability:** Gerbil/Gambit version lock and qualified target-specific adapters are required before claims of compiled portability or native resource safety.
 11. **Negative results:** failed promotions and unsupported domains remain first-class evidence. Never hide failures by renaming a rejected mechanism into a broader abstraction.

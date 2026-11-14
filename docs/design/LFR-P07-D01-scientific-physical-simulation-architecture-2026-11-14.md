@@ -1,17 +1,17 @@
-# LFR-P10-D01 | Scientific & Physical Simulation Architecture
+# LFR-P07-D01 | Scientific Simulation & Experimental Systems / Scientific & Physical Simulation
 
 **Document class:** Source-grounded specialist detailed-design proposal  
 **Date:** 14 November 2026  
 **Programme:** Lisp Foundation Reserve (LFR-C02)  
 **Domain track:** `SCIENTIFIC SIMULATION` — Scientific Simulation & Experimental Systems  
-**Edition:** P10 — Scientific Simulation & Experimental Systems  
-**Design slice:** D01 — Scientific & Physical Simulation Architecture  
+**Edition:** P07 — Scientific Simulation & Experimental Systems  
+**Design slice:** D01 — Scientific & Physical Simulation  
 **Primary design language:** Gerbil Scheme for model contracts, reference solvers, time and event semantics, numeric oracles, and orchestration; qualified native/FMI/service adapters by workload  
-**Repository context:** `vietcong73/alien-works`, branch `audit/lisp-foundation-reserve`; path `docs/design/LFR-P10-D01-scientific-physical-simulation-architecture-2026-11-14.md`  
+**Repository context:** `vietcong73/alien-works`, branch `audit/lisp-foundation-reserve`; path `docs/design/LFR-P07-D01-scientific-physical-simulation-architecture-2026-11-14.md`  
 **Status:** `SOURCE_GROUNDED_DESIGN_PROPOSED / 80_FUTURE_TESTS / 12_FUTURE_GATES / UNIMPLEMENTED / RUNTIME_UNQUALIFIED / DOCUMENT_PUBLISHED_TO_GITHUB`  
 **Publication:** Owner-approved publication of this design document to `docs/design/` on `audit/lisp-foundation-reserve`. Implementation, native library installation, external execution and deployment follow separate authorization.
 
-> **Design decision:** P10-D01 provides versioned scientific models, state and field representations, numerical integration, event handling, physical invariants, coupling and error evidence. A compact Gerbil reference is the executable semantic baseline proposed for future implementation. Scalable solvers and specialized simulators connect through independently qualified ports. Simulation results are claims about a declared model, discretization, numerical method and parameter envelope.
+> **Design decision:** P07-D01 provides versioned scientific models, state and field representations, numerical integration, event handling, physical invariants, coupling and error evidence. A compact Gerbil reference is the executable semantic baseline proposed for future implementation. Scalable solvers and specialized simulators connect through independently qualified ports. Simulation results are claims about a declared model, discretization, numerical method and parameter envelope.
 
 ## 0. Objectives, first useful capability and boundaries
 
@@ -23,7 +23,7 @@
 
 **Coverage:** finite-dimensional differential equations, initial/boundary-value problems, one-dimensional diffusion, discrete-event and hybrid transitions, low-order mechanical dynamics, uncertainty propagation, model coupling, solver interoperability, checkpoint semantics, and numeric/scientific evaluation.
 
-**Integration boundary:** P09-D03 owns control decisions, supervisor admission and device-facing authority. P09-D04 owns distributed work delivery and failure reconciliation. P09-D01 may consume a simulation through a separately qualified environment adapter. P08 owns game-world causality and scene truth. P10-D02 will own cross-experiment portfolio management and research orchestration; D01 owns one simulation's state, numerical execution and scientific evidence.
+**Integration boundary:** P06-D03 owns control decisions, supervisor admission and device-facing authority. P06-D04 owns distributed work delivery and failure reconciliation. P06-D01 may consume a simulation through a separately qualified environment adapter. P05 owns game-world causality and scene truth. P07-D02 will own cross-experiment portfolio management and research orchestration; D01 owns one simulation's state, numerical execution and scientific evidence.
 
 **Runtime classes:** `FINITE_REFERENCE`, `LOCAL_NUMERICAL`, `PDE_DISCRETIZATION`, `HYBRID_EVENT`, `CO_SIMULATION`, `NATIVE_SOLVER`, `DISTRIBUTED_SIMULATION`. Each qualification claim identifies the class, model family, parameter domain and backend.
 
@@ -56,7 +56,7 @@ Evidence labels: `STANDARD` is normative interface documentation; `DOC` is offic
 | [Project Chrono](https://projectchrono.org/) (`DOC/SOURCE`) | Rigid/flexible dynamics, constraints, contacts and multiphysics integration | Qualified physical-engine backend for mechanical workloads | Contact, constraint, time integration and data parity |
 | [Gerbil reference](https://cons.io/reference/) and [Gambit manual](https://gambitscheme.org/latest/gambit.pdf) (`DOC`) | Gerbil/Gambit facilities must be validated for numerical layout, type assumptions and foreign memory ownership | Compile-proven small reference and explicitly pinned FFI ports | Toolchain probe, checked numeric conversion and resource lifetime |
 | LFR [K0-D01](LFR-K0-D01-gerbil-meta-foundation-minimal-contract-kernel-2026-11-13.md) / [K1-D01](LFR-K1-D01-opt-in-generalized-mechanisms-detailed-design-2026-11-13.md) (`LFR`) | K0 exact identity, validation and receipts; K1 M05 time, M13 interop, M17 numeric validity, M18 coupling candidates | Foundation plus optional reusable mechanisms | Standalone core and selected integration conformance |
-| LFR [P09-D03](LFR-P09-D03-control-autonomous-systems-architecture-2026-11-13.md) / [P09-D04](LFR-P09-D04-distributed-systems-coordination-architecture-2026-11-14.md) (`LFR`) | Controller supervision and distributed coordination have independent domains and authority | Distinct plant-observation and remote-work adapters | Control/delivery adapter negative tests |
+| LFR [P06-D03](LFR-P06-D03-control-autonomous-systems-architecture-2026-11-13.md) / [P06-D04](LFR-P06-D04-distributed-systems-coordination-architecture-2026-11-14.md) (`LFR`) | Controller supervision and distributed coordination have independent domains and authority | Distinct plant-observation and remote-work adapters | Control/delivery adapter negative tests |
 
 **Source boundary:** open-source and standard documents establish feasible interfaces and testable algorithms. This design contains original contracts and independently derived reference equations; it has no copied solver source. Dependency licenses and runtime versions require a fresh, pinned inspection before implementation.
 
@@ -67,7 +67,7 @@ Evidence labels: `STANDARD` is normative interface documentation; `DOC` is offic
                             |
              ModelSpec + InitialCondition + RunSpec
                             v
-               +-- P10-D01 PUBLIC CONTRACT --+
+               +-- P07-D01 PUBLIC CONTRACT --+
                | validate / initialize / run |
                | advance / observe / report  |
                +--------------+--------------+
@@ -91,7 +91,7 @@ Evidence labels: `STANDARD` is normative interface documentation; `DOC` is offic
                  Evaluated trajectory / errors
 
 K0: shared contract vocabulary. K1: selected mechanisms.
-P09-D03, P09-D01, P08, P09-D04, P10-D02: optional integration ports.
+P06-D03, P06-D01, P05, P06-D04, P07-D02: optional integration ports.
 ```
 
 ### 2.1 Dependency classes
@@ -102,7 +102,7 @@ P09-D03, P09-D01, P08, P09-D04, P10-D02: optional integration ports.
 | D01-owned core | Time, state, validation, reference solver, invariant checks | Yes | Local deterministic oracle execution |
 | Capabilities | `SolverPort`, `MeshPort`, `CouplingPort`, `CheckpointPort`, `TracePort` | Yes as interfaces; in-memory implementations initially | Declared numerical, temporal and state-lifecycle semantics |
 | Optional mechanisms | K1 time/numeric/interop/coupled-system candidates | Selected independently | Qualified mechanism profile |
-| Optional integrations | P08, P09-D01/D03/D04, P10-D02 and other applications | No | Adapter-specific request/result interpretation |
+| Optional integrations | P05, P06-D01/D03/D04, P07-D02 and other applications | No | Adapter-specific request/result interpretation |
 | Optional infrastructure | SUNDIALS, PETSc, FMI importers, Gmsh, Chrono, Julia service | No | Pinned backend version, ABI and empirical performance |
 
 **Standalone acceptance:** the three reference fixtures are specified independently of other specialist runtimes and external solvers. Future compiled Gerbil fixtures must pass their applicable tests using K0 contracts and local capability implementations.
@@ -111,12 +111,12 @@ P09-D03, P09-D01, P08, P09-D04, P10-D02: optional integration ports.
 
 | Owner | Owns | Port into D01 |
 |---|---|---|
-| P10-D01 | Physical model, simulation state, integrator choice, trajectory, event localization, numerical errors | Simulation API |
-| P09-D03 | Control objective, estimator/controller/supervisor, command admission | Frozen control input and measured observation adapter |
-| P09-D04 | Remote work delivery, leases, quorum and reconciliation | Remote-simulation job envelope and result receipt |
-| P09-D01 | Learner, policy updates and evaluation | Episode/observation adapter with explicit time mapping |
-| P08 | World truth, scene state, game rules, materialization | Authored physical-model import and output adapter |
-| P10-D02 (planned) | Experiment plans, datasets, benchmark campaigns and cross-run governance | D01 result/evidence artifacts |
+| P07-D01 | Physical model, simulation state, integrator choice, trajectory, event localization, numerical errors | Simulation API |
+| P06-D03 | Control objective, estimator/controller/supervisor, command admission | Frozen control input and measured observation adapter |
+| P06-D04 | Remote work delivery, leases, quorum and reconciliation | Remote-simulation job envelope and result receipt |
+| P06-D01 | Learner, policy updates and evaluation | Episode/observation adapter with explicit time mapping |
+| P05 | World truth, scene state, game rules, materialization | Authored physical-model import and output adapter |
+| P07-D02 (planned) | Experiment plans, datasets, benchmark campaigns and cross-run governance | D01 result/evidence artifacts |
 | External host | Real device effects, access control and empirical measurement | Controlled measurement/input only |
 
 The simulation's committed state is authoritative **within its model execution**. A consumer decides whether and how its domain state incorporates a simulated result.
@@ -294,11 +294,11 @@ A binding verifies the FMU's actual capability flags, platform binary, model-des
 
 ### 7.3 Cross-specialist adapters
 
-- **P09-D03:** simulation emits model state or measured-observation envelopes; controller inputs are sampled at declared times; the application host admits real controls separately.
-- **P09-D04:** asynchronous simulation jobs carry exact model, solver, input and numerical profile locks; distributed delivery does not determine mathematical time or simulation commit semantics.
-- **P09-D01:** simulation can supply an environment, but a simulation time horizon and an RL episode termination are different typed events.
-- **P08:** physics values may inform world-state decisions through P08's domain adapter; it decides authoritative world outcomes.
-- **P10-D02:** campaign-level parameter sweeps and reports consume D01 evidence without changing its solver result after publication.
+- **P06-D03:** simulation emits model state or measured-observation envelopes; controller inputs are sampled at declared times; the application host admits real controls separately.
+- **P06-D04:** asynchronous simulation jobs carry exact model, solver, input and numerical profile locks; distributed delivery does not determine mathematical time or simulation commit semantics.
+- **P06-D01:** simulation can supply an environment, but a simulation time horizon and an RL episode termination are different typed events.
+- **P05:** physics values may inform world-state decisions through P05's domain adapter; it decides authoritative world outcomes.
+- **P07-D02:** campaign-level parameter sweeps and reports consume D01 evidence without changing its solver result after publication.
 
 ## 8. Exact reference fixture A: OscillatorLab
 
@@ -395,7 +395,7 @@ Two first-order thermal capacitances connected by a conductance define an indepe
 
 **Uncertainty sources:** initial-condition distributions, uncertain parameters, stochastic forcing, discretization error, solver tolerance, finite arithmetic, calibration discrepancy and observation noise are recorded separately.
 
-**Deterministic parameter sweeps:** input sets contain exact parameter identity and per-run seed/method locks; report min/max/percentiles only for a declared sample design. Multi-run scheduling may be delegated later to P10-D02 or P09-D04 while each individual simulation retains D01 state and truth semantics.
+**Deterministic parameter sweeps:** input sets contain exact parameter identity and per-run seed/method locks; report min/max/percentiles only for a declared sample design. Multi-run scheduling may be delegated later to P07-D02 or P06-D04 while each individual simulation retains D01 state and truth semantics.
 
 **Sensitivity:** finite-difference perturbations declare scale, stencil, truncation sensitivity and roundoff check; automatic/adjoint differentiation becomes an optional backend profile requiring smoothness and event-discontinuity handling. Check sensitivities against analytic derivatives for the oscillator before using a solver's reported gradient as scientific evidence.
 
@@ -416,7 +416,7 @@ A selected backend must return a result consistent with its specific solver prof
 ### 12.1 Proposed Gerbil namespaces
 
 ```text
-lfr/p10/simulation/
+lfr/p07/simulation/
   contract/{model,units,state,time,run,receipt}.ss
   model/{ode,dae,pde,hybrid,validation}.ss
   reference/{euler,rk4,symplectic,verlet,implicit-euler}.ss
@@ -530,7 +530,7 @@ For each job, select a short candidate list after model classification. Pin sour
 | **Q7 — Coupling/FMI conformance** | Coupling/FMI conformance | Model/CS/SE time ownership, early return, rollback and interface residual |
 | **Q8 — Native/backend parity** | Native/backend parity | ABI, memory, solver-state, error and end-to-end benchmark for selected adapter |
 | **Q9 — Resource/security** | Resource/security | Budgets, model-data validation, callback, memory and isolation negative tests |
-| **Q10 — Integration conformance** | Integration conformance | Selected P08/P09/D04/P10-D02 or external adapter and domain-source-of-truth checks |
+| **Q10 — Integration conformance** | Integration conformance | Selected P05/P06/D04/P07-D02 or external adapter and domain-source-of-truth checks |
 | **Q11 — Independent audit and claim** | Independent audit and claim | Reproducible reports, independent oracle, hashes and uncertainty ceiling |
 
 **Gate applicability:** every reference release requires Q0/Q1/Q2/Q3, applicable Q9 and Q11. Q4 applies to PDE, Q5 to hybrid events, Q6 to DAE/stiff solver claims, Q7 to coupling/FMI, Q8 to selected native backends, and Q10 to selected external integration profiles. A release claim publishes both passed tests and excluded scopes.
@@ -541,121 +541,121 @@ For each job, select a short candidate list after model classification. Pin sour
 
 | Test | Fixture / challenge | Required observation |
 |---|---|---|
-| **P10-D01-T01** | Unit-compatible oscillator input | accept kg/N/m/s parameter dimensions under declared model |
-| **P10-D01-T02** | Unit mismatch in spring law | reject invalid dimensional term and name field |
-| **P10-D01-T03** | Affine temperature conversion | preserve correct absolute temperature difference semantics |
-| **P10-D01-T04** | Stale model revision | reject step with mismatched model revision |
-| **P10-D01-T05** | Parameter validity | reject negative mass and nonpositive diffusivity |
-| **P10-D01-T06** | Finite numeric contract | reject NaN/Inf initial state |
-| **P10-D01-T07** | Coordinate-frame conversion | transform known point with explicit frame witness |
-| **P10-D01-T08** | Wrong mesh orientation | flag invalid topology/orientation fixture |
-| **P10-D01-T09** | Missing boundary label | reject unresolved external face |
-| **P10-D01-T10** | Run identity and restart | preserve model/solver/initialization locks in checkpoint |
+| **P07-D01-T01** | Unit-compatible oscillator input | accept kg/N/m/s parameter dimensions under declared model |
+| **P07-D01-T02** | Unit mismatch in spring law | reject invalid dimensional term and name field |
+| **P07-D01-T03** | Affine temperature conversion | preserve correct absolute temperature difference semantics |
+| **P07-D01-T04** | Stale model revision | reject step with mismatched model revision |
+| **P07-D01-T05** | Parameter validity | reject negative mass and nonpositive diffusivity |
+| **P07-D01-T06** | Finite numeric contract | reject NaN/Inf initial state |
+| **P07-D01-T07** | Coordinate-frame conversion | transform known point with explicit frame witness |
+| **P07-D01-T08** | Wrong mesh orientation | flag invalid topology/orientation fixture |
+| **P07-D01-T09** | Missing boundary label | reject unresolved external face |
+| **P07-D01-T10** | Run identity and restart | preserve model/solver/initialization locks in checkpoint |
 
 #### Oscillator reference
 
 | Test | Fixture / challenge | Required observation |
 |---|---|---|
-| **P10-D01-T11** | Undamped analytic solution | match cosine/sine state at fixed times |
-| **P10-D01-T12** | Underdamped exact position | match exponential-trigonometric analytic oracle |
-| **P10-D01-T13** | Underdamped exact velocity | match analytic derivative independent of solver |
-| **P10-D01-T14** | Energy dissipation | verify E(0)-E(T)=integrated c*v^2 within declared integration error |
-| **P10-D01-T15** | Undamped energy invariant | reference energy constancy for analytic trajectory |
-| **P10-D01-T16** | Explicit Euler energy growth | detect known unstable growth for chosen h and period count |
-| **P10-D01-T17** | Symplectic Euler phase/energy | measure stable-domain bounded energy oscillation and phase error |
-| **P10-D01-T18** | Velocity-Verlet order | observe second-order global state convergence for undamped smooth case |
-| **P10-D01-T19** | RK4 refinement order | observe near-fourth-order global error in asymptotic regime |
-| **P10-D01-T20** | Critical damping continuity | compare limiting under/critical/overdamped oracle trajectories |
+| **P07-D01-T11** | Undamped analytic solution | match cosine/sine state at fixed times |
+| **P07-D01-T12** | Underdamped exact position | match exponential-trigonometric analytic oracle |
+| **P07-D01-T13** | Underdamped exact velocity | match analytic derivative independent of solver |
+| **P07-D01-T14** | Energy dissipation | verify E(0)-E(T)=integrated c*v^2 within declared integration error |
+| **P07-D01-T15** | Undamped energy invariant | reference energy constancy for analytic trajectory |
+| **P07-D01-T16** | Explicit Euler energy growth | detect known unstable growth for chosen h and period count |
+| **P07-D01-T17** | Symplectic Euler phase/energy | measure stable-domain bounded energy oscillation and phase error |
+| **P07-D01-T18** | Velocity-Verlet order | observe second-order global state convergence for undamped smooth case |
+| **P07-D01-T19** | RK4 refinement order | observe near-fourth-order global error in asymptotic regime |
+| **P07-D01-T20** | Critical damping continuity | compare limiting under/critical/overdamped oracle trajectories |
 
 #### Stepper and stiff systems
 
 | Test | Fixture / challenge | Required observation |
 |---|---|---|
-| **P10-D01-T21** | Rejected-step atomicity | last accepted state/time unchanged after error rejection |
-| **P10-D01-T22** | Accepted-step monotonicity | time and revision progress once per accepted step |
-| **P10-D01-T23** | Error norm normalization | use declared state-wise atol/rtol scale |
-| **P10-D01-T24** | Dense output scope | reject observation outside valid interpolation interval |
-| **P10-D01-T25** | Adaptive controller cap | stop after declared rejections and preserve trace |
-| **P10-D01-T26** | Stiff diagonal analytic pair | compare two-mode exact decay at fixed times |
-| **P10-D01-T27** | Implicit Euler scalar decay | match discrete implicit update and residual |
-| **P10-D01-T28** | Nonlinear iteration failure | return typed residual/nonconvergence without false success |
-| **P10-D01-T29** | Consistent DAE initialization | accept valid algebraic constraint state |
-| **P10-D01-T30** | Inconsistent DAE initialization | reject incompatible y,ydot algebraic initial values |
+| **P07-D01-T21** | Rejected-step atomicity | last accepted state/time unchanged after error rejection |
+| **P07-D01-T22** | Accepted-step monotonicity | time and revision progress once per accepted step |
+| **P07-D01-T23** | Error norm normalization | use declared state-wise atol/rtol scale |
+| **P07-D01-T24** | Dense output scope | reject observation outside valid interpolation interval |
+| **P07-D01-T25** | Adaptive controller cap | stop after declared rejections and preserve trace |
+| **P07-D01-T26** | Stiff diagonal analytic pair | compare two-mode exact decay at fixed times |
+| **P07-D01-T27** | Implicit Euler scalar decay | match discrete implicit update and residual |
+| **P07-D01-T28** | Nonlinear iteration failure | return typed residual/nonconvergence without false success |
+| **P07-D01-T29** | Consistent DAE initialization | accept valid algebraic constraint state |
+| **P07-D01-T30** | Inconsistent DAE initialization | reject incompatible y,ydot algebraic initial values |
 
 #### PDE and mesh
 
 | Test | Fixture / challenge | Required observation |
 |---|---|---|
-| **P10-D01-T31** | Periodic mass conservation | sum signed interior fluxes to zero |
-| **P10-D01-T32** | Discrete Fourier eigenmode | compare heat trajectory to semidiscrete exact exponential |
-| **P10-D01-T33** | Continuum spatial refinement | observe second-order eigenvalue convergence for smooth fixed Fourier mode |
-| **P10-D01-T34** | Forward Euler r=1/2 | preserve nonnegative convex-combination profile |
-| **P10-D01-T35** | Forward Euler r>1/2 | reject positivity guarantee under violating explicit step |
-| **P10-D01-T36** | Boundary-flux source accounting | match change in mass to signed flux+source |
-| **P10-D01-T37** | Zero-Neumann boundary | preserve mass with zero external flux |
-| **P10-D01-T38** | Dirichlet boundary accounting | observe nonzero boundary contribution when present |
-| **P10-D01-T39** | Mesh projection and conservation | declare transferred integral error on remesh |
-| **P10-D01-T40** | Inverted/invalid cell | reject topology with nonpositive measure |
+| **P07-D01-T31** | Periodic mass conservation | sum signed interior fluxes to zero |
+| **P07-D01-T32** | Discrete Fourier eigenmode | compare heat trajectory to semidiscrete exact exponential |
+| **P07-D01-T33** | Continuum spatial refinement | observe second-order eigenvalue convergence for smooth fixed Fourier mode |
+| **P07-D01-T34** | Forward Euler r=1/2 | preserve nonnegative convex-combination profile |
+| **P07-D01-T35** | Forward Euler r>1/2 | reject positivity guarantee under violating explicit step |
+| **P07-D01-T36** | Boundary-flux source accounting | match change in mass to signed flux+source |
+| **P07-D01-T37** | Zero-Neumann boundary | preserve mass with zero external flux |
+| **P07-D01-T38** | Dirichlet boundary accounting | observe nonzero boundary contribution when present |
+| **P07-D01-T39** | Mesh projection and conservation | declare transferred integral error on remesh |
+| **P07-D01-T40** | Inverted/invalid cell | reject topology with nonpositive measure |
 
 #### Hybrid dynamics
 
 | Test | Fixture / challenge | Required observation |
 |---|---|---|
-| **P10-D01-T41** | Ball exact impact time | bracket and locate positive analytic root |
-| **P10-D01-T42** | Impact guard direction | reject upward crossing as downward impact |
-| **P10-D01-T43** | Restitution reset | match v_after=-e*v_before |
-| **P10-D01-T44** | Impact energy ratio | match e^2 kinetic energy ratio for e>=0 |
-| **P10-D01-T45** | Starting at ground rising | avoid spurious impact at t=0 |
-| **P10-D01-T46** | Rest contact at e=0 | enter rest mode without infinite zero-time bounces |
-| **P10-D01-T47** | Multiple simultaneous guards | apply declared event priority and trace |
-| **P10-D01-T48** | Event inside long step | commit pre-event segment and reset before continuing |
-| **P10-D01-T49** | Zeno accumulation | stop/report under event accumulation policy |
-| **P10-D01-T50** | Rollback after invalid event | preserve last accepted anchor and event trace |
+| **P07-D01-T41** | Ball exact impact time | bracket and locate positive analytic root |
+| **P07-D01-T42** | Impact guard direction | reject upward crossing as downward impact |
+| **P07-D01-T43** | Restitution reset | match v_after=-e*v_before |
+| **P07-D01-T44** | Impact energy ratio | match e^2 kinetic energy ratio for e>=0 |
+| **P07-D01-T45** | Starting at ground rising | avoid spurious impact at t=0 |
+| **P07-D01-T46** | Rest contact at e=0 | enter rest mode without infinite zero-time bounces |
+| **P07-D01-T47** | Multiple simultaneous guards | apply declared event priority and trace |
+| **P07-D01-T48** | Event inside long step | commit pre-event segment and reset before continuing |
+| **P07-D01-T49** | Zeno accumulation | stop/report under event accumulation policy |
+| **P07-D01-T50** | Rollback after invalid event | preserve last accepted anchor and event trace |
 
 #### Coupling and FMI
 
 | Test | Fixture / challenge | Required observation |
 |---|---|---|
-| **P10-D01-T51** | Thermal RC monolithic oracle | compare two-state coupled solution |
-| **P10-D01-T52** | Staggered exchange error | measure communication-step convergence |
-| **P10-D01-T53** | Iterative coupling residual | stop when interface norm passes declared threshold |
-| **P10-D01-T54** | Divergent coupling iteration | return COUPLING_NONCONVERGED and preserve anchor |
-| **P10-D01-T55** | FMI Model Exchange | map importer-owned solver/time contract correctly |
-| **P10-D01-T56** | FMI Co-Simulation early return | honor last successful time before next exchange |
-| **P10-D01-T57** | FMI Scheduled Execution | activate partitions by declared clock and order |
-| **P10-D01-T58** | FMU incompatible capability | reject requested rollback/state save without support |
-| **P10-D01-T59** | Unit mismatch across coupling | reject incompatible connected port dimensions |
-| **P10-D01-T60** | FMU stale version reference | reject different model-description/backend revision |
+| **P07-D01-T51** | Thermal RC monolithic oracle | compare two-state coupled solution |
+| **P07-D01-T52** | Staggered exchange error | measure communication-step convergence |
+| **P07-D01-T53** | Iterative coupling residual | stop when interface norm passes declared threshold |
+| **P07-D01-T54** | Divergent coupling iteration | return COUPLING_NONCONVERGED and preserve anchor |
+| **P07-D01-T55** | FMI Model Exchange | map importer-owned solver/time contract correctly |
+| **P07-D01-T56** | FMI Co-Simulation early return | honor last successful time before next exchange |
+| **P07-D01-T57** | FMI Scheduled Execution | activate partitions by declared clock and order |
+| **P07-D01-T58** | FMU incompatible capability | reject requested rollback/state save without support |
+| **P07-D01-T59** | Unit mismatch across coupling | reject incompatible connected port dimensions |
+| **P07-D01-T60** | FMU stale version reference | reject different model-description/backend revision |
 
 #### Backend and reproducibility
 
 | Test | Fixture / challenge | Required observation |
 |---|---|---|
-| **P10-D01-T61** | Gerbil standalone reference | compile/run with zero specialist runtime imports |
-| **P10-D01-T62** | Pinned FFI lifetime | retain native state and callbacks until release |
-| **P10-D01-T63** | Numeric endianness/layout | round-trip representative vectors with exact conversion evidence |
-| **P10-D01-T64** | Native callback failure | return typed error and preserve accepted anchor |
-| **P10-D01-T65** | Backend numeric parity | compare trajectories against independent oracle and tolerance envelope |
-| **P10-D01-T66** | Backend over-tolerance | reject mismatched numerical output despite success status |
-| **P10-D01-T67** | Checkpoint closure | resume with exact compatible model/solver/time/RNG revision |
-| **P10-D01-T68** | Checkpoint revision mismatch | reject stale/incompatible restore |
-| **P10-D01-T69** | Seed and scheduling separation | report deterministic-vs-nondeterministic replay grade |
-| **P10-D01-T70** | Equal-error performance tour | measure end-to-end costs at matched numeric accuracy |
+| **P07-D01-T61** | Gerbil standalone reference | compile/run with zero specialist runtime imports |
+| **P07-D01-T62** | Pinned FFI lifetime | retain native state and callbacks until release |
+| **P07-D01-T63** | Numeric endianness/layout | round-trip representative vectors with exact conversion evidence |
+| **P07-D01-T64** | Native callback failure | return typed error and preserve accepted anchor |
+| **P07-D01-T65** | Backend numeric parity | compare trajectories against independent oracle and tolerance envelope |
+| **P07-D01-T66** | Backend over-tolerance | reject mismatched numerical output despite success status |
+| **P07-D01-T67** | Checkpoint closure | resume with exact compatible model/solver/time/RNG revision |
+| **P07-D01-T68** | Checkpoint revision mismatch | reject stale/incompatible restore |
+| **P07-D01-T69** | Seed and scheduling separation | report deterministic-vs-nondeterministic replay grade |
+| **P07-D01-T70** | Equal-error performance tour | measure end-to-end costs at matched numeric accuracy |
 
 #### Integration, safety and audit
 
 | Test | Fixture / challenge | Required observation |
 |---|---|---|
-| **P10-D01-T71** | D03 control sampling | deliver time-aligned simulation observation to selected adapter |
-| **P10-D01-T72** | P09-D01 environment mapping | separate simulation time from episode termination |
-| **P10-D01-T73** | D04 remote task mapping | preserve model/solver locks across delivery and reconnect |
-| **P10-D01-T74** | P08 world-scene boundary | return simulation observation without domain-state admission |
-| **P10-D01-T75** | P10-D02 experiment artifact | export self-contained run/evidence manifest |
-| **P10-D01-T76** | Untrusted model input | reject executable payload and preserve validation trace |
-| **P10-D01-T77** | Resource budget | stop bounded run on memory/wall/step limits |
-| **P10-D01-T78** | Independent reviewer reproduction | replay one fixture from locked manifest and compare oracle |
-| **P10-D01-T79** | Validation claim ceiling | decline physical-validation claim without empirical evidence |
-| **P10-D01-T80** | Qualification partial/unknown | record unresolved tests without promoting untested backend |
+| **P07-D01-T71** | D03 control sampling | deliver time-aligned simulation observation to selected adapter |
+| **P07-D01-T72** | P06-D01 environment mapping | separate simulation time from episode termination |
+| **P07-D01-T73** | D04 remote task mapping | preserve model/solver locks across delivery and reconnect |
+| **P07-D01-T74** | P05 world-scene boundary | return simulation observation without domain-state admission |
+| **P07-D01-T75** | P07-D02 experiment artifact | export self-contained run/evidence manifest |
+| **P07-D01-T76** | Untrusted model input | reject executable payload and preserve validation trace |
+| **P07-D01-T77** | Resource budget | stop bounded run on memory/wall/step limits |
+| **P07-D01-T78** | Independent reviewer reproduction | replay one fixture from locked manifest and compare oracle |
+| **P07-D01-T79** | Validation claim ceiling | decline physical-validation claim without empirical evidence |
+| **P07-D01-T80** | Qualification partial/unknown | record unresolved tests without promoting untested backend |
 
 ### 15.3 Claim and release matrix
 
@@ -680,7 +680,7 @@ For each job, select a short candidate list after model classification. Pin sour
 5. **D01-04 — Hybrid event core:** guard, root bracket, reset, rest/Zeno policy; execute T41–T50.
 6. **D01-05 — Coupling reference:** coupled thermal RC, scheduled exchanges and FMI interface probes; execute selected T51–T60.
 7. **D01-06 — Native candidate tour:** SUNDIALS/PETSc or other selected backend only after task profile and oracle qualify; execute applicable T61–T70.
-8. **D01-07 — Interoperability and independent audit:** optional D03/D04/P08/P09-D01/P10-D02 adapters, Q0–Q11, publication of evidence, unresolved cases and claim scope; execute T71–T80 where applicable.
+8. **D01-07 — Interoperability and independent audit:** optional D03/D04/P05/P06-D01/P07-D02 adapters, Q0–Q11, publication of evidence, unresolved cases and claim scope; execute T71–T80 where applicable.
 
 ## 17. Open engineering decisions
 
@@ -696,7 +696,7 @@ For each job, select a short candidate list after model classification. Pin sour
 | Mechanical contact | Analytic bounce first; Chrono later | Contact/nonpenetration/constraint and performance oracles |
 | Long-running simulation | Local bounded run first | Checkpoint closure, durability and recovery proof |
 | Distributed execution | Optional D04 job adapter | Independent numeric truth and remote receipt reconciliation |
-| UI and visualization | Trace/sample export; optional P07 viewer | Dimension/frame mapping and non-authoritative presentation |
+| UI and visualization | Trace/sample export; optional P01-D02 viewer | Dimension/frame mapping and non-authoritative presentation |
 | Experimental campaign | D01 produces evidence; D02 later coordinates many runs | Manifest versioning, comparability and provenance |
 
 ## 18. Final design verdict

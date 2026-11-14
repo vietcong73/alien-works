@@ -1,27 +1,27 @@
-# LFR-P09-D02 | Multi-Agent & Behavioral Systems Architecture
+# LFR-P06-D02 | Adaptive Intelligence & Autonomous Systems / Multi-Agent & Behavioral Systems
 
 **Document class:** Source-grounded specialist detailed design proposal  
 **Date:** 13 November 2026  
 **Programme:** Lisp Foundation Reserve (LFR-C02)  
 **Domain track:** `ADAPTIVE SYSTEMS` — Adaptive Intelligence & Autonomous Systems  
-**Edition:** P09 — Adaptive Intelligence & Autonomous Systems  
+**Edition:** P06 — Adaptive Intelligence & Autonomous Systems  
 **Design slice:** D02 — Multi-Agent & Behavioral Systems  
 **Primary design language:** Gerbil Scheme for bounded reference behavior, contracts and orchestration; qualified computational adapters only when justified  
-**Repository context:** `vietcong73/alien-works`, branch `audit/lisp-foundation-reserve`; path `docs/design/LFR-P09-D02-multi-agent-behavioral-systems-architecture-2026-11-13.md`  
+**Repository context:** `vietcong73/alien-works`, branch `audit/lisp-foundation-reserve`; path `docs/design/LFR-P06-D02-multi-agent-behavioral-systems-architecture-2026-11-13.md`  
 **Status:** `SOURCE_GROUNDED_DESIGN_PROPOSED / 80_FUTURE_TESTS / 12_FUTURE_GATES / NO_IMPLEMENTATION / NO_RUNTIME_QUALIFICATION / DOCUMENT_PUBLISHED_TO_GITHUB`  
 **Publication:** Owner-approved publication of this design document to `docs/design/` on `audit/lisp-foundation-reserve`. Publication does not authorize code installation, implementation, data access, autonomous external actions or deployment.
 
-> **Design decision:** P09-D02 defines a **versioned, bounded, observable multi-agent behavior and interaction system**. It supports deterministic and learned behaviors, sequential and simultaneous actions, cooperation and competition, heterogeneous agents, limited knowledge, shared resources and adversarial opponents. **Single-agent planning is not multi-agent coordination; multi-agent behavior is not automatically multi-agent reinforcement learning (MARL).** The first useful artifact is a small Gerbil-native multi-agent fixture with independent exact oracles and traceable action conflict decisions. No game engine, neural network, external service or distributed runtime is mandatory.
+> **Design decision:** P06-D02 defines a **versioned, bounded, observable multi-agent behavior and interaction system**. It supports deterministic and learned behaviors, sequential and simultaneous actions, cooperation and competition, heterogeneous agents, limited knowledge, shared resources and adversarial opponents. **Single-agent planning is not multi-agent coordination; multi-agent behavior is not automatically multi-agent reinforcement learning (MARL).** The first useful artifact is a small Gerbil-native multi-agent fixture with independent exact oracles and traceable action conflict decisions. No game engine, neural network, external service or distributed runtime is mandatory.
 
 ## 0. Objectives, product, and boundaries
 
 **Research question:** Can independently selected behavioral and multi-agent algorithms form a usable, auditable Gerbil-first architecture for games, simulations, robotics-like mock environments and non-game decision tasks, without hiding the difference between observation, intention, negotiation, authorized effects and observed consequences? Can it scale by *measured need* instead of calling all coordination a MARL problem?
 
-**Useful first deliverable:** a deterministic `Crossroads` micro-simulator with **two or three role-distinct agents**, shared and private observations, explicit turn/simultaneity modes, bounded task allocation, resource collision handling, an oracle for small instances, and an independent trace/evaluation CLI. Demonstrate a fixed policy, a behavior tree or task planner, and one coordination method under the *same* fixture semantics. A renderer, P08 world engine, RL learner and network are optional adapters, not prerequisites.
+**Useful first deliverable:** a deterministic `Crossroads` micro-simulator with **two or three role-distinct agents**, shared and private observations, explicit turn/simultaneity modes, bounded task allocation, resource collision handling, an oracle for small instances, and an independent trace/evaluation CLI. Demonstrate a fixed policy, a behavior tree or task planner, and one coordination method under the *same* fixture semantics. A renderer, P05 world engine, RL learner and network are optional adapters, not prerequisites.
 
 **In scope:** actor/agent identity; role and group membership; heterogeneous observation and action spaces; per-agent memory; FSM, behavior trees, utility, GOAP, HTN, small exact search, team allocation, communication contracts; sequential, simultaneous, mixed and event-driven schedules; action masks and resource conflicts; cooperation, adversarial and mixed incentives; local/public/private knowledge; policy binding; multi-agent evaluation; MARL integration ports and qualified backend choices.
 
-**Out of scope:** operating a game engine; generating worlds (P08-D03); choosing P08-D01 causal consequences; storing authoritative P08-D02 world state; owning a deep RL training system (P09-D01); supervisory control/physical actuation (future P09-D03); distributed transport/consensus/storage semantics (future P09-D04); a universal theorem prover; invented general-game equilibria; unrestricted autonomous tool execution; making a test fixture into production AI.
+**Out of scope:** operating a game engine; generating worlds (P05-D03); choosing P05-D01 causal consequences; storing authoritative P05-D02 world state; owning a deep RL training system (P06-D01); supervisory control/physical actuation (future P06-D03); distributed transport/consensus/storage semantics (future P06-D04); a universal theorem prover; invented general-game equilibria; unrestricted autonomous tool execution; making a test fixture into production AI.
 
 **Four design prohibitions:** no *implicit* truth-sharing among agents; no implicit promotion from proposal to effect; no conversion of simultaneous turns into sequential turns without semantic proof; no claim that increasing a training reward proves coordination or exploitability resistance.
 
@@ -51,7 +51,7 @@ Evidence classes: `DOC` = official/maintainer API description; `SOURCE` = public
 | [EPyMARL](https://github.com/uoe-agents/epymarl) (`SOURCE`) | Explicit common-reward vs individual-reward algorithm limitations | Reject incompatible payoff/algorithm pairings | QMIX/VDN apply unchanged to arbitrary general-sum rewards |
 | [Gerbil interface reference](https://gerbil.scheme.org/reference/std/interface.html) and [Gambit](https://gambitscheme.org/latest/gambit.pdf) (`DOC`) | Module interfaces, runtime/foreign bindings and toolchain constraints | Contracts first; compile and FFI probes before port claims | Interfaces are a security sandbox or foreign ABI proof |
 | LFR [K0-D01](LFR-K0-D01-gerbil-meta-foundation-minimal-contract-kernel-2026-11-13.md), [K1-D01](LFR-K1-D01-opt-in-generalized-mechanisms-detailed-design-2026-11-13.md) (`LFR_DESIGN`) | Identity, authority, result, observation, multi-agent interaction candidates | Reuse only applicable exact contract slices | Any K1 mechanism has passed runtime gates |
-| LFR [P09-D01](LFR-P09-D01-reinforcement-learning-adaptive-intelligence-architecture-2026-11-13.md), [P08-D01](LFR-P08-D01-spacetime-decision-causal-consequence-design-2026-11-13.md), [P08-D02](LFR-P08-D02-game-world-scene-architecture-2026-11-13.md), [P08-D03](LFR-P08-D03-game-world-procedural-generation-architecture-2026-11-13.md) (`LFR_DESIGN`) | RL learner scope and game causality/world/generation separation | Optional typed integration, no hidden cross-edition edits | These designs or runtime adapters are already implemented |
+| LFR [P06-D01](LFR-P06-D01-reinforcement-learning-adaptive-intelligence-architecture-2026-11-13.md), [P05-D01](LFR-P05-D01-spacetime-decision-causal-consequence-design-2026-11-13.md), [P05-D02](LFR-P05-D02-game-world-scene-architecture-2026-11-13.md), [P05-D03](LFR-P05-D03-game-world-procedural-generation-architecture-2026-11-13.md) (`LFR_DESIGN`) | RL learner scope and game causality/world/generation separation | Optional typed integration, no hidden cross-edition edits | These designs or runtime adapters are already implemented |
 
 **Licensing/provenance:** candidate algorithms are independently specified first; reuse of third-party source requires a later file-level copyright/license inspection. The LFR design is not a claim to possess proprietary Naughty Dog engine code. Pin a source revision and dependency closure before any backend comparison; published docs may drift.
 
@@ -65,7 +65,7 @@ Application / test host (only authoritative action/world executor)
                  | per-agent local/public/private scopes
                  v
           +------------------------+
-          | P09-D02 behavior layer |
+          | P06-D02 behavior layer |
           | FSM / BT / utility     |
           | GOAP / HTN / strategy  |
           | optional learned policy|
@@ -86,10 +86,10 @@ Application / test host (only authoritative action/world executor)
                       v
           Trace / independent evaluator
 
-P09-D01: optional learner, policy artifacts, dataset/evaluation port
-P08: optional game/world adapter; retains world rules and truth
-P09-D03: future control/supervisory adapter; retains actuator authority
-P09-D04: future distributed transport/service adapter; retains delivery semantics
+P06-D01: optional learner, policy artifacts, dataset/evaluation port
+P05: optional game/world adapter; retains world rules and truth
+P06-D03: future control/supervisory adapter; retains actuator authority
+P06-D04: future distributed transport/service adapter; retains delivery semantics
 K0: identity, validation, authority-record and receipt vocabulary
 K1: separately qualified optional behavior/interaction mechanisms
 ```
@@ -106,10 +106,10 @@ A policy may be deterministic, randomized, planning-based, symbolic or learned. 
 
 - **K0:** small, exact, versioned identity/effect/authority/result envelopes. K0 cannot schedule turns or enforce permissions by itself.
 - **K1:** opt-in M03/M04/M05/M06/M07/M08/M12/M14/M15/M16 when independently qualified. None required as one bundled runtime.
-- **P09-D01:** optional policy-inference and learner/evaluation adapter. D02 does not implement PPO/QMIX, train neural networks or overwrite D01's algorithm registry.
-- **P08-D01/D02/D03:** optional environment connector. D01 admits causal interventions, D02 owns world truth, D03 generates representations. D02 agents propose only.
-- **P03/P04/P05/P06:** optional semantic state/directors, authority-bound effects, durable memory/evidence and history; D02 does not replace their hosts.
-- **P09-D03/D04:** future design-only ports for supervisory control and distributed execution. D02 defines intention/interaction semantics but not actuator safety, transactions, consensus or network retries.
+- **P06-D01:** optional policy-inference and learner/evaluation adapter. D02 does not implement PPO/QMIX, train neural networks or overwrite D01's algorithm registry.
+- **P05-D01/D02/D03:** optional environment connector. D01 admits causal interventions, D02 owns world truth, D03 generates representations. D02 agents propose only.
+- **P03-D01/P02-D02/P04-D01/P03-D02:** optional semantic state/directors, authority-bound effects, durable memory/evidence and history; D02 does not replace their hosts.
+- **P06-D03/D04:** future design-only ports for supervisory control and distributed execution. D02 defines intention/interaction semantics but not actuator safety, transactions, consensus or network retries.
 
 ## 3. Typed scenario, observation and membership contracts
 
@@ -149,7 +149,7 @@ ObservationEnvelope {
 
 **Knowledge boundaries:** `global_state`, `environment_truth`, `agent_observation`, `agent_private_memory`, `team_blackboard` and `evaluator_state` are different objects. An observation projection cannot secretly inject hidden adversary goals or invisible terrain through a shared team cache. A trained centralized critic may read privileged global features *only within a separately declared training/evaluation profile*; inference policy reads its allowed deployment inputs.
 
-**Membership:** agent disappearance, death, disconnect, respawn, team swap and policy update have explicit generation/episode records. A terminated agent cannot submit a new action by reusing an old agent ID, and an episode may continue when one agent terminates. Distinguish per-agent `terminated/truncated` from collective episode completion, preserving P09-D01 target semantics.
+**Membership:** agent disappearance, death, disconnect, respawn, team swap and policy update have explicit generation/episode records. A terminated agent cannot submit a new action by reusing an old agent ID, and an episode may continue when one agent terminates. Distinguish per-agent `terminated/truncated` from collective episode completion, preserving P06-D01 target semantics.
 
 ## 4. Behavior engine contract: from stimulus to proposal
 
@@ -278,7 +278,7 @@ TeamTaskAllocation {team_ref, goal_revision, task_refs[], candidate_agent_refs[]
 | Coordinating several workers | Fixed roles + greedy | Bipartite matching, bounded auction, joint search | Assignment cost vs exact oracle, fairness, resource feasibility, stale bids |
 | Finite adversarial turns | Fixed strategy, random | Minimax/alpha-beta, small normal-form solver | Legal action, exploitability only when applicable, hidden info constraints |
 | Partial-information cooperation | Independent fixed policies | Shared memory/communication, team task allocation | Forbidden information leakage, communication cost, message delay and missing partner |
-| Continuous crowd steering | Rule-based steering | Local avoidance/planner or qualified native vector kernel | Collision rate, frame budget, numeric stability, dynamics validity; future P10 simulation scope |
+| Continuous crowd steering | Rule-based steering | Local avoidance/planner or qualified native vector kernel | Collision rate, frame budget, numeric stability, dynamics validity; future P07 simulation scope |
 | Repeated nonstationary games | Frozen pool, independent heuristic | Fictitious-play/self-play or MARL via D01 | Population shift, opponent overfitting, held-out opponents, training/eval separation |
 | Learned cooperative discrete actions | Independent policy baseline | IPPO/MAPPO, VDN/QMIX under **compatible shared payoff** | Credit assignment, team vs individual reward semantics, opponent shifts |
 | Learned heterogeneous continuous actions | Fixed decentralized control | MAPPO/MASAC/MADDPG under supported spaces | Continuous action bounds, centralized training info, shared-policy compatibility |
@@ -288,7 +288,7 @@ For each tour, define a task-specific short list, the feasible algorithm version
 
 ### 7.1 MARL boundary
 
-P09-D01 owns learner identity, frozen policy artifacts, trajectories, update and evaluation lifecycle. D02 adds `AgentPolicyBinding`, team metadata, joint-action records, opponent pools, communication observations and interaction metrics. D02 may request D01 to train a policy or import an independently qualified learned artifact. It cannot silently modify D01 policy weights during inference, turn an individual reward into a team reward, use a centralized critic at decentralized deployment, or infer a game's equilibrium from an episode reward curve.
+P06-D01 owns learner identity, frozen policy artifacts, trajectories, update and evaluation lifecycle. D02 adds `AgentPolicyBinding`, team metadata, joint-action records, opponent pools, communication observations and interaction metrics. D02 may request D01 to train a policy or import an independently qualified learned artifact. It cannot silently modify D01 policy weights during inference, turn an individual reward into a team reward, use a centralized critic at decentralized deployment, or infer a game's equilibrium from an episode reward curve.
 
 **Candidate compatibility:** independent learners (IQL/IPPO) may be applicable to distinct-payoff settings but must address nonstationary co-learners. Value-decomposition methods such as VDN/QMIX require the matching cooperative/common-reward assumptions in the selected implementation; the EPyMARL implementation explicitly distinguishes these from general-sum profiles. MAPPO/MASAC/MADDPG depend on their actual action-space and information-profile implementations, not just shared algorithm names. Each variant must be inspected and pinned before proposing implementation.
 
@@ -306,12 +306,12 @@ Three valid implementation profiles are alternatives selected **by job**.
 | **B — Gerbil + qualified native accelerator** | Gerbil remains semantic owner; native kernel computes measured hot path (search, batch utility scores, geometric neighbors) | Profiled high-density agent or large search workload | ABI/lifetime validation, exact semantics at boundary, numeric/ordering parity, end-to-end win |
 | **C — Gerbil + external execution/learning service** | Gerbil owns request/admission/evidence; service owns separately qualified compute/training | Measured remote MARL training, distributed scenario sweep or specialized solver | Identity/version binding, retry/idempotency, authenticated transport, failure reconciliation and replay ceiling |
 
-Profile A is a useful reference because pure finite-state/graph and small matching algorithms do not require a tensor framework. Profile B must beat A on **end-to-end wall time and correctness** for a representative workload, including serialization, copies, locks and failure overhead. Profile C needs a separately approved service security and data policy. Prefer an optional P09-D01 MARL backend over duplicating a learner in D02.
+Profile A is a useful reference because pure finite-state/graph and small matching algorithms do not require a tensor framework. Profile B must beat A on **end-to-end wall time and correctness** for a representative workload, including serialization, copies, locks and failure overhead. Profile C needs a separately approved service security and data policy. Prefer an optional P06-D01 MARL backend over duplicating a learner in D02.
 
 ### 8.1 Proposed Gerbil namespace, descriptive only
 
 ```text
-lfr/p09/multiagent/
+lfr/p06/multiagent/
   contract/{identity,scenario,agent,turn,observation,action,receipt}.ss
   behavior/{fsm,bt,utility,goap,htn,search,validation}.ss
   coordination/{membership,claims,allocation,negotiation,arbitration}.ss
@@ -363,7 +363,7 @@ A synchronous reference adapter may host all operations in one process, while pr
 
 **F10 — Frozen-opponent cross-play:** deterministic, random, fixed-heuristic and optionally learned policies play against held-out opponents across independent seeds. Report a per-opponent matrix, not only mean reward.
 
-**F11 — P08 optional world adapter:** project a P08 world view into per-agent observations, pass intentions to P08-D01 host rules, and use only admitted D02 state receipts. Do not equate a generated terrain descriptor from D03 with a canonical scene mutation.
+**F11 — P05 optional world adapter:** project a P05 world view into per-agent observations, pass intentions to P05-D01 host rules, and use only admitted D02 state receipts. Do not equate a generated terrain descriptor from D03 with a canonical scene mutation.
 
 **F12 — Non-game team scheduling:** workers are abstract software agents with no physics. Propose task allocation under deadlines; evaluate via a pure fake executor. Neither real scheduler permissions nor distributed consensus is assumed.
 
@@ -427,7 +427,7 @@ A meaningful negative result is retained. A task may succeed under an FSM or gre
 22. **I22 — Algorithm/job fit:** selection must satisfy observed action space, turn mode, payoff and information assumptions.
 23. **I23 — MARL provenance:** D01 training/trajectory/policy evidence is not rewritten by D02 binding.
 24. **I24 — CTDE isolation:** training-only global truth is unavailable at decentralized inference.
-25. **I25 — Distinct causal authority:** P08 decides world consequences; D02 cannot force a result by proposing it.
+25. **I25 — Distinct causal authority:** P05 decides world consequences; D02 cannot force a result by proposing it.
 26. **I26 — Unknown effect is unknown:** no fake success/undo after ambiguous host response.
 27. **I27 — Determinism scope:** declared replay conditions include scheduling/numeric/backend constraints, not just seed.
 28. **I28 — Independent oracle:** task acceptance cannot be graded solely by the evaluated agent's self-report.
@@ -478,131 +478,131 @@ EVALUATION_LEAKAGE | TEST_ORACLE_MISSING | INSUFFICIENT_EVIDENCE
 
 | Test | Fixture / falsification criterion |
 |---|---|
-| **P09-D02-T01** · Distinct agent and policy IDs | Two agents share one frozen policy; instance memories remain disjoint. |
-| **P09-D02-T02** · Spawn generation lock | Old instance action cannot execute after respawn. |
-| **P09-D02-T03** · Role swap revision | Role membership change invalidates the previous action grant. |
-| **P09-D02-T04** · Agent join mid-episode | Joined actor appears only under declared eligibility phase. |
-| **P09-D02-T05** · Agent leave mid-frame | Departed actor is removed or handled by pinned missing-action policy. |
-| **P09-D02-T06** · Policy revision freeze | Action proposal pins exact policy while trainer updates another revision. |
-| **P09-D02-T07** · Mixed observation spaces | Two roles accept different observation schemas without coercion. |
-| **P09-D02-T08** · Team reassignment evidence | History retains old team membership when a role switches team. |
+| **P06-D02-T01** · Distinct agent and policy IDs | Two agents share one frozen policy; instance memories remain disjoint. |
+| **P06-D02-T02** · Spawn generation lock | Old instance action cannot execute after respawn. |
+| **P06-D02-T03** · Role swap revision | Role membership change invalidates the previous action grant. |
+| **P06-D02-T04** · Agent join mid-episode | Joined actor appears only under declared eligibility phase. |
+| **P06-D02-T05** · Agent leave mid-frame | Departed actor is removed or handled by pinned missing-action policy. |
+| **P06-D02-T06** · Policy revision freeze | Action proposal pins exact policy while trainer updates another revision. |
+| **P06-D02-T07** · Mixed observation spaces | Two roles accept different observation schemas without coercion. |
+| **P06-D02-T08** · Team reassignment evidence | History retains old team membership when a role switches team. |
 
 **KNOWLEDGE (T09–T16):**
 
 | Test | Fixture / falsification criterion |
 |---|---|
-| **P09-D02-T09** · Hidden adversary intention | Visible observation cannot reveal secret opponent goal. |
-| **P09-D02-T10** · Identical observation different truth | Agent action may be identical despite evaluator-only hidden difference. |
-| **P09-D02-T11** · Private memory separation | Shared-policy agents cannot read each other private memory. |
-| **P09-D02-T12** · Team blackboard read denial | Unauthorized role read returns typed denial. |
-| **P09-D02-T13** · Blackboard unauthorized mutation | Team writer scope prevents overriding global world truth. |
-| **P09-D02-T14** · Message not trusted as observation | Forged teammate fact remains attributed sender claim. |
-| **P09-D02-T15** · Training-only privileged critic | Global state available only under explicit CTDE train profile. |
-| **P09-D02-T16** · Observation staleness | Old observation hash fails current-frame proposal validation. |
+| **P06-D02-T09** · Hidden adversary intention | Visible observation cannot reveal secret opponent goal. |
+| **P06-D02-T10** · Identical observation different truth | Agent action may be identical despite evaluator-only hidden difference. |
+| **P06-D02-T11** · Private memory separation | Shared-policy agents cannot read each other private memory. |
+| **P06-D02-T12** · Team blackboard read denial | Unauthorized role read returns typed denial. |
+| **P06-D02-T13** · Blackboard unauthorized mutation | Team writer scope prevents overriding global world truth. |
+| **P06-D02-T14** · Message not trusted as observation | Forged teammate fact remains attributed sender claim. |
+| **P06-D02-T15** · Training-only privileged critic | Global state available only under explicit CTDE train profile. |
+| **P06-D02-T16** · Observation staleness | Old observation hash fails current-frame proposal validation. |
 
 **TURN (T17–T24):**
 
 | Test | Fixture / falsification criterion |
 |---|---|
-| **P09-D02-T17** · AEC selected actor | Nonselected actor action rejected. |
-| **P09-D02-T18** · Barrier joint snapshot | No agent sees other frame actions before joint completion. |
-| **P09-D02-T19** · Barrier deterministic serialization | Permuting proposal receipt ordering leaves simultaneous outcome unchanged. |
-| **P09-D02-T20** · AEC not equal parallel | Action-dependent intermediate reward blocks naive conversion. |
-| **P09-D02-T21** · Terminated agent cleanup | Final dead step/receipt is preserved per adapter. |
-| **P09-D02-T22** · Truncated versus terminated | Per-agent time limit remains distinct from task terminal. |
-| **P09-D02-T23** · Mixed event schedule | Phase and event order match independent hand trace. |
-| **P09-D02-T24** · Late worker reply | Stale frame result cannot advance new frame. |
+| **P06-D02-T17** · AEC selected actor | Nonselected actor action rejected. |
+| **P06-D02-T18** · Barrier joint snapshot | No agent sees other frame actions before joint completion. |
+| **P06-D02-T19** · Barrier deterministic serialization | Permuting proposal receipt ordering leaves simultaneous outcome unchanged. |
+| **P06-D02-T20** · AEC not equal parallel | Action-dependent intermediate reward blocks naive conversion. |
+| **P06-D02-T21** · Terminated agent cleanup | Final dead step/receipt is preserved per adapter. |
+| **P06-D02-T22** · Truncated versus terminated | Per-agent time limit remains distinct from task terminal. |
+| **P06-D02-T23** · Mixed event schedule | Phase and event order match independent hand trace. |
+| **P06-D02-T24** · Late worker reply | Stale frame result cannot advance new frame. |
 
 **BEHAVIOR (T25–T32):**
 
 | Test | Fixture / falsification criterion |
 |---|---|
-| **P09-D02-T25** · FSM guarded transition tie | Two true guards resolve under stated priority. |
-| **P09-D02-T26** · FSM unreachable-state proof | Unreachable or invalid transitions detected under bounded enumeration. |
-| **P09-D02-T27** · BT memoryless selector preemption | Threat interrupts running patrol and records halt. |
-| **P09-D02-T28** · BT memoryful selector semantics | Running child resumes under pinned variant until external preemption. |
-| **P09-D02-T29** · BT failed async cancellation | Late action result cannot resurrect halted subtree. |
-| **P09-D02-T30** · Utility tie/hysteresis | Equal scores use fixed tie-break; bounded oscillation test. |
-| **P09-D02-T31** · GOAP precondition effect trace | Plan simulator matches declared symbolic model, not host truth. |
-| **P09-D02-T32** · HTN method fallback | Unavailable primitive triggers allowed alternate decomposition. |
+| **P06-D02-T25** · FSM guarded transition tie | Two true guards resolve under stated priority. |
+| **P06-D02-T26** · FSM unreachable-state proof | Unreachable or invalid transitions detected under bounded enumeration. |
+| **P06-D02-T27** · BT memoryless selector preemption | Threat interrupts running patrol and records halt. |
+| **P06-D02-T28** · BT memoryful selector semantics | Running child resumes under pinned variant until external preemption. |
+| **P06-D02-T29** · BT failed async cancellation | Late action result cannot resurrect halted subtree. |
+| **P06-D02-T30** · Utility tie/hysteresis | Equal scores use fixed tie-break; bounded oscillation test. |
+| **P06-D02-T31** · GOAP precondition effect trace | Plan simulator matches declared symbolic model, not host truth. |
+| **P06-D02-T32** · HTN method fallback | Unavailable primitive triggers allowed alternate decomposition. |
 
 **PLANNING (T33–T40):**
 
 | Test | Fixture / falsification criterion |
 |---|---|
-| **P09-D02-T33** · GOAP false initial state | Unobserved required fact does not become assumed true. |
-| **P09-D02-T34** · A* small exact oracle | Optimal path cost equals independent enumeration for admissible heuristic. |
-| **P09-D02-T35** · Heuristic nonadmissibility label | No optimality claim for unproven heuristic. |
-| **P09-D02-T36** · Stale plan invalidation | Changed resource invalidates cached plan key. |
-| **P09-D02-T37** · Bounded no-solution | Search exhaustion returns explicit budget status, no infinite loop. |
-| **P09-D02-T38** · HTN recursion cap | Self-referential decomposition stops at configured depth. |
-| **P09-D02-T39** · GOAP actual-host reject | Host denial does not get reclassified as plan success. |
-| **P09-D02-T40** · Agent-specific goal revision | Goal change invalidates prior proposal and utility scores. |
+| **P06-D02-T33** · GOAP false initial state | Unobserved required fact does not become assumed true. |
+| **P06-D02-T34** · A* small exact oracle | Optimal path cost equals independent enumeration for admissible heuristic. |
+| **P06-D02-T35** · Heuristic nonadmissibility label | No optimality claim for unproven heuristic. |
+| **P06-D02-T36** · Stale plan invalidation | Changed resource invalidates cached plan key. |
+| **P06-D02-T37** · Bounded no-solution | Search exhaustion returns explicit budget status, no infinite loop. |
+| **P06-D02-T38** · HTN recursion cap | Self-referential decomposition stops at configured depth. |
+| **P06-D02-T39** · GOAP actual-host reject | Host denial does not get reclassified as plan success. |
+| **P06-D02-T40** · Agent-specific goal revision | Goal change invalidates prior proposal and utility scores. |
 
 **COORDINATION (T41–T48):**
 
 | Test | Fixture / falsification criterion |
 |---|---|
-| **P09-D02-T41** · Exclusive bridge contention | At most one agent receives capacity-one resource per frame. |
-| **P09-D02-T42** · Capacity-N shared resource | Admitted total claims do not exceed pinned capacity. |
-| **P09-D02-T43** · Exact allocation oracle | Small assignment result matches independent brute force. |
-| **P09-D02-T44** · Forbidden job assignment | Planner never matches agent to explicitly barred job. |
-| **P09-D02-T45** · Priority starvation detector | A rule may be policy-admissible but reports worst-agent deprivation. |
-| **P09-D02-T46** · Auction stale bid | Bid from prior task revision is invalid. |
-| **P09-D02-T47** · Negotiation timeout | Unconfirmed award is not an executed agreement. |
-| **P09-D02-T48** · Wait-for cycle | Deadlock fixture reports cycle or bounded escape. |
+| **P06-D02-T41** · Exclusive bridge contention | At most one agent receives capacity-one resource per frame. |
+| **P06-D02-T42** · Capacity-N shared resource | Admitted total claims do not exceed pinned capacity. |
+| **P06-D02-T43** · Exact allocation oracle | Small assignment result matches independent brute force. |
+| **P06-D02-T44** · Forbidden job assignment | Planner never matches agent to explicitly barred job. |
+| **P06-D02-T45** · Priority starvation detector | A rule may be policy-admissible but reports worst-agent deprivation. |
+| **P06-D02-T46** · Auction stale bid | Bid from prior task revision is invalid. |
+| **P06-D02-T47** · Negotiation timeout | Unconfirmed award is not an executed agreement. |
+| **P06-D02-T48** · Wait-for cycle | Deadlock fixture reports cycle or bounded escape. |
 
 **STRATEGY (T49–T56):**
 
 | Test | Fixture / falsification criterion |
 |---|---|
-| **P09-D02-T49** · Finite zero-sum payoff | Two-player payoffs match hand-computed matrix. |
-| **P09-D02-T50** · Imperfect-information partition | Equivalent information states not split by hidden truth. |
-| **P09-D02-T51** · Simultaneous mixed strategies | One-shot opponent strategies tested under declared action timing. |
-| **P09-D02-T52** · General-sum metric refusal | A zero-sum exploitability metric is not asserted for unsupported game. |
-| **P09-D02-T53** · Best-response oracle validity | Tiny best-response computation agrees with exhaustive search. |
-| **P09-D02-T54** · Opponent pool leakage | Held-out opponent cannot appear in training record. |
-| **P09-D02-T55** · Policy cross-play matrix | Win-rate disaggregated by opponent class and confidence. |
-| **P09-D02-T56** · Team versus individual payoff | Aggregate team score never erases individual rewards. |
+| **P06-D02-T49** · Finite zero-sum payoff | Two-player payoffs match hand-computed matrix. |
+| **P06-D02-T50** · Imperfect-information partition | Equivalent information states not split by hidden truth. |
+| **P06-D02-T51** · Simultaneous mixed strategies | One-shot opponent strategies tested under declared action timing. |
+| **P06-D02-T52** · General-sum metric refusal | A zero-sum exploitability metric is not asserted for unsupported game. |
+| **P06-D02-T53** · Best-response oracle validity | Tiny best-response computation agrees with exhaustive search. |
+| **P06-D02-T54** · Opponent pool leakage | Held-out opponent cannot appear in training record. |
+| **P06-D02-T55** · Policy cross-play matrix | Win-rate disaggregated by opponent class and confidence. |
+| **P06-D02-T56** · Team versus individual payoff | Aggregate team score never erases individual rewards. |
 
 **LEARNING (T57–T64):**
 
 | Test | Fixture / falsification criterion |
 |---|---|
-| **P09-D02-T57** · D01 policy artifact lock | D02 inference does not mutate learned policy weights. |
-| **P09-D02-T58** · Common-reward incompatibility | QMIX/VDN candidate rejected for mismatched general-sum setup. |
-| **P09-D02-T59** · Independent learner nonstationarity | Changing opponent revision is recorded in data provenance. |
-| **P09-D02-T60** · CTDE inference isolation | Decentralized policy cannot consume privileged critic features. |
-| **P09-D02-T61** · Invalid action mask from learner | Learned proposal outside mask fails host admission. |
-| **P09-D02-T62** · Missing learner fallback | A declared nonlearning fallback records exact alternate policy ID. |
-| **P09-D02-T63** · Equal training budgets | Two MARL candidates use declared comparable interaction budgets. |
-| **P09-D02-T64** · Zero-learning baseline wins | Nonlearning approach is permitted to qualify over learned one. |
+| **P06-D02-T57** · D01 policy artifact lock | D02 inference does not mutate learned policy weights. |
+| **P06-D02-T58** · Common-reward incompatibility | QMIX/VDN candidate rejected for mismatched general-sum setup. |
+| **P06-D02-T59** · Independent learner nonstationarity | Changing opponent revision is recorded in data provenance. |
+| **P06-D02-T60** · CTDE inference isolation | Decentralized policy cannot consume privileged critic features. |
+| **P06-D02-T61** · Invalid action mask from learner | Learned proposal outside mask fails host admission. |
+| **P06-D02-T62** · Missing learner fallback | A declared nonlearning fallback records exact alternate policy ID. |
+| **P06-D02-T63** · Equal training budgets | Two MARL candidates use declared comparable interaction budgets. |
+| **P06-D02-T64** · Zero-learning baseline wins | Nonlearning approach is permitted to qualify over learned one. |
 
 **AUTHORITY (T65–T72):**
 
 | Test | Fixture / falsification criterion |
 |---|---|
-| **P09-D02-T65** · False host receipt message | Agent-supplied receipt cannot change canonical state. |
-| **P09-D02-T66** · Double action correlation | Duplicate accepted intent does not trigger duplicate host effect. |
-| **P09-D02-T67** · Unknown host result | Uncertain effect triggers reconciliation, not retry-as-if-failed. |
-| **P09-D02-T68** · P08 world-adapter denial | P08-D01 host rejects inadmissible intervention despite high utility. |
-| **P09-D02-T69** · Blackboard permission escalation | Team write never grants resource executor permission. |
-| **P09-D02-T70** · External tool access denial | Policy action value cannot call filesystem/network directly. |
-| **P09-D02-T71** · Malformed native response | Type and revision mismatches reject B backend output. |
-| **P09-D02-T72** · Service replay token mismatch | C backend stale correlation ID cannot replace current result. |
+| **P06-D02-T65** · False host receipt message | Agent-supplied receipt cannot change canonical state. |
+| **P06-D02-T66** · Double action correlation | Duplicate accepted intent does not trigger duplicate host effect. |
+| **P06-D02-T67** · Unknown host result | Uncertain effect triggers reconciliation, not retry-as-if-failed. |
+| **P06-D02-T68** · P05 world-adapter denial | P05-D01 host rejects inadmissible intervention despite high utility. |
+| **P06-D02-T69** · Blackboard permission escalation | Team write never grants resource executor permission. |
+| **P06-D02-T70** · External tool access denial | Policy action value cannot call filesystem/network directly. |
+| **P06-D02-T71** · Malformed native response | Type and revision mismatches reject B backend output. |
+| **P06-D02-T72** · Service replay token mismatch | C backend stale correlation ID cannot replace current result. |
 
 **EVALUATION (T73–T80):**
 
 | Test | Fixture / falsification criterion |
 |---|---|
-| **P09-D02-T73** · Independent held-out seeds | Train and test seed families remain disjoint. |
-| **P09-D02-T74** · Oracle on 4x4 Crossroads | Finite enumerated optimum/feasibility checked independently. |
-| **P09-D02-T75** · Metrics preserve negative cases | Failures and timeouts included in denominators. |
-| **P09-D02-T76** · End-to-end latency measurement | Observation-to-receipt time counts overhead and contention. |
-| **P09-D02-T77** · Memory/expansion budget | Solver stops within profile caps with precise outcome. |
-| **P09-D02-T78** · Native semantic parity | Same fixtures expose any native/reference outcome mismatch. |
-| **P09-D02-T79** · Unknown game-theory claim | Unvalidated equilibrium remains unestablished. |
-| **P09-D02-T80** · Release disposition evidence | Audit report states design/contract/task/deployment separately. |
+| **P06-D02-T73** · Independent held-out seeds | Train and test seed families remain disjoint. |
+| **P06-D02-T74** · Oracle on 4x4 Crossroads | Finite enumerated optimum/feasibility checked independently. |
+| **P06-D02-T75** · Metrics preserve negative cases | Failures and timeouts included in denominators. |
+| **P06-D02-T76** · End-to-end latency measurement | Observation-to-receipt time counts overhead and contention. |
+| **P06-D02-T77** · Memory/expansion budget | Solver stops within profile caps with precise outcome. |
+| **P06-D02-T78** · Native semantic parity | Same fixtures expose any native/reference outcome mismatch. |
+| **P06-D02-T79** · Unknown game-theory claim | Unvalidated equilibrium remains unestablished. |
+| **P06-D02-T80** · Release disposition evidence | Audit report states design/contract/task/deployment separately. |
 
 ### 13.3 Claim matrix and evidence artifacts
 
@@ -629,7 +629,7 @@ EVALUATION_LEAKAGE | TEST_ORACLE_MISSING | INSUFFICIENT_EVIDENCE
 8. **D02-07 — Optional measured native/service backends:** only after profiling indicates a real deficit, perform A/B/C parity and end-to-end budget experiments; do not introduce distributed infrastructure just to run a two-agent toy.
 9. **D02-08 — Independent audit:** held-out tasks/seeds/opponents, failure retention, license/provenance, Q10–Q11, release scope. Publish claims limited to demonstrated tasks and adapters.
 
-**Independent stopping conditions:** if the baseline satisfies the declared use case under budget, implementation may stop without GOAP, HTN or MARL. If no suitable oracle/evaluator exists, mark `SPEC_BLOCKED` or `UNRESOLVED` rather than spending compute to create persuasive-looking curves. Do not mutate P09-D01, P08, K0 or K1 to make the local design appear compatible.
+**Independent stopping conditions:** if the baseline satisfies the declared use case under budget, implementation may stop without GOAP, HTN or MARL. If no suitable oracle/evaluator exists, mark `SPEC_BLOCKED` or `UNRESOLVED` rather than spending compute to create persuasive-looking curves. Do not mutate P06-D01, P05, K0 or K1 to make the local design appear compatible.
 
 ## 15. Open issues and decision register
 
@@ -645,10 +645,10 @@ EVALUATION_LEAKAGE | TEST_ORACLE_MISSING | INSUFFICIENT_EVIDENCE
 | Training | No MARL required for reference | D01 algorithm-specific data/action/payoff qualification |
 | Native acceleration | None until A is profiled | End-to-end semantic parity and resource win |
 | External service | None until scale demands | D04-grade transport/security and recovery evidence |
-| P08 game adapter | Optional source-compatible request/receipt | P08 owner admission, world/procedural version locks |
-| Durable team memory | Optional persistence adapter, not world truth | P05 storage/provenance and permission qualification |
+| P05 game adapter | Optional source-compatible request/receipt | P05 owner admission, world/procedural version locks |
+| Durable team memory | Optional persistence adapter, not world truth | P04-D01 storage/provenance and permission qualification |
 | Control/robotics | Simulation-only until D03 | Independent supervisory and actuator safety cases |
-| Next design | P09-D03 — Control & Autonomous Systems | Separate review; no automatic inheritance from D02 |
+| Next design | P06-D03 — Control & Autonomous Systems | Separate review; no automatic inheritance from D02 |
 
 ## 16. Final design verdict
 

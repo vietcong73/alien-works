@@ -55,7 +55,7 @@ This design is assessed against **two original game-oriented architecture subjec
 - Naughty Dog evidence review: https://github.com/vietcong73/alien-works/blob/audit/lisp-foundation-reserve/docs/reviews/naughty-dog-uncharted-lisp-family-review.md
 - LFR source inventory: https://github.com/vietcong73/alien-works/blob/audit/lisp-foundation-reserve/docs/reviews/systematic/alien-works-centered-systematic-evidence-review-2026-11-12.md
 - C02 governing concept: https://github.com/vietcong73/alien-works/blob/audit/lisp-foundation-reserve/docs/concept/LFR-C02-source-lineage-gerbil-reserve-concept-2026-11-12.md
-- Specialist references: `docs/design/LFR-P01-D01-native-metaprogramming-detailed-design-2026-11-12.md`, `LFR-P02-D01-declarative-systems-process-supervision-detailed-design-2026-11-12.md`, `LFR-P03-D01-semantic-state-dsl-detailed-design-2026-11-12.md`, `LFR-P04-D01-agent-authority-controlled-execution-detailed-design-2026-11-12.md`, `LFR-P05-D01-retrieval-persistence-evidence-detailed-design-2026-11-12.md`, `LFR-P06-D01-branching-causal-reversibility-design-2026-11-13.md`, and `LFR-P07-D01-ui-interoperability-detailed-design-2026-11-13.md` in the same branch's `docs/design/` directory.
+- Specialist references: `docs/design/LFR-P01-D01-native-metaprogramming-detailed-design-2026-11-12.md`, `LFR-P02-D01-declarative-systems-process-supervision-detailed-design-2026-11-12.md`, `LFR-P03-D01-semantic-state-dsl-detailed-design-2026-11-12.md`, `LFR-P02-D02-agent-authority-controlled-execution-detailed-design-2026-11-12.md`, `LFR-P04-D01-retrieval-persistence-evidence-detailed-design-2026-11-12.md`, `LFR-P03-D02-branching-causal-reversibility-design-2026-11-13.md`, and `LFR-P01-D02-ui-interoperability-detailed-design-2026-11-13.md` in the same branch's `docs/design/` directory.
 
 ### 0.4 Official Gerbil documentation: a mandatory feasibility ledger
 
@@ -85,12 +85,12 @@ Each proposed K0 construct passes four paper-level screening criteria before ent
 
 | K0 family | Distinct source / specialist witnesses | Same invariant across domains | Deliberately left out |
 |---|---|---|---|
-| Identity/version | Guix generation + P06 historical node; GloUI entity + P05 source chunk | Identity, revision and semantic equivalence are distinct relations | Git graph, object store, entity registry, causal history |
-| Schema/validation | Glow P03 IR; P07 messages; Guix declaration; P04 tool request | Failed validation must be visible and cannot silently admit a malformed boundary object | Universal DSL, solver, compiler or JSON stack |
-| Effect descriptor | Uncharted native hook vs Alien-Works native wrapper; P02 activation vs P04 command | Describing an effect is not performing it | Effect runner, OS process, scheduling, transaction manager |
-| Authority decision | P04 approval vs P07 effect endpoint; Uncharted restricted hook semantics | An action requires a separately bound authoritative decision before effect execution | Universal policy evaluator, sandbox, consent UI |
-| Resource ownership | Alien-Works scoped foreign handle vs Trial resource; P02 child handle vs P07 task observation | Owner, generation, lease and terminal release must not be confused | Real destructor, PID manager, GPU handles, GC finalizer policy |
-| Result/failure/receipt | GloUI transfer worker vs P04 run; Personal AI error vs P05 corruption; P06 undo vs Guix rollback | `FAILED` and `UNKNOWN` do not imply rollback or success; receipts carry evidence scope | Logging daemon, persistence, causal proof engine |
+| Identity/version | Guix generation + P03-D02 historical node; GloUI entity + P04-D01 source chunk | Identity, revision and semantic equivalence are distinct relations | Git graph, object store, entity registry, causal history |
+| Schema/validation | Glow P03-D01 IR; P01-D02 messages; Guix declaration; P02-D02 tool request | Failed validation must be visible and cannot silently admit a malformed boundary object | Universal DSL, solver, compiler or JSON stack |
+| Effect descriptor | Uncharted native hook vs Alien-Works native wrapper; P02-D01 activation vs P02-D02 command | Describing an effect is not performing it | Effect runner, OS process, scheduling, transaction manager |
+| Authority decision | P02-D02 approval vs P01-D02 effect endpoint; Uncharted restricted hook semantics | An action requires a separately bound authoritative decision before effect execution | Universal policy evaluator, sandbox, consent UI |
+| Resource ownership | Alien-Works scoped foreign handle vs Trial resource; P02-D01 child handle vs P01-D02 task observation | Owner, generation, lease and terminal release must not be confused | Real destructor, PID manager, GPU handles, GC finalizer policy |
+| Result/failure/receipt | GloUI transfer worker vs P02-D02 run; Personal AI error vs P04-D01 corruption; P03-D02 undo vs Guix rollback | `FAILED` and `UNKNOWN` do not imply rollback or success; receipts carry evidence scope | Logging daemon, persistence, causal proof engine |
 
 **Non-admitted apparent similarities:** SDL event polling vs Uncharted director; Git branch vs physical alternate timeline; token hash vs exact equality; asynchronous acceptance vs completed external effect; interface method vs enforced permission; macro expansion vs safe untrusted-code execution.
 
@@ -99,10 +99,10 @@ Each proposed K0 construct passes four paper-level screening criteria before ent
 ```text
 APPLICATION
   |-- imports K0 contracts directly (allowed)
-  |-- imports selected P01..P07 specialist contracts/implementations (allowed)
+  |-- imports selected P01–P07 specialist contracts/implementations (allowed)
   `-- imports K1 mechanism only if individually qualified (future)
 
-P01 .. P07 [independent implementations]
+P01–P07 [independent implementations]
   -> may adapt to a stable K0 public contract
   -> do NOT import each other's internal engines through K0
 
@@ -110,7 +110,7 @@ K0 / minimal Gerbil-only definitions and *pure checks*
   identity.ss  version.ss  schema.ss  effects.ss
   authority.ss owner.ss    outcome.ss receipt.ss
 
-No K0 import of K1, P01..P07, original repositories, Guix/Guile,
+No K0 import of K1, P01–P07, original repositories, Guix/Guile,
 Shepherd, Common Lisp runtime, graphics, backend, actor, model, database,
 network server or UI toolkit.
 ```
@@ -161,7 +161,7 @@ compatible(A, B, rule)   = result of a named consumer compatibility check
 same_observation(A,B,O)  = equivalence under explicitly declared observer O
 ```
 
-These are different relations. `same_observation` may hold while `same_ref` is false, as in P06 histories with identical state images but distinct lineage, or two distinct UI entities with identical displayed fields.
+These are different relations. `same_observation` may hold while `same_ref` is false, as in P03-D02 histories with identical state images but distinct lineage, or two distinct UI entities with identical displayed fields.
 
 ## 4. Schema / validation contract
 
@@ -214,7 +214,7 @@ AuthorityDecision {
 - A request commitment is based on a canonical, length-bounded form. Compare original material or trusted authenticated bindings before effects; digest equality alone is not a proof of equivalence or authority.
 - Default outcome when authority is absent, expired, changed or unverifiable: `DENY` or `UNKNOWN`, **never ALLOW**.
 - A policy declaration or a metaprogrammed rule cannot grant new K0-level trust powers to itself. Upgrade of the trust roots is a separate owner-governed consumer decision.
-- The producer of an `AuthorityDecision` must be distinguished from a system that can verify and enforce it. Do not conflate K0 records with P04's policy engine or P06's internal trusted kernel.
+- The producer of an `AuthorityDecision` must be distinguished from a system that can verify and enforce it. Do not conflate K0 records with P02-D02's policy engine or P03-D02's internal trusted kernel.
 
 ## 6. Resource ownership and lease state
 
@@ -235,7 +235,7 @@ Proposed checked declarative rules:
 - `OWNED -> TRANSFER_PENDING -> TRANSFERRED` only when a verified target owner accepts the transfer; incomplete transfer returns uncertainty, not two assured owners.
 - `OWNED -> RELEASE_PENDING -> RELEASED` only after independently observed release success; an exception or missing native acknowledgment yields `RELEASE_FAILED`/`UNKNOWN`.
 - A `BORROWED` holder does not gain destroy authority; stale generations are rejected; duplicate release is typed failure, not assumed idempotence.
-- Lease lifetime does not imply that a native callback is quiescent. Callback draining, thread affinity and OS handles remain P01/P02 concerns.
+- Lease lifetime does not imply that a native callback is quiescent. Callback draining, thread affinity and OS handles remain P01-D01/P02-D01 concerns.
 
 ## 7. Results, failures, uncertainty and receipts
 
@@ -258,7 +258,7 @@ Receipt { receipt_ref, subject_ref, operation_ref, input_version,
 - A failed operation may have partial external effects; a compensating operation is a new effect with its own authorization and receipt.
 - An error message containing `SUCCESS` cannot become `OK`; terminal status is typed data, never inferred from history-string search.
 - Receipt has explicit evidence **level**: `DECLARED`, `OBSERVED`, `VERIFIED_AGAINST_ORACLE`, `INDEPENDENTLY_AUDITED`. This is a *scope-aware classification*, not universal truth and not a replacement for domain evidence.
-- K0 creates **no durable store** and no universal log bus. P05 or a consumer backend may persist admissible data under separately qualified guarantees.
+- K0 creates **no durable store** and no universal log bus. P04-D01 or a consumer backend may persist admissible data under separately qualified guarantees.
 - Redact secret and high-sensitivity payloads at the point of receipt creation. Retaining a digest does not automatically make a record anonymous.
 
 ## 8. Contract composability: an illustrative boundary trace
@@ -275,29 +275,29 @@ Caller describes request (data)
   -> optional specialist handles compensation / recovery
 ```
 
-Not every use involves effects. A pure P03 compiler analysis or P05 lexical ranking can use `Schema`, `VersionRef` and `Result` without any `AuthorityDecision` or lease. **K0 is a suite of thin contracts, not a mandatory workflow for all consumers.**
+Not every use involves effects. A pure P03-D01 compiler analysis or P04-D01 lexical ranking can use `Schema`, `VersionRef` and `Result` without any `AuthorityDecision` or lease. **K0 is a suite of thin contracts, not a mandatory workflow for all consumers.**
 
 ### 8.1 Mock profile A: native resource in a game host
 
 - Alien-Works/Trial motivate a `ResourceOwner` with an acquired mock handle, generation, and lease.
-- A deliberate partial-construction failure yields `FAIL` with acquisition receipt; any cleanup is performed by a mock P01 adapter.
+- A deliberate partial-construction failure yields `FAIL` with acquisition receipt; any cleanup is performed by a mock P01-D01 adapter.
 - K0 can assert that a `RELEASED` report includes a release observation for the same generation; cannot infer C finalizers or GPU state.
 
 ### 8.2 Mock profile B: Uncharted-style bounded domain action
 
-- A domain script declares `open-door` transition and a restricted native capability request. Its domain state machine lives in a mock P03-like adapter.
+- A domain script declares `open-door` transition and a restricted native capability request. Its domain state machine lives in a mock P03-D01-like adapter.
 - K0 schema validates the request, and effect descriptor declares native mutation. A fake consumer authority denies an unpermitted invocation.
 - No engine VM or actual Uncharted code is imported; the actor's state-machine logic remains outside K0.
 
 ### 8.3 Mock profile C: coding assistant file mutation and UI observation
 
-- A mock P04 edit request binds canonical input and version; fake P07 UI renders accepted/pending/result states without becoming the authority.
+- A mock P02-D02 edit request binds canonical input and version; fake P01-D02 UI renders accepted/pending/result states without becoming the authority.
 - Unauthorized or stale-base effect is refused before a mock write; a later verification failure remains `FAIL` or `UNKNOWN`, not an invented rollback.
 
 ### 8.4 Mock profile D: retrieval and multiple causal histories
 
-- P05 source revision and P06 history node each use `IdentityRef` / `VersionRef`; even identical bytes do not mean identical lineage.
-- P06 owns fork/synthesis and does not import its history graph into K0. K0 can report candidate version/provenance and scoped qualification outcomes.
+- P04-D01 source revision and P03-D02 history node each use `IdentityRef` / `VersionRef`; even identical bytes do not mean identical lineage.
+- P03-D02 owns fork/synthesis and does not import its history graph into K0. K0 can report candidate version/provenance and scoped qualification outcomes.
 
 ## 9. Minimal Gerbil design: APIs and module skeleton
 
@@ -371,18 +371,18 @@ foundation/k0/
 
 | Temptation | K0 verdict | Correct destination |
 |---|---|---|
-| A universal state machine for Uncharted, Chess and process services | **Reject** | P03, P06, P02 respectively |
-| General causal hypergraph/merge protocol | **Reject** | P06; optional K1 adapter if independently warranted |
-| Macro interpreter / DSL compiler | **Reject** | P03/P07/P01, possibly K1 after proofs |
-| A global agent/tool permission authority | **Reject** | P04 and consumer policy |
+| A universal state machine for Uncharted, Chess and process services | **Reject** | P03-D01, P03-D02, P02-D01 respectively |
+| General causal hypergraph/merge protocol | **Reject** | P03-D02; optional K1 adapter if independently warranted |
+| Macro interpreter / DSL compiler | **Reject** | P03-D01/P01-D02/P01-D01, possibly K1 after proofs |
+| A global agent/tool permission authority | **Reject** | P02-D02 and consumer policy |
 | General actor/message bus or work scheduler | **Reject** | Relevant specialist or K1 |
 | OS sandbox, crypto signing, ACL or capabilities broker | **Reject** | External security/consumer enforcement |
-| Native handle allocator, GPU/SDL runtime, callbacks | **Reject** | P01 |
-| Guix/Guile/Shepherd bridge or package graph | **Reject** | P02 research / external deployment only |
-| Universal transaction/rollback/effect compensation | **Reject** | P04/P06/consumer-specific, later K1 evidence |
-| DB, cloud evidence store or RAG layer | **Reject** | P05 qualified backend |
-| UI, HTTP routing, task status transport | **Reject** | P07 |
-| Full code-as-data meta-control plane | **Reject** | P06/P03/P07; K0 standardizes policy/version refs only |
+| Native handle allocator, GPU/SDL runtime, callbacks | **Reject** | P01-D01 |
+| Guix/Guile/Shepherd bridge or package graph | **Reject** | P02-D01 research / external deployment only |
+| Universal transaction/rollback/effect compensation | **Reject** | P02-D02/P03-D02/consumer-specific, later K1 evidence |
+| DB, cloud evidence store or RAG layer | **Reject** | P04-D01 qualified backend |
+| UI, HTTP routing, task status transport | **Reject** | P01-D02 |
+| Full code-as-data meta-control plane | **Reject** | P03-D02/P03-D01/P01-D02; K0 standardizes policy/version refs only |
 
 The entire kernel should be independently importable with no source imports from specialists or research repositories. Six families can be implemented as small modules without forcing a single monolithic source file or dependency graph.
 
@@ -417,8 +417,8 @@ No test listed below has been executed. `PASS` is a future evidence-dependent re
 | **K0-T01** | Two refs share local ID but differ in namespaces | Exact identity rejects alias |
 | **K0-T02** | Two refs share namespace/ID but have different kinds | Kind mismatch prevents equality |
 | **K0-T03** | Same resource ID reused after lease closure with later generation | Stale prior-generation ref rejected |
-| **K0-T04** | Same state bytes under two P06 historical lineages | Byte similarity does not imply historical identity |
-| **K0-T05** | Same P07 entity values under distinct entity IDs | Entity identities remain distinct |
+| **K0-T04** | Same state bytes under two P03-D02 historical lineages | Byte similarity does not imply historical identity |
+| **K0-T05** | Same P01-D02 entity values under distinct entity IDs | Entity identities remain distinct |
 | **K0-T06** | Same display version string but changed semantic revision | Version mismatch detected |
 | **K0-T07** | Digest forced equal for two different canonical objects | Exact comparison does not trust digest only |
 | **K0-T08** | Source lock absent in a claim requiring original compiler pin | Cannot claim pinned reconstruction |
@@ -506,11 +506,11 @@ No test listed below has been executed. `PASS` is a future evidence-dependent re
 
 | ID | Falsification fixture | Required observation |
 |---|---|---|
-| **K0-T63** | P01-like native handle plus Alien-Works/Trial teardown failure | Same K0 lease/result vocabulary without FFI imports |
+| **K0-T63** | P01-D01-like native handle plus Alien-Works/Trial teardown failure | Same K0 lease/result vocabulary without FFI imports |
 | **K0-T64** | Uncharted-like domain state hook denied by mock policy | State/script semantics independent from authority record |
-| **K0-T65** | P04 edit + P07 display observe accepted versus failed | No false UI success; server authority kept distinct |
-| **K0-T66** | P05 corpus source vs P06 causal node equal content | Both use Ref/Version yet have different identity semantics |
-| **K0-T67** | P02 service readiness vs P03 director signal | Shared result semantics without shared scheduler |
+| **K0-T65** | P02-D02 edit + P01-D02 display observe accepted versus failed | No false UI success; server authority kept distinct |
+| **K0-T66** | P04-D01 corpus source vs P03-D02 causal node equal content | Both use Ref/Version yet have different identity semantics |
+| **K0-T67** | P02-D01 service readiness vs P03-D01 director signal | Shared result semantics without shared scheduler |
 | **K0-T68** | Run all four mock profiles with one unchanged K0 codebase | No specialization-specific source edits or dependencies |
 
 #### Toolchain & dependency: T69–T72
@@ -529,7 +529,7 @@ No test listed below has been executed. `PASS` is a future evidence-dependent re
 3. **K0-02:** implement inert `EffectDescriptor` and `AuthorityDecision` data model, plus exact-binding helper without any authenticating or executing power; qualify Q4–Q5 with adversarial fixtures.
 4. **K0-03:** implement `ResourceOwner` and `LeaseObservation`; mock acquisition, failure, transfer and destruction; qualify Q6.
 5. **K0-04:** implement `Result`, `Failure`, `Uncertain`, `Receipt`; define claim-level and secret-safe output; qualify Q7.
-6. **K0-05:** run independent mock profiles for Alien-Works/Trial resources, Uncharted state/native hook, P04+P07 controlled requests, P05+P06 identity/version, and P02+P03 status boundaries. Qualify Q8 without adding any specialist dependencies.
+6. **K0-05:** run independent mock profiles for Alien-Works/Trial resources, Uncharted state/native hook, P02-D02+P01-D02 controlled requests, P04-D01+P03-D02 identity/version, and P02-D01+P03-D01 status boundaries. Qualify Q8 without adding any specialist dependencies.
 7. **K0-06:** pure-import audit, pinned-toolchain build, negative unsafe-interface/export tests and independent qualification, Q0/Q9–Q11. Only then consider a first `K0_CONTRACTS_QUALIFIED` release.
 8. **After K0:** separately research K1 candidates. A pattern is not promoted just because it appeared in two documents. It needs independently working consumer evidence and no hidden specialization.
 

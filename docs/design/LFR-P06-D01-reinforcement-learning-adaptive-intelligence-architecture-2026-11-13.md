@@ -1,17 +1,17 @@
-# LFR-P09-D01 | Reinforcement Learning & Adaptive Intelligence Architecture
+# LFR-P06-D01 | Adaptive Intelligence & Autonomous Systems / Reinforcement Learning & Adaptive Intelligence
 
 **Document class:** Source-grounded specialist detailed-design proposal  
 **Date:** 13 November 2026  
 **Programme:** Lisp Foundation Reserve (LFR-C02)  
 **Domain track:** `REINFORCEMENT LEARNING` — Adaptive Intelligence & Learning Systems  
-**Edition:** P09 — Reinforcement Learning & Adaptive Intelligence  
-**Design slice:** D01 — Environment, Algorithm & Evaluation Architecture  
+**Edition:** P06 — Adaptive Intelligence & Autonomous Systems  
+**Design slice:** D01 — Reinforcement Learning & Adaptive Intelligence  
 **Primary design language:** Gerbil Scheme for semantic contracts, reference environments and lightweight learners; opt-in qualified ML/native/service backends for heavier computation  
-**Repository context:** `vietcong73/alien-works`, branch `audit/lisp-foundation-reserve`; path `docs/design/LFR-P09-D01-reinforcement-learning-adaptive-intelligence-architecture-2026-11-13.md`  
+**Repository context:** `vietcong73/alien-works`, branch `audit/lisp-foundation-reserve`; path `docs/design/LFR-P06-D01-reinforcement-learning-adaptive-intelligence-architecture-2026-11-13.md`  
 **Status:** `DESIGN_PROPOSED / SOURCE_REVIEWED / TESTS_SPECIFIED / UNIMPLEMENTED / RUNTIME_UNQUALIFIED / DOCUMENT_PUBLISHED_TO_GITHUB`  
 **Publication:** Owner-approved publication of this design document to `docs/design/` on `audit/lisp-foundation-reserve`. Publication does not authorize implementation, installation, training on sensitive data, deployment or an external-action policy.
 
-> **Design decision:** P09 treats environments, observations, actions, rewards/costs, policies, learners, training runs and evaluations as **separately versioned systems**. Its first useful implementation is a tiny, deterministic Gerbil environment with an exact solution oracle and tabular RL learners. Deep RL and offline RL become independently selected and qualified algorithm/backend profiles, not a monolithic dependency or an automatic replacement for the reference system.
+> **Design decision:** P06-D01 treats environments, observations, actions, rewards/costs, policies, learners, training runs and evaluations as **separately versioned systems**. Its first useful implementation is a tiny, deterministic Gerbil environment with an exact solution oracle and tabular RL learners. Deep RL and offline RL become independently selected and qualified algorithm/backend profiles, not a monolithic dependency or an automatic replacement for the reference system.
 
 ## 0. Problem, product, and boundaries
 
@@ -21,9 +21,9 @@
 
 **Subsequent capability:** import or implement DQN, PPO, SAC, offline learners or model-based planners through individually qualified adapters and task-relevant evaluations. Nothing in this D01 declares that those implementations already run in Gerbil.
 
-**In scope:** environment/action/observation API; episode/reset/termination semantics; algorithm capability registry; policy and learner lifecycle; trajectory and replay formats; reward/cost/constraint separation; online/offline training; reference learner semantics; on-policy/off-policy freshness; evaluation and statistics; reproducibility; external compute adapters; versioned checkpoints; qualified usage of P08 as a reference environment.
+**In scope:** environment/action/observation API; episode/reset/termination semantics; algorithm capability registry; policy and learner lifecycle; trajectory and replay formats; reward/cost/constraint separation; online/offline training; reference learner semantics; on-policy/off-policy freshness; evaluation and statistics; reproducibility; external compute adapters; versioned checkpoints; qualified usage of P05 as a reference environment.
 
-**Out of scope:** P08's world storage and causal simulator; P06's history DAG/synthesis; multi-agent game AI and game theory (separately designed); building a universal differentiable tensor compiler; implementation of every contemporary RL paper; a universal reward function; real-actuator permission; guaranteed optimality; trading profitability; model deployment; unlimited distributed training; hardcoding a specific Python library as the foundation.
+**Out of scope:** P05's world storage and causal simulator; P03-D02's history DAG/synthesis; multi-agent game AI and game theory (separately designed); building a universal differentiable tensor compiler; implementation of every contemporary RL paper; a universal reward function; real-actuator permission; guaranteed optimality; trading profitability; model deployment; unlimited distributed training; hardcoding a specific Python library as the foundation.
 
 ### 0.1 Three independent claims
 
@@ -35,9 +35,9 @@
 
 ## 1. Source and implementation evidence ledger
 
-Evidence categories: `DIRECT_DOC` official or maintainer documentation; `OPEN_SOURCE` inspectable implementation; `LFR_DESIGN` existing design-only work; `RESEARCH` conceptual algorithm claim; `PROPOSED` unimplemented P09 mechanism. Open-source availability is **not** equivalent to running the code in our target toolchain.
+Evidence categories: `DIRECT_DOC` official or maintainer documentation; `OPEN_SOURCE` inspectable implementation; `LFR_DESIGN` existing design-only work; `RESEARCH` conceptual algorithm claim; `PROPOSED` unimplemented P06-D01 mechanism. Open-source availability is **not** equivalent to running the code in our target toolchain.
 
-| Source | Verified engineering lesson | Proposed P09 transfer | Nontransfer / counterexample |
+| Source | Verified engineering lesson | Proposed P06-D01 transfer | Nontransfer / counterexample |
 |---|---|---|---|
 | [Gymnasium Env API](https://gymnasium.farama.org/api/env/) (`DIRECT_DOC`) | `reset`, `step`, typed action/observation spaces; `terminated` differs from `truncated` | Make task terminal and external horizon separate typed results | Never replace both with one `done` before value-target construction |
 | [Stable-Baselines3 algorithms](https://stable-baselines3.readthedocs.io/en/master/guide/algos.html) (`DIRECT_DOC`, `OPEN_SOURCE`) | DQN, PPO, SAC and other families have different space, data and update contracts | Task-to-algorithm capability matrix with independent adapters | A supported algorithm name does not certify this application's task |
@@ -49,8 +49,8 @@ Evidence categories: `DIRECT_DOC` official or maintainer documentation; `OPEN_SO
 | [Gerbil `:std/test`](https://gerbil.scheme.org/reference/std/test.html), [test runner](https://gerbil.scheme.org/reference/dev/test.html), [FFI](https://gerbil.scheme.org/guide/ffi.html) (`DIRECT_DOC`) | Mock tests and Gambit-backed foreign bindings are feasible | Small pure reference core first; real FFI qualified per toolchain | FFI existence does not prove tensor throughput or safe resource ownership |
 | [Gerbil interfaces](https://gerbil.scheme.org/reference/std/interface.html) (`DIRECT_DOC`) | Checked and unchecked dispatch exist | Explicit checking at host boundary and tests for bypass risks | An interface declaration is not a security sandbox |
 | LFR [K0-D01](LFR-K0-D01-gerbil-meta-foundation-minimal-contract-kernel-2026-11-13.md) and [K1-D01](LFR-K1-D01-opt-in-generalized-mechanisms-detailed-design-2026-11-13.md) (`LFR_DESIGN`) | Typed identities, evidence, observation, objectives and lifecycle | Use only selected contracts/mechanisms, never all K1 components | Their proposed qualification is not a runtime PASS |
-| LFR [P08-D01](LFR-P08-D01-spacetime-decision-causal-consequence-design-2026-11-13.md), [D02](LFR-P08-D02-game-world-scene-architecture-2026-11-13.md), [D03](LFR-P08-D03-game-world-procedural-generation-architecture-2026-11-13.md) (`LFR_DESIGN`) | World intervention, state and generation are separated | P08 may be an environment source through P09-owned conversion | RL has no write authority over world causality or generator algorithms |
-| LFR [P03-D01](LFR-P03-D01-semantic-state-dsl-detailed-design-2026-11-12.md), [P06-D01](LFR-P06-D01-branching-causal-reversibility-design-2026-11-13.md) (`LFR_DESIGN`) | Event order and historical records are separate models | Explicit clocks, episode and history mapping when selected | Reset is neither time travel nor undo of external side effects |
+| LFR [P05-D01](LFR-P05-D01-spacetime-decision-causal-consequence-design-2026-11-13.md), [D02](LFR-P05-D02-game-world-scene-architecture-2026-11-13.md), [D03](LFR-P05-D03-game-world-procedural-generation-architecture-2026-11-13.md) (`LFR_DESIGN`) | World intervention, state and generation are separated | P05 may be an environment source through P06-D01-owned conversion | RL has no write authority over world causality or generator algorithms |
+| LFR [P03-D01](LFR-P03-D01-semantic-state-dsl-detailed-design-2026-11-12.md), [P03-D02](LFR-P03-D02-branching-causal-reversibility-design-2026-11-13.md) (`LFR_DESIGN`) | Event order and historical records are separate models | Explicit clocks, episode and history mapping when selected | Reset is neither time travel nor undo of external side effects |
 
 **Research anchors for conceptual semantics:** Sutton & Barto, *Reinforcement Learning: An Introduction*, second edition (http://incompleteideas.net/book/the-book-2nd.html); DQN/PPO/SAC primary publications may explain an algorithm, but **implementation source and executed benchmarks** are the main qualification evidence. No reimplementation is considered correct solely because its equations resemble a paper.
 
@@ -61,7 +61,7 @@ Evidence categories: `DIRECT_DOC` official or maintainer documentation; `OPEN_SO
                                  |
                   EnvironmentSpec + ObjectiveSpec
                                  v
-  +--------------------- P09 SYSTEM ----------------------+
+  +--------------------- P06-D01 SYSTEM ----------------------+
   |  Environment Host  | Policy Inference | Data Collector |
   |  Learner Backend   | Independent Evaluator             |
   |                                                      |
@@ -71,7 +71,7 @@ Evidence categories: `DIRECT_DOC` official or maintainer documentation; `OPEN_SO
   +-------------------------+----------------------------+
                             |
         optional qualified adapters, not mandatory imports
-          P08 world | pure toy model | control simulator
+          P05 world | pure toy model | control simulator
           native ML backend | remote runner | offline data
 ```
 
@@ -86,7 +86,7 @@ Evidence categories: `DIRECT_DOC` official or maintainer documentation; `OPEN_SO
 
 ### 2.1 Domain independence
 
-A finite grid, stochastic control toy, logged offline dataset, game world or simulation can provide environment transitions if it meets the P09 contract. P08 compatibility is a **source-design relationship**, not a hard-coded P08 RL port. A consumer must create and qualify the adapter it needs; P09 may own a general Gymnasium-like envelope but does not modify P08 code or documents.
+A finite grid, stochastic control toy, logged offline dataset, game world or simulation can provide environment transitions if it meets the P06-D01 contract. P05 compatibility is a **source-design relationship**, not a hard-coded P05 RL port. A consumer must create and qualify the adapter it needs; P06-D01 may own a general Gymnasium-like envelope but does not modify P05 code or documents.
 
 ### 2.2 Optional K1 reuse
 
@@ -124,7 +124,7 @@ StepReceipt {
 }
 ```
 
-`reset(seed, initial_profile) -> EpisodeAnchor + Observation + ResetReceipt` creates a new episode generation, with declared initial-state stochasticity and information. `reset` is **not P06 reconstruction, P08 historical intervention, rollback, or proof of reversibility**.
+`reset(seed, initial_profile) -> EpisodeAnchor + Observation + ResetReceipt` creates a new episode generation, with declared initial-state stochasticity and information. `reset` is **not P03-D02 reconstruction, P05 historical intervention, rollback, or proof of reversibility**.
 
 `step(episode, action, expected_step) -> StepReceipt | Rejection | Unknown` must validate action schema, current generation, allowed action mask, step index and environment revision. A post-terminal step without a declared auto-reset wrapper rejects rather than silently creating a new episode. Auto-reset, when selected, has its own wrapper revision and final-observation semantics.
 
@@ -299,7 +299,7 @@ Evaluation minimum:
 | Noisy partially observed toy | Improvement over memoryless and fixed policies; scoped observation | Assuming privileged hidden state visible to policy |
 | Continuous pendulum/control simulation | Holdout return/cost, action clipping, sample/wall budgets | Continuous-space compatibility inferred from DQN label |
 | Offline historical dataset | Support diagnostics, behavior cloning baseline, qualified OPE or holdout simulation | Fabricated online return or causal/trading alpha |
-| P08 game-world fixture | Version-locked observations/actions and admitted state transitions | Calling a preview future a committed world outcome |
+| P05 game-world fixture | Version-locked observations/actions and admitted state transitions | Calling a preview future a committed world outcome |
 
 ### 7.2 Honest dispositions
 
@@ -317,7 +317,7 @@ The first version is a **Gerbil-native reference package**, not a native neural-
 | **B — Gerbil + native/ML runtime** | Neural policy inference, gradients, tensor operations, accelerated sampling when measured necessary | ABI, buffer ownership, numeric fidelity, lifecycle, device and end-to-end benchmark |
 | **C — Gerbil + external training service** | Large batches, distributed training, separate research stacks when cost/reliability justify it | Authenticated requests, job/version identity, data scope, bounded retries, checkpoints, reconciliation, cost and availability |
 
-The three options can coexist per *role*: an application may run a pure Gerbil environment, a native learner and an external evaluator. No option is privileged in advance; **the selected method must prove task fit**. The P08 generator's A/B/C profile and the P09 learner's A/B/C profile are separate decisions with different correctness/performance oracles.
+The three options can coexist per *role*: an application may run a pure Gerbil environment, a native learner and an external evaluator. No option is privileged in advance; **the selected method must prove task fit**. The P05 generator's A/B/C profile and the P06-D01 learner's A/B/C profile are separate decisions with different correctness/performance oracles.
 
 **Interop contract:** `BackendRequest {task_ref, algorithm_revision, env_or_dataset_refs, policy_checkpoint_ref_optional, schema_and_numeric_locks, resource_budget, authority_scope, idempotency_or_job_id}`. `BackendReceipt` returns execution state, trained artifact ref, input locks, resource usage, uncertainty, evaluation evidence refs and unresolved effects. A backend returning HTTP success or exit 0 does not certify that a policy is good.
 
@@ -366,15 +366,15 @@ editions/rl-adaptive/
 
 ## 9. Interfaces to other specialist editions
 
-**P08:** P09 may read the P08-D01/D02/D03 **published design contracts** as evidence for environment observation, admissible action and generation/version identity. P09 does not require a P08 import, inject a new RL/control port into P08, change world rules, interpret P06 histories or own procedural generation. A concrete P08→P09 adapter is a separately designed consumer component only when a real game task requires it.
+**P05:** P06-D01 may read the P05-D01/D02/D03 **published design contracts** as evidence for environment observation, admissible action and generation/version identity. P06-D01 does not require a P05 import, inject a new RL/control port into P05, change world rules, interpret P03-D02 histories or own procedural generation. A concrete P05→P06-D01 adapter is a separately designed consumer component only when a real game task requires it.
 
-**P03:** bounded temporal event/director contracts may inform an environment host, but P09 does not inherit P03 scheduling or invent one universal environment `step` implementation. **P04:** external tool/hardware effect authority is held by the host and separately qualified effect drivers. **P05:** durable dataset/checkpoint backends need independent storage guarantees. **P06:** a historical branch is not an episode; reset does not erase durable records. **K0/K1:** use selected exact versioned contracts, not mandatory all-edition imports.
+**P03-D01:** bounded temporal event/director contracts may inform an environment host, but P06-D01 does not inherit P03-D01 scheduling or invent one universal environment `step` implementation. **P02-D02:** external tool/hardware effect authority is held by the host and separately qualified effect drivers. **P04-D01:** durable dataset/checkpoint backends need independent storage guarantees. **P03-D02:** a historical branch is not an episode; reset does not erase durable records. **K0/K1:** use selected exact versioned contracts, not mandatory all-edition imports.
 
-**Future multi-agent specialization:** P09-D01 is single-agent first. Parallel and AEC environments are not silently converted; multi-agent role identity, turn order, shared policies and conflicting simultaneous actions require separate design and qualification. P09 may later supply algorithmic learning components to a multi-agent consumer without claiming game-theoretic equilibria or MARL correctness here.
+**Future multi-agent specialization:** P06-D01 is single-agent first. Parallel and AEC environments are not silently converted; multi-agent role identity, turn order, shared policies and conflicting simultaneous actions require separate design and qualification. P06-D01 may later supply algorithmic learning components to a multi-agent consumer without claiming game-theoretic equilibria or MARL correctness here.
 
 ## 10. Adversarial and cross-domain fixtures
 
-**F1 — Finite grid:** deterministic 5×5 grid, terminal goal/pit, a wall and a small legal action set. Enumerate every transition and compute oracle action values. Verify wrong action, terminal, truncation and repeatable seeds. This is the first qualified target, no game renderer or P08 dependency.
+**F1 — Finite grid:** deterministic 5×5 grid, terminal goal/pit, a wall and a small legal action set. Enumerate every transition and compute oracle action values. Verify wrong action, terminal, truncation and repeatable seeds. This is the first qualified target, no game renderer or P05 dependency.
 
 **F2 — Two observations, one hidden state difference:** distinct latent states generate the same visible symbol, leading to different optimal responses with memory. Verify observation cannot leak state; any memoryful policy is separately qualified.
 
@@ -386,9 +386,9 @@ editions/rl-adaptive/
 
 **F6 — Offline dataset without support:** historical logged data omits a class of actions. A proposed unseen-action value improvement may not be called verified; report support gap and OPE limitation.
 
-**F7 — P08 world source:** a region rule admits a world intervention, but the player-visible policy observation omits hidden causal facts. The environment adapter cannot expose privileged world state nor claim `preview_consequences` is a committed step; P08 retains world authority.
+**F7 — P05 world source:** a region rule admits a world intervention, but the player-visible policy observation omits hidden causal facts. The environment adapter cannot expose privileged world state nor claim `preview_consequences` is a committed step; P05 retains world authority.
 
-**F8 — Control/financial non-game mock:** same P09 episode/learner/evaluation records are exercised on a numeric simulator with explicit costs and terminal/truncation. Neither physical safety nor live trading success follows from the mock.
+**F8 — Control/financial non-game mock:** same P06-D01 episode/learner/evaluation records are exercised on a numeric simulator with explicit costs and terminal/truncation. Neither physical safety nor live trading success follows from the mock.
 
 **F9 — Asynchronous worker:** duplicated, delayed or reordered inference and update receipts cannot silently advance policy revisions or double-count experience.
 
@@ -419,7 +419,7 @@ editions/rl-adaptive/
 19. **I19 — Evidence retains failure:** aborted runs and failed candidate trials remain counted in evaluation evidence.
 20. **I20 — No false policy promotion:** selection/deployment requires an independent owner/host admission step.
 21. **I21 — External effect separation:** a learned action proposal is not execution authority and cannot bypass host safety checks.
-22. **I22 — Semantic portability:** non-game consumers can use P09 without P08/game engine imports.
+22. **I22 — Semantic portability:** non-game consumers can use P06-D01 without P05/game engine imports.
 23. **I23 — No global algorithm winner:** performance/qualification applies only to named tasks and evidence scopes.
 24. **I24 — No false maturity:** a design test register is not an executed qualification result.
 
@@ -458,7 +458,7 @@ Tests are specifications, not executed evidence. Toolchain and exact package ver
 | **Q6 — Experiment governance** | Training/evaluation isolation, budgets, checkpoints and counted failures | Specific experiment protocol |
 | **Q7 — Task performance** | Predeclared baselines, held-out metrics, uncertainty and constraint results | Named task and thresholds |
 | **Q8 — Numeric/backend** | If selected, tensor/FFI/service ownership, numeric and failure parity | Exact runtime/backend/profile |
-| **Q9 — P08/other adapters** | Cross-edition independence, authorized action and observation isolation | Selected adapter only |
+| **Q9 — P05/other adapters** | Cross-edition independence, authorized action and observation isolation | Selected adapter only |
 | **Q10 — Robustness** | Stale data, delayed workers, adversarial, reward hacking and leakage negatives | Tested disturbances, not universal safety |
 | **Q11 — Independent audit** | Verify claims, evidence links, non-PASS dispositions and implementation scope | Only demonstrated modules and workloads |
 
@@ -468,78 +468,78 @@ The register below is **future qualification work**, not results. Each test must
 
 | ID | Challenge | Pass oracle |
 |---|---|---|
-| **P09-T01** | Environment ID collision across namespaces | Distinct typed identity / no cross-env cache reuse |
-| **P09-T02** | Episode generation reused after reset | Old step rejected STALE_EPISODE |
-| **P09-T03** | Unknown action schema field | Strict validation refusal |
-| **P09-T04** | Incompatible observation schema | No silently coerced observation |
-| **P09-T05** | Policy revision rebound to new model | Explicit incompatibility/migration |
-| **P09-T06** | Missing RNG/source revision lock | Replay claim blocked |
-| **P09-T07** | Malformed feedback vector | Feedback validation fails |
-| **P09-T08** | Unknown worker authority class | No live-effect admission |
-| **P09-T09** | Reset emits initial observation | Correct generation and schema |
-| **P09-T10** | Step after true terminal | Reject until reset unless qualified wrapper |
-| **P09-T11** | Nonterminal truncation | Separate truncated status and valid bootstrap semantics |
-| **P09-T12** | Simultaneous terminal/truncation declared | Both flags preserved under named profile |
-| **P09-T13** | Lost final observation during auto-reset | Final observation required or wrapper refused |
-| **P09-T14** | Off-by-one step index | STEP_ORDER_CONFLICT |
-| **P09-T15** | Clock-domain mismatch | No implicit time conversion |
-| **P09-T16** | Noisy stochastic transition with locked RNG | Exact declared replay or honest non-equivalence |
-| **P09-T17** | Two latent states share observation | No privileged state leak |
-| **P09-T18** | Unobserved variable used by policy | Scope violation blocked |
-| **P09-T19** | Illegal action under fixed mask | Action refused |
-| **P09-T20** | Mask changes under environment revision | Old mask invalidated |
-| **P09-T21** | Observation and action shape mismatch | Typed schema rejection |
-| **P09-T22** | Policy hidden state without version | Recurrent-state compatibility refusal |
-| **P09-T23** | Reward and cost contradictory incentives | Cost violation remains visible |
-| **P09-T24** | Reward shaping revision changed | Old feedback records quarantined |
-| **P09-T25** | Finite MDP transition sum != 1 | Model invalid |
-| **P09-T26** | Finite value iteration exact check | Residual/oracle tolerance passed |
-| **P09-T27** | Deterministic tie optimal actions | Documented tie policy consistent |
-| **P09-T28** | Q-learning nonterminal target | Numeric target matches independent oracle |
-| **P09-T29** | Q-learning truncated target | Does not incorrectly zero bootstrap |
-| **P09-T30** | Q-learning terminal target | Correct zero bootstrap |
-| **P09-T31** | SARSA vs Q-learning next action | Different justified target |
-| **P09-T32** | Invalid gamma/alpha/exploration schedule | Reject invalid hyperparameter |
-| **P09-T33** | Trajectory transition ordering | No skipped/duplicated step |
-| **P09-T34** | Behavior policy version absent from on-policy sample | On-policy admission fails |
-| **P09-T35** | Offline dataset source mismatch | No forced merge without migration |
-| **P09-T36** | Replay buffer crosses episode terminal | Terminal boundary maintained |
-| **P09-T37** | Dataset duplicated samples | Dedup policy enforced and recorded |
-| **P09-T38** | Train/eval split overlap | EVALUATION_LEAKAGE detected |
-| **P09-T39** | Offline behavior propensity unknown | Importance-sampling OPE refused |
-| **P09-T40** | Offline unseen action support | Support gap reported, no qualified value |
-| **P09-T41** | Policy inference from immutable revision | Frozen output and version receipt |
-| **P09-T42** | Learner update policy revision race | No mutation of frozen policy |
-| **P09-T43** | Stale PPO rollout arrives | On-policy freshness contract enforced |
-| **P09-T44** | Off-policy replay accepted conditionally | Only configured learner permits reuse |
-| **P09-T45** | Optimizer checkpoint lacks normalizer | Cannot claim restored equivalence |
-| **P09-T46** | Episode steps vs updates miscounted | Separate counters reconcile |
-| **P09-T47** | Run resource limit exhaustion | Typed budget failure |
-| **P09-T48** | NaN/Inf learner update | Numeric failure and evidence retained |
-| **P09-T49** | Random policy baseline on grid | Independent baseline reproduced |
-| **P09-T50** | Exact optimal-policy baseline | Learned gap computed correctly |
-| **P09-T51** | Holdout seed contamination | No holdout PASS |
-| **P09-T52** | Reward improves, hard constraint violated | Constraint failure wins |
-| **P09-T53** | Many seed results vs cherry-picked best | Predeclared aggregation and interval |
-| **P09-T54** | Evaluation wrapper changes termination | Mismatch detected or qualified mapping |
-| **P09-T55** | Per-episode tail metric required | Tail/worst-case results recorded |
-| **P09-T56** | Candidate underperforms task target | TASK_UNDERPERFORMING |
-| **P09-T57** | P08 game observation adapter | No hidden causal leakage |
-| **P09-T58** | P08 world preview vs actual step | Preview not treated as committed state |
-| **P09-T59** | P08 procedural generation backend change | Version and environment source locks retained |
-| **P09-T60** | Non-game numeric environment | No dependency on game engine |
-| **P09-T61** | ML backend invalid tensor layout | Adapter refuses/returns numeric failure |
-| **P09-T62** | Native inference resource release unknown | No release-success claim |
-| **P09-T63** | External learner lost acknowledgment | No invented success or blind unsafe retry |
-| **P09-T64** | Remote policy artifact reorders results | Request/model identity checked |
-| **P09-T65** | Duplicate worker completion | No duplicate policy update or data count |
-| **P09-T66** | Truncation flag stripped in import | Import rejected or incompatible |
-| **P09-T67** | Data-only DSL injects arbitrary eval | No execution/authority grant |
-| **P09-T68** | Reward-hacking candidate high score | Constraint/oracle catches failure |
-| **P09-T69** | Stochastic GPU run same seed differs | No unconditional byte-replay claim |
-| **P09-T70** | Environment offline OPE unsupported | Qualification ceiling retained |
-| **P09-T71** | Simulation-qualified policy requests hardware action | DEPLOYMENT_NOT_ESTABLISHED |
-| **P09-T72** | Independent audit with known failed runs | Failures retained, no all-PASS invention |
+| **P06-D01-T01** | Environment ID collision across namespaces | Distinct typed identity / no cross-env cache reuse |
+| **P06-D01-T02** | Episode generation reused after reset | Old step rejected STALE_EPISODE |
+| **P06-D01-T03** | Unknown action schema field | Strict validation refusal |
+| **P06-D01-T04** | Incompatible observation schema | No silently coerced observation |
+| **P06-D01-T05** | Policy revision rebound to new model | Explicit incompatibility/migration |
+| **P06-D01-T06** | Missing RNG/source revision lock | Replay claim blocked |
+| **P06-D01-T07** | Malformed feedback vector | Feedback validation fails |
+| **P06-D01-T08** | Unknown worker authority class | No live-effect admission |
+| **P06-D01-T09** | Reset emits initial observation | Correct generation and schema |
+| **P06-D01-T10** | Step after true terminal | Reject until reset unless qualified wrapper |
+| **P06-D01-T11** | Nonterminal truncation | Separate truncated status and valid bootstrap semantics |
+| **P06-D01-T12** | Simultaneous terminal/truncation declared | Both flags preserved under named profile |
+| **P06-D01-T13** | Lost final observation during auto-reset | Final observation required or wrapper refused |
+| **P06-D01-T14** | Off-by-one step index | STEP_ORDER_CONFLICT |
+| **P06-D01-T15** | Clock-domain mismatch | No implicit time conversion |
+| **P06-D01-T16** | Noisy stochastic transition with locked RNG | Exact declared replay or honest non-equivalence |
+| **P06-D01-T17** | Two latent states share observation | No privileged state leak |
+| **P06-D01-T18** | Unobserved variable used by policy | Scope violation blocked |
+| **P06-D01-T19** | Illegal action under fixed mask | Action refused |
+| **P06-D01-T20** | Mask changes under environment revision | Old mask invalidated |
+| **P06-D01-T21** | Observation and action shape mismatch | Typed schema rejection |
+| **P06-D01-T22** | Policy hidden state without version | Recurrent-state compatibility refusal |
+| **P06-D01-T23** | Reward and cost contradictory incentives | Cost violation remains visible |
+| **P06-D01-T24** | Reward shaping revision changed | Old feedback records quarantined |
+| **P06-D01-T25** | Finite MDP transition sum != 1 | Model invalid |
+| **P06-D01-T26** | Finite value iteration exact check | Residual/oracle tolerance passed |
+| **P06-D01-T27** | Deterministic tie optimal actions | Documented tie policy consistent |
+| **P06-D01-T28** | Q-learning nonterminal target | Numeric target matches independent oracle |
+| **P06-D01-T29** | Q-learning truncated target | Does not incorrectly zero bootstrap |
+| **P06-D01-T30** | Q-learning terminal target | Correct zero bootstrap |
+| **P06-D01-T31** | SARSA vs Q-learning next action | Different justified target |
+| **P06-D01-T32** | Invalid gamma/alpha/exploration schedule | Reject invalid hyperparameter |
+| **P06-D01-T33** | Trajectory transition ordering | No skipped/duplicated step |
+| **P06-D01-T34** | Behavior policy version absent from on-policy sample | On-policy admission fails |
+| **P06-D01-T35** | Offline dataset source mismatch | No forced merge without migration |
+| **P06-D01-T36** | Replay buffer crosses episode terminal | Terminal boundary maintained |
+| **P06-D01-T37** | Dataset duplicated samples | Dedup policy enforced and recorded |
+| **P06-D01-T38** | Train/eval split overlap | EVALUATION_LEAKAGE detected |
+| **P06-D01-T39** | Offline behavior propensity unknown | Importance-sampling OPE refused |
+| **P06-D01-T40** | Offline unseen action support | Support gap reported, no qualified value |
+| **P06-D01-T41** | Policy inference from immutable revision | Frozen output and version receipt |
+| **P06-D01-T42** | Learner update policy revision race | No mutation of frozen policy |
+| **P06-D01-T43** | Stale PPO rollout arrives | On-policy freshness contract enforced |
+| **P06-D01-T44** | Off-policy replay accepted conditionally | Only configured learner permits reuse |
+| **P06-D01-T45** | Optimizer checkpoint lacks normalizer | Cannot claim restored equivalence |
+| **P06-D01-T46** | Episode steps vs updates miscounted | Separate counters reconcile |
+| **P06-D01-T47** | Run resource limit exhaustion | Typed budget failure |
+| **P06-D01-T48** | NaN/Inf learner update | Numeric failure and evidence retained |
+| **P06-D01-T49** | Random policy baseline on grid | Independent baseline reproduced |
+| **P06-D01-T50** | Exact optimal-policy baseline | Learned gap computed correctly |
+| **P06-D01-T51** | Holdout seed contamination | No holdout PASS |
+| **P06-D01-T52** | Reward improves, hard constraint violated | Constraint failure wins |
+| **P06-D01-T53** | Many seed results vs cherry-picked best | Predeclared aggregation and interval |
+| **P06-D01-T54** | Evaluation wrapper changes termination | Mismatch detected or qualified mapping |
+| **P06-D01-T55** | Per-episode tail metric required | Tail/worst-case results recorded |
+| **P06-D01-T56** | Candidate underperforms task target | TASK_UNDERPERFORMING |
+| **P06-D01-T57** | P05 game observation adapter | No hidden causal leakage |
+| **P06-D01-T58** | P05 world preview vs actual step | Preview not treated as committed state |
+| **P06-D01-T59** | P05 procedural generation backend change | Version and environment source locks retained |
+| **P06-D01-T60** | Non-game numeric environment | No dependency on game engine |
+| **P06-D01-T61** | ML backend invalid tensor layout | Adapter refuses/returns numeric failure |
+| **P06-D01-T62** | Native inference resource release unknown | No release-success claim |
+| **P06-D01-T63** | External learner lost acknowledgment | No invented success or blind unsafe retry |
+| **P06-D01-T64** | Remote policy artifact reorders results | Request/model identity checked |
+| **P06-D01-T65** | Duplicate worker completion | No duplicate policy update or data count |
+| **P06-D01-T66** | Truncation flag stripped in import | Import rejected or incompatible |
+| **P06-D01-T67** | Data-only DSL injects arbitrary eval | No execution/authority grant |
+| **P06-D01-T68** | Reward-hacking candidate high score | Constraint/oracle catches failure |
+| **P06-D01-T69** | Stochastic GPU run same seed differs | No unconditional byte-replay claim |
+| **P06-D01-T70** | Environment offline OPE unsupported | Qualification ceiling retained |
+| **P06-D01-T71** | Simulation-qualified policy requests hardware action | DEPLOYMENT_NOT_ESTABLISHED |
+| **P06-D01-T72** | Independent audit with known failed runs | Failures retained, no all-PASS invention |
 
 
 ### 12.3 Qualification claim matrix
@@ -551,20 +551,20 @@ The register below is **future qualification work**, not results. Each test must
 | `P09_TABULAR_ALGORITHM_QUALIFIED` | Q0–Q7, Q10–Q11 on finite tasks with actual improvement and numeric checks | Named algorithm/task/seed protocol |
 | `P09_DEEP_ALGORITHM_ADAPTER_QUALIFIED` | Relevant Q0–Q11 including Q8, independent code/gradient and performance checks | Exact backend/variant/workloads |
 | `P09_OFFLINE_POLICY_EVALUATION_QUALIFIED` | Q5/Q6/Q7/Q10/Q11 with support assumptions, coverage and uncertainty | Selected data/support/policy class only |
-| `P09_DEPLOYMENT_ADMISSIBLE` | Separate real-host safety, permission, observational and effect qualification | Named host; not inferable from P09 alone |
+| `P09_DEPLOYMENT_ADMISSIBLE` | Separate real-host safety, permission, observational and effect qualification | Named host; not inferable from P06-D01 alone |
 
-**Release is modular:** qualifying a tabular learner does not certify PPO, SAC, offline OPE, a native tensor engine, a P08 game world or deployed control. All 72 registered cases need not be executed in one first-release package; the exact applicable subset must be declared before a profile is qualified, while every mandatory gate for the claimed profile must actually pass.
+**Release is modular:** qualifying a tabular learner does not certify PPO, SAC, offline OPE, a native tensor engine, a P05 game world or deployed control. All 72 registered cases need not be executed in one first-release package; the exact applicable subset must be declared before a profile is qualified, while every mandatory gate for the claimed profile must actually pass.
 
 ## 13. Implementation sequencing post separate authorization
 
-1. **P09-00 — Evidence and locks:** pin K0/K1/P08 interface revisions and external implementation/docs; define exact algorithm/task success and negative controls.
-2. **P09-01 — Environment/episode contracts:** pure Gerbil finite grid, typed terminal/truncation semantics and independent transition oracle.
-3. **P09-02 — First working algorithm:** value iteration baseline, tabular Q-learning and SARSA, with reproducible per-step target traces, observation/action tests and task performance qualification.
-4. **P09-03 — Data/evaluator:** trajectory versions, replay integrity, frozen splits, random/fixed/oracle baselines, multi-seed evaluation and failure ledger.
-5. **P09-04 — Algorithm candidate tour:** choose one additional algorithm *because a named task requires it*; inspect maintained implementation source, adapters and numeric/parity evidence before attempting broad training.
-6. **P09-05 — Optional advanced backends:** select A/B/C by measured fit; add DQN/PPO/SAC/offline paths one by one under separate task qualification, no compulsory neural trainer.
-7. **P09-06 — Independent integration audit:** test a self-contained environment and a non-game numeric environment; test P08 only as a deliberately selected adapter when available.
-8. **P09-07 — Separate future design authority:** advanced training backend algorithms, multi-agent/games and actual application deployment each require their own scoped designs. D01 does not pre-commit the entire program.
+1. **P06-D01-00 — Evidence and locks:** pin K0/K1/P05 interface revisions and external implementation/docs; define exact algorithm/task success and negative controls.
+2. **P06-D01-01 — Environment/episode contracts:** pure Gerbil finite grid, typed terminal/truncation semantics and independent transition oracle.
+3. **P06-D01-02 — First working algorithm:** value iteration baseline, tabular Q-learning and SARSA, with reproducible per-step target traces, observation/action tests and task performance qualification.
+4. **P06-D01-03 — Data/evaluator:** trajectory versions, replay integrity, frozen splits, random/fixed/oracle baselines, multi-seed evaluation and failure ledger.
+5. **P06-D01-04 — Algorithm candidate tour:** choose one additional algorithm *because a named task requires it*; inspect maintained implementation source, adapters and numeric/parity evidence before attempting broad training.
+6. **P06-D01-05 — Optional advanced backends:** select A/B/C by measured fit; add DQN/PPO/SAC/offline paths one by one under separate task qualification, no compulsory neural trainer.
+7. **P06-D01-06 — Independent integration audit:** test a self-contained environment and a non-game numeric environment; test P05 only as a deliberately selected adapter when available.
+8. **P06-D01-07 — Separate future design authority:** advanced training backend algorithms, multi-agent/games and actual application deployment each require their own scoped designs. D01 does not pre-commit the entire program.
 
 **Task prioritization:** if time/compute is constrained, build a *correct and measurable small learner* before an impressive but unqualified deep-learning dashboard. A reproducible finite baseline reveals target bugs before they are hidden in hundreds of millions of gradient updates.
 
@@ -580,7 +580,7 @@ The register below is **future qualification work**, not results. Each test must
 | On-policy concurrency | Version-pinned collector and learner; reject unsupported staleness | Race/failure injection and algorithm-specific data acceptance |
 | Rewards vs safety | Distinct reward, cost, hard constraint and host authority | Negative reward-hacking cases |
 | Multi-agent | Separate future specialist | AEC/Parallel semantics and policy-mapping contract |
-| P08 game world | Relevant source, never required | Scoped observation/action adapter and D01/D02 revision locks |
+| P05 game world | Relevant source, never required | Scoped observation/action adapter and D01/D02 revision locks |
 | Algorithm qualification | Named task + implementation + budget + held-out baselines | Independent executed oracle and seed/range evidence |
 | Production claims | No deployability implied | Separate user/host authority and real-world validation |
 

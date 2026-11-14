@@ -1,35 +1,37 @@
-# LFR-P02-D01 | Declarative Systems & Process Supervision Reserve
+# LFR-P02-D01 | Declarative Scheme Systems & Governed Execution / Declarative Systems & Process Supervision
 
-**Document class:** Detailed Design Proposal — specialized edition P02 only  
+**Document class:** Detailed Design Proposal — specialized edition P02-D01 only  
 **Date:** 12 November 2026  
 **Status:** `DETAILED_DESIGN_PROPOSED / STATIC_SOURCE_GROUNDED / EXECUTION_NOT_QUALIFIED`  
 **Programme:** Lisp Foundation Reserve (LFR-C02)  
+**Edition:** P02 — Declarative Scheme Systems & Governed Execution  
+**Design slice:** D01 — Declarative Systems & Process Supervision  
 **Target implementation language:** Gerbil Scheme, using Gambit runtime mechanisms only where independently qualified  
 **Primary source lineage:** GNU Guix / GNU Guile Scheme, GNU Shepherd  
 **Background cross-check:** Alien-Works lifecycle design and Gerbil Coding Harness process-invocation review  
-**Document boundary:** P02 alone; **not** P03, the Gerbil Meta-Foundation, Guix itself, or a full system manager  
+**Document boundary:** P02-D01 alone; **not** P03-D01, the Gerbil Meta-Foundation, Guix itself, or a full system manager  
 **Publication:** Owner-approved documentation publication on 12 November 2026 in `vietcong73/alien-works`, branch `audit/lisp-foundation-reserve`, at `docs/design/`. This publication does not authorize implementation, source-code changes, runtime commands, or Guix reconfiguration.
 
 ## 0. Decision statement
 
 Design **one independently versioned Gerbil specialized edition** with two separable profiles:
 
-- **P02-A, Declarative Systems (primary / pure):** describes objects and dependencies; validates and lowers declarations into normalized plans; models execution stages, effects, versions, evidence and discrepancies without executing arbitrary code. It is not a package manager, general build system, or process scheduler.
-- **P02-B, Local Process Supervision (optional / effectful):** manages specifically registered local child processes, service dependencies, start/readiness/stop, bounded restart behavior, shutdown and health observations through an explicitly qualified OS-process backend. It is not PID 1, an actor runtime, a system-wide init replacement, or a Guix/Shepherd bridge.
+- **P02-D01-A, Declarative Systems (primary / pure):** describes objects and dependencies; validates and lowers declarations into normalized plans; models execution stages, effects, versions, evidence and discrepancies without executing arbitrary code. It is not a package manager, general build system, or process scheduler.
+- **P02-D01-B, Local Process Supervision (optional / effectful):** manages specifically registered local child processes, service dependencies, start/readiness/stop, bounded restart behavior, shutdown and health observations through an explicitly qualified OS-process backend. It is not PID 1, an actor runtime, a system-wide init replacement, or a Guix/Shepherd bridge.
 
 Both are *new Gerbil designs informed by source behavior*, **not** ports or claims of semantic equivalence. No Guile runtime, Guix daemon, Shepherd daemon, GNU store, Guix Home, GNU package graph, or G-expression interpreter belongs on their mandatory dependency path.
 
 ### Product purpose
 
-P02 is useful when an application must first describe what should exist, reason about dependent components, plan an ordered change, and optionally run long-lived local child services. Consumers may use P02-A alone for pure dependency composition or use P02-B for local supervision. Each use has explicit outcomes, rather than optimistic calls that declare success merely because a command was started.
+P02-D01 is useful when an application must first describe what should exist, reason about dependent components, plan an ordered change, and optionally run long-lived local child services. Consumers may use P02-D01-A alone for pure dependency composition or use P02-D01-B for local supervision. Each use has explicit outcomes, rather than optimistic calls that declare success merely because a command was started.
 
-### Problem P02 is solving
+### Problem P02-D01 is solving
 
-Ad hoc applications frequently conflate *configuration declarations*, *execution order*, *process liveness*, *readiness*, *authorization*, *observed state* and *rollback*. That makes partial failure hard to diagnose and small workflows accidentally dependent on one host's environment. Guix and Shepherd demonstrate important but distinct remedies. P02 extracts only the transferable mechanisms and specifies their limits.
+Ad hoc applications frequently conflate *configuration declarations*, *execution order*, *process liveness*, *readiness*, *authorization*, *observed state* and *rollback*. That makes partial failure hard to diagnose and small workflows accidentally dependent on one host's environment. Guix and Shepherd demonstrate important but distinct remedies. P02-D01 extracts only the transferable mechanisms and specifies their limits.
 
 ## 1. Primary source-lineage / defect-resolution ledger
 
-| ID | Source evidence and original problem solved | What is strong | Boundary / failure mode | P02 design response | Evidence needed later |
+| ID | Source evidence and original problem solved | What is strong | Boundary / failure mode | P02-D01 design response | Evidence needed later |
 |---|---|---|---|---|---|
 | **G01** | Guix `package->bag`: transforms symbolic packages into explicit build inputs and outputs [source](https://github.com/guix-mirror/guix/blob/18f545c14eb36c7c588d2cf356e387e17e53cd51/guix/packages.scm#L1812-L1855) | Staged description-to-IR lowering | Guix bag is specific to its store and build systems | `Declaration -> NormalizedGraph -> EffectPlan`; typed, serializable, inspectable stages | Deterministic lowering and unchanged input descriptor |
 | **G02** | Guix G-expressions / `lower-gexp`: prepares code and referenced dependencies for later execution [source](https://github.com/guix-mirror/guix/blob/18f545c14eb36c7c588d2cf356e387e17e53cd51/guix/gexp.scm#L1120-L1172) | Explicit host/build staging and reference capture | Escapes and ambient-host values may leak between stages; staged errors are difficult to localize | Data-only **StageSpec** and explicit input manifest; no arbitrary host/target code evaluation | Reject unresolved reference, ambient input, or executable code in descriptors |
@@ -37,24 +39,24 @@ Ad hoc applications frequently conflate *configuration declarations*, *execution
 | **G04** | Guix `<service-type>` extensions, compose and extend [source](https://github.com/guix-mirror/guix/blob/18f545c14eb36c7c588d2cf356e387e17e53cd51/gnu/services.scm#L187-L211) | Composable declarations with targeted configuration changes | Effective configuration can be obscured across many contributing sources | Typed **Contribution** ledger with source locations and deterministic folding | Every output field traceable to contributing declarations |
 | **G05** | Guix `service-back-edges` and `fold-services` [source](https://github.com/guix-mirror/guix/blob/18f545c14eb36c7c588d2cf356e387e17e53cd51/gnu/services.scm#L1319-L1459) | Missing/ambiguous targets are explicit errors; extension folding | Complex multi-stage graph semantics; not a daemon supervisor | Reject ambiguous/missing providers, cycles and illegal composition before effects | Counterexamples for missing, ambiguous and cyclic extensions |
 | **G06** | Guix profile construction and switching [source](https://github.com/guix-mirror/guix/blob/18f545c14eb36c7c588d2cf356e387e17e53cd51/guix/scripts/package.scm#L140-L179) | Versioned, provenance-rich desired artifacts | Switching a generation does **not** roll back mutable databases, external files or running services | Immutable declaration revisions, explicit before/after observations and `PARTIAL_EFFECT` outcomes | Failure-injection demonstrates no fictitious atomic rollback |
-| **S01** | Shepherd service provisions and requirements [manual](https://www.gnu.org/software/shepherd/manual/html_node/) | Managed dependency-aware service start | Service dependency is not the same as artifact dependency | P02-B's separate runtime service registry and readiness conditions | Dependency readiness and reverse shutdown tests |
+| **S01** | Shepherd service provisions and requirements [manual](https://www.gnu.org/software/shepherd/manual/html_node/) | Managed dependency-aware service start | Service dependency is not the same as artifact dependency | P02-D01-B's separate runtime service registry and readiness conditions | Dependency readiness and reverse shutdown tests |
 | **S02** | Shepherd restart delay/limit and disable behavior [manual](https://www.gnu.org/software/shepherd/manual/html_node/) | Restart-loop containment | Crashes and respawn do not repair external state; restart storms can persist without limits | Monotonic backoff and bounded restart window; explicit `DISABLED` state | Crash-loop model, fake clock, real child exits |
 | **S03** | Shepherd one-shot vs long-running services [manual](https://www.gnu.org/software/shepherd/manual/html_node/) | Different service completion semantics | One-shot success cannot be inferred from long-running process health | Tagged `ONESHOT` vs `DAEMON` declarations with distinct success rules | Exit/readiness distinctions and failure propagation |
 | **L01** | Gerbil `:std/misc/process` `run-process` provides argv-based synchronous child invocation [reference](https://gerbil.scheme.org/reference/std/misc/process.html) | Concrete process integration point | Synchronous helper **does not by itself qualify** persistent service supervision, process-tree death or hard deadlines | Separate `ProcessDriver` interface; OS backend admitted only after spawn/signal/wait/reap/PGID qualification | Real kernel process, child-tree, timeout and PID-reuse tests |
-| **L02** | Gerbil actors/threads provide in-process messaging [reference](https://gerbil.scheme.org/reference/std/actor.html) | Useful coordination primitive | Actor monitor ≠ PID supervisor; same-process actor administration ≠ security boundary | P02-B may use actors internally, but owns OS-process lifecycle separately | Death-of-actor vs death-of-child non-equivalence test |
-| **A01** | Alien-Works uses scoped application native lifecycle and task queues [source](https://github.com/borodust/alien-works/blob/86381f8bce44a396347cbe8de70349be5b43ece1/src/framework/framework.lisp) | Clear acquire/use/release composition | Native renderer tasks are not durable process supervision | Explicit separate lifecycle of declarations, child services, and native resources | No importing graphics packages to build P02-A |
+| **L02** | Gerbil actors/threads provide in-process messaging [reference](https://gerbil.scheme.org/reference/std/actor.html) | Useful coordination primitive | Actor monitor ≠ PID supervisor; same-process actor administration ≠ security boundary | P02-D01-B may use actors internally, but owns OS-process lifecycle separately | Death-of-actor vs death-of-child non-equivalence test |
+| **A01** | Alien-Works uses scoped application native lifecycle and task queues [source](https://github.com/borodust/alien-works/blob/86381f8bce44a396347cbe8de70349be5b43ece1/src/framework/framework.lisp) | Clear acquire/use/release composition | Native renderer tasks are not durable process supervision | Explicit separate lifecycle of declarations, child services, and native resources | No importing graphics packages to build P02-D01-A |
 | **H01** | Gerbil Coding Harness `open-process` execution audit [review](https://github.com/vietcong73/alien-works/blob/audit/lisp-foundation-reserve/docs/reviews/gerbil-projects/06-coding-harness-gerbil-source-code-review.md) | argv dispatch avoids accidental shell composition | Idle timeout ≠ wall-clock deadline; signaling one PID ≠ descendant cleanup | Structured hard deadline with process-group handling when supported; test fallback refusal | Continuous-output and child-spawning adversarial fixtures |
 
-**Source assurance ceiling:** Guix/Gerbil entries are pinned code or official API references, Shepherd rows are official manual behavior rather than a fresh independent source audit, and all target P02 behavior is still proposed. Guix Home and Shepherd implementation internals have **not** been audited to the same depth as Guix package/System in the existing dossier. Do not silently upgrade evidence levels.
+**Source assurance ceiling:** Guix/Gerbil entries are pinned code or official API references, Shepherd rows are official manual behavior rather than a fresh independent source audit, and all target P02-D01 behavior is still proposed. Guix Home and Shepherd implementation internals have **not** been audited to the same depth as Guix package/System in the existing dossier. Do not silently upgrade evidence levels.
 
 ### A precision correction to earlier drafts
 
-Guix service *extensions* are about composing configuration/outputs, whereas Shepherd *requirements* determine runtime start dependencies. Identical graph terminology does not make them the same graph. P02 treats them as different graph kinds, with an explicit lowering relation only when an application supplies one. Likewise, Gerbil actor lifecycle cannot be treated as a substitute for OS process supervision.
+Guix service *extensions* are about composing configuration/outputs, whereas Shepherd *requirements* determine runtime start dependencies. Identical graph terminology does not make them the same graph. P02-D01 treats them as different graph kinds, with an explicit lowering relation only when an application supplies one. Likewise, Gerbil actor lifecycle cannot be treated as a substitute for OS process supervision.
 
 ## 2. Module boundary and dependency design
 
 ```text
-P02-A: PURE DECLARATIVE PROFILE (mandatory only if this edition is used)
+P02-D01-A: PURE DECLARATIVE PROFILE (mandatory only if this edition is used)
   p02/schema   p02/identity   p02/graph   p02/compose
       |               |            |           |
       +---------------+------------+-----------+
@@ -67,7 +69,7 @@ P02-A: PURE DECLARATIVE PROFILE (mandatory only if this edition is used)
                           |
                pure mock/evidence tests
 
-P02-B: OPTIONAL LOCAL PROCESS PROFILE
+P02-D01-B: OPTIONAL LOCAL PROCESS PROFILE
   p02/service-spec  --> p02/registry --> p02/supervisor-state
                              |                    |
                        p02/health           p02/restart-policy
@@ -81,16 +83,16 @@ P02-B: OPTIONAL LOCAL PROCESS PROFILE
 
 **Dependency invariants:**
 
-1. P02-A can load, validate, lower, topologically sort, diff and produce dry-run receipts without P02-B, native process execution, Guile, Guix or Shepherd.
-2. P02-B imports P02-A's declaration/result types but P02-A never imports P02-B.
-3. P02-B may operate through an injected fake process driver and fake monotonic clock. A real Linux driver is an independently qualified optional backend.
-4. Neither profile imports P01; future interoperability occurs through agreed descriptors, not cross-edition source dependency.
-5. The future LFR Meta-Foundation may later *accept* promoted cross-domain contracts, but P02 does not define global K0 or force other editions to adopt its graph ontology.
+1. P02-D01-A can load, validate, lower, topologically sort, diff and produce dry-run receipts without P02-D01-B, native process execution, Guile, Guix or Shepherd.
+2. P02-D01-B imports P02-D01-A's declaration/result types but P02-D01-A never imports P02-D01-B.
+3. P02-D01-B may operate through an injected fake process driver and fake monotonic clock. A real Linux driver is an independently qualified optional backend.
+4. Neither profile imports P01-D01; future interoperability occurs through agreed descriptors, not cross-edition source dependency.
+5. The future LFR Meta-Foundation may later *accept* promoted cross-domain contracts, but P02-D01 does not define global K0 or force other editions to adopt its graph ontology.
 
 ### Proposed source layout (not created)
 
 ```text
-editions/declarative-systems-processes/          # P02 standalone future repository/package
+editions/declarative-systems-processes/          # P02-D01 standalone future repository/package
   README.md
   gerbil.pkg
   build.ss
@@ -145,7 +147,7 @@ All public formats need stable tagged encoding, explicit type/version discrimina
 - **Reference/input DAG:** A node may depend on another declaration/artifact. It establishes ordering or inclusion only. Edges do not start processes.
 - **Extension/composition DAG:** Values contribute to selected targets through declared combiners. Missing/ambiguous target resolution is a validation error.
 - **Effect-plan DAG:** Ordered intents and compensability metadata. Approval of one step is not approval of all descendants unless scope states so.
-- **Runtime-service graph (P02-B):** Depends on the **readiness/success** of other services, not simply existence of graph nodes.
+- **Runtime-service graph (P02-D01-B):** Depends on the **readiness/success** of other services, not simply existence of graph nodes.
 
 No implicit conversion between graph kinds. A consumer must declare a mapping and prove its preconditions. Store-derived graph contents are never assumed to be automatically executable.
 
@@ -209,7 +211,7 @@ DECODED -> VALIDATED -> COMPOSED -> LOWERED -> PLANNED
 
 ### 4.2 The execution boundary
 
-- P02-A is incapable of execution by design; its output is inert data.
+- P02-D01-A is incapable of execution by design; its output is inert data.
 - A concrete executor consumes `EffectPlan` **only after** a separate authority decision by the owning application. This design does **not** implement a global authorization framework.
 - Every effectful step declares target identity, required owner, preconditions, timeout, retry/idempotency policy, expected output/health checks, and side-effect class.
 - An executor must refuse unknown effect types and incompatible adapter versions; it must not fall back to `(eval ...)`, `sh -c`, or textual interpolation.
@@ -218,7 +220,7 @@ DECODED -> VALIDATED -> COMPOSED -> LOWERED -> PLANNED
 
 ### 4.3 Why this is **not** reimplementing Guix
 
-P02 does not contain: derivation hash compatibility, `/gnu/store`, substitute verification, package build isolation, GC roots, system profiles, package naming semantics, Guix channels, bootloader activation, Guix daemon protocol or reproducible-build certification. A future consumer may use Guix externally, but P02 itself neither requires nor controls Guix.
+P02-D01 does not contain: derivation hash compatibility, `/gnu/store`, substitute verification, package build isolation, GC roots, system profiles, package naming semantics, Guix channels, bootloader activation, Guix daemon protocol or reproducible-build certification. A future consumer may use Guix externally, but P02-D01 itself neither requires nor controls Guix.
 
 ## 5. Composition and extension semantics
 
@@ -244,11 +246,11 @@ A `CompositionRegistry` binds a type name and schema version to an allowed exten
 
 Compute expected complexity of resolution as `O(V+E)` for ordinary traversal/topological checks, plus documented complexity of the chosen combiners. Enforce limits on graph nodes, edges, depth, total descriptor bytes and recursion. Property tests cover graph diamonds, duplicate edges, stable traversal and adversarial cycle graphs. No hard real-time guarantee follows from Big-O alone.
 
-## 6. P02-B: optional local OS-process supervision
+## 6. P02-D01-B: optional local OS-process supervision
 
 ### 6.1 Why it exists separately
 
-Shepherd handles *running operating-system services*. Gerbil actor handles and in-process queues have different ownership, failure and restart semantics. P02-B will manage **only processes it starts and owns** (or those explicitly adopted under a separate, narrowly specified ownership protocol). A process PID cannot be treated as an unforgeable, eternal identity. The supervisor must record a process identity/generation and refuse stale handles.
+Shepherd handles *running operating-system services*. Gerbil actor handles and in-process queues have different ownership, failure and restart semantics. P02-D01-B will manage **only processes it starts and owns** (or those explicitly adopted under a separate, narrowly specified ownership protocol). A process PID cannot be treated as an unforgeable, eternal identity. The supervisor must record a process identity/generation and refuse stale handles.
 
 ### 6.2 Process and service contracts
 
@@ -262,7 +264,7 @@ Shepherd handles *running operating-system services*. Gerbil actor handles and i
 | `ServiceReceipt` | `{service_ref, generation, state, exit_kind, stop_reason, health, completed_actions, gaps}` | No success without observed exit/readiness as applicable |
 | `ProcessDriver` | `{spawn, poll, signal, reap, close, capabilities}` | Backend capability negotiation is required |
 
-Environment must be an explicit mapping or tightly controlled inheritance policy; ambient PATH lookup is discouraged for executable identity. Credentials must not be logged in argv, env dumps, raw output or receipts. A service may run under the same OS account as the supervisor: **P02 does not claim sandboxing or privilege separation**.
+Environment must be an explicit mapping or tightly controlled inheritance policy; ambient PATH lookup is discouraged for executable identity. Credentials must not be logged in argv, env dumps, raw output or receipts. A service may run under the same OS account as the supervisor: **P02-D01 does not claim sandboxing or privilege separation**.
 
 ### 6.3 Service lifecycle state machine
 
@@ -316,7 +318,7 @@ A nominal example is `max_attempts=3 within 60 seconds, delay=2 seconds, backoff
 
 ### 6.7 Internal actors are not security boundaries
 
-P02-B may use Gerbil actor threads to serialize commands and collect health reports. Actor-admin checks within one process are not a hostile-code isolation mechanism; all threads in that process are implicitly trusted for some administrative actor actions according to Gerbil's actor reference. Tool authority must come from the owning application's explicit policy and, where needed, OS boundaries, not from an actor name alone.
+P02-D01-B may use Gerbil actor threads to serialize commands and collect health reports. Actor-admin checks within one process are not a hostile-code isolation mechanism; all threads in that process are implicitly trusted for some administrative actor actions according to Gerbil's actor reference. Tool authority must come from the owning application's explicit policy and, where needed, OS boundaries, not from an actor name alone.
 
 ## 7. Failure and uncertainty semantics
 
@@ -383,50 +385,50 @@ A mock pass proves only policy/state behavior. A later Linux pass must independe
 
 | Work package | Deliverable | Gate |
 |---|---|---|
-| `P02-W01` | Source/provenance lock, license analysis, finite-scope contracts | Q0 |
-| `P02-W02` | Pure typed declarations and stable serialization | Q1 |
-| `P02-W03` | DAG and extension registry, deterministic fold + explainability | Q2 |
-| `P02-W04` | Data-only lowering, staged effect-plan + typed result/receipt | Q3 |
-| `P02-W05` | Injected fake supervisor, fake clock, restart/readiness rules | Q4 |
-| `P02-W06` | Conditional Linux process driver under strict capability tests | Q5 |
-| `P02-W07` | Independent review and cross-profile dependency checks | Q6 |
+| `P02-D01-W01` | Source/provenance lock, license analysis, finite-scope contracts | Q0 |
+| `P02-D01-W02` | Pure typed declarations and stable serialization | Q1 |
+| `P02-D01-W03` | DAG and extension registry, deterministic fold + explainability | Q2 |
+| `P02-D01-W04` | Data-only lowering, staged effect-plan + typed result/receipt | Q3 |
+| `P02-D01-W05` | Injected fake supervisor, fake clock, restart/readiness rules | Q4 |
+| `P02-D01-W06` | Conditional Linux process driver under strict capability tests | Q5 |
+| `P02-D01-W07` | Independent review and cross-profile dependency checks | Q6 |
 
 ### 9.2 Exact negative/positive test scenarios
 
 | Test | Given / stimulus | Required observation |
 |---|---|---|
-| **P02-T01** | Load P02-A without supervisor/native dependencies | Pure imports and tests succeed; no OS process starts |
-| **P02-T02** | A->B->C reference chain | Deterministic closure and topological order |
-| **P02-T03** | Diamond dependency | Shared input appears once, retains both provenance paths |
-| **P02-T04** | A->B->A cycle | Structured cycle diagnostic with path |
-| **P02-T05** | Duplicate ID, differing definitions | Reject conflicting identity |
-| **P02-T06** | Missing extension target | `MISSING_PROVIDER`, no effects |
-| **P02-T07** | Two equally matching targets | `AMBIGUOUS_PROVIDER`, no arbitrary selection |
-| **P02-T08** | Conflicting contributions on immutable field | Reject, cite both contributors |
-| **P02-T09** | Commutative merges in permuted order | Byte-identical canonical representation/digest |
-| **P02-T10** | Ordered noncommutative merge | Explicit declared ordering; no hidden dependence on hash iteration |
-| **P02-T11** | Source edit changes declared input | Version/digest changes; stale plan refused |
-| **P02-T12** | Undeclared host PATH/locale/clock in stage | Rejected rather than ambient capture |
-| **P02-T13** | Stage contains executable Scheme form | Data-only decoder rejects code-bearing input |
-| **P02-T14** | Dry-run plan | Receipt marked `NOT_EXECUTED`; no mutable side effects |
-| **P02-T15** | Third plan action fails after two committed actions | `PARTIAL_FAILED`, completed steps preserved, no fake rollback |
-| **P02-T16** | Lost execution acknowledgement | `UNKNOWN` until observation/reconciliation |
-| **P02-T17** | Descriptor includes credential literal | Validation rejects or redacts according to explicit field policy |
-| **P02-T18** | Fake supervisor: dependency not ready | Dependent process never starts |
-| **P02-T19** | Fake supervisor: requirement completes as ONESHOT | Success semantics differ from long-running readiness |
-| **P02-T20** | Fake process exits successfully once | `ONESHOT` succeeds only with verified postcondition |
-| **P02-T21** | Fake daemon dies with failure, restart allowed | Backoff and attempt count match policy |
-| **P02-T22** | Restart budget exceeded | `DISABLED`, never infinite respawn |
-| **P02-T23** | Fake dependency disabled mid-run | Policy-specific propagate/wait/stop result |
-| **P02-T24** | Fake clock jumps wall time backward | Restart budget uses monotonic logical time |
-| **P02-T25** | Stale process generation / PID reused | Cannot stop or signal unrelated process |
-| **P02-T26** | Stop request with grace deadline | Required stop/reap/escalation or explicit `UNVERIFIED` |
-| **P02-T27** | Real child continuously streams output | True wall-clock deadline unaffected by output chatter |
-| **P02-T28** | Real child forks descendants | Process-group cleanup verified or capability refused |
-| **P02-T29** | Real child creates output saturation | Bounded memory, drained streams and no deadlock |
-| **P02-T30** | Real child exits during readiness probe | Correct race handling and non-success state |
-| **P02-T31** | Parent crashes during child's lifetime | No false claim of recovered ownership; observation logs uncertainty |
-| **P02-T32** | P02-A packaged/imported independently | No Guix/Guile/Shepherd, P01, SDL, LLM or privileged daemon loaded |
+| **P02-D01-T01** | Load P02-D01-A without supervisor/native dependencies | Pure imports and tests succeed; no OS process starts |
+| **P02-D01-T02** | A->B->C reference chain | Deterministic closure and topological order |
+| **P02-D01-T03** | Diamond dependency | Shared input appears once, retains both provenance paths |
+| **P02-D01-T04** | A->B->A cycle | Structured cycle diagnostic with path |
+| **P02-D01-T05** | Duplicate ID, differing definitions | Reject conflicting identity |
+| **P02-D01-T06** | Missing extension target | `MISSING_PROVIDER`, no effects |
+| **P02-D01-T07** | Two equally matching targets | `AMBIGUOUS_PROVIDER`, no arbitrary selection |
+| **P02-D01-T08** | Conflicting contributions on immutable field | Reject, cite both contributors |
+| **P02-D01-T09** | Commutative merges in permuted order | Byte-identical canonical representation/digest |
+| **P02-D01-T10** | Ordered noncommutative merge | Explicit declared ordering; no hidden dependence on hash iteration |
+| **P02-D01-T11** | Source edit changes declared input | Version/digest changes; stale plan refused |
+| **P02-D01-T12** | Undeclared host PATH/locale/clock in stage | Rejected rather than ambient capture |
+| **P02-D01-T13** | Stage contains executable Scheme form | Data-only decoder rejects code-bearing input |
+| **P02-D01-T14** | Dry-run plan | Receipt marked `NOT_EXECUTED`; no mutable side effects |
+| **P02-D01-T15** | Third plan action fails after two committed actions | `PARTIAL_FAILED`, completed steps preserved, no fake rollback |
+| **P02-D01-T16** | Lost execution acknowledgement | `UNKNOWN` until observation/reconciliation |
+| **P02-D01-T17** | Descriptor includes credential literal | Validation rejects or redacts according to explicit field policy |
+| **P02-D01-T18** | Fake supervisor: dependency not ready | Dependent process never starts |
+| **P02-D01-T19** | Fake supervisor: requirement completes as ONESHOT | Success semantics differ from long-running readiness |
+| **P02-D01-T20** | Fake process exits successfully once | `ONESHOT` succeeds only with verified postcondition |
+| **P02-D01-T21** | Fake daemon dies with failure, restart allowed | Backoff and attempt count match policy |
+| **P02-D01-T22** | Restart budget exceeded | `DISABLED`, never infinite respawn |
+| **P02-D01-T23** | Fake dependency disabled mid-run | Policy-specific propagate/wait/stop result |
+| **P02-D01-T24** | Fake clock jumps wall time backward | Restart budget uses monotonic logical time |
+| **P02-D01-T25** | Stale process generation / PID reused | Cannot stop or signal unrelated process |
+| **P02-D01-T26** | Stop request with grace deadline | Required stop/reap/escalation or explicit `UNVERIFIED` |
+| **P02-D01-T27** | Real child continuously streams output | True wall-clock deadline unaffected by output chatter |
+| **P02-D01-T28** | Real child forks descendants | Process-group cleanup verified or capability refused |
+| **P02-D01-T29** | Real child creates output saturation | Bounded memory, drained streams and no deadlock |
+| **P02-D01-T30** | Real child exits during readiness probe | Correct race handling and non-success state |
+| **P02-D01-T31** | Parent crashes during child's lifetime | No false claim of recovered ownership; observation logs uncertainty |
+| **P02-D01-T32** | P02-D01-A packaged/imported independently | No Guix/Guile/Shepherd, P01-D01, SDL, LLM or privileged daemon loaded |
 
 A test marked **design-specified** is not a test passed. Distinguish fake-clock/fake-child model tests, property tests and real Linux integration tests in every future receipt.
 
@@ -438,9 +440,9 @@ A test marked **design-specified** is not a test passed. Distinguish fake-clock/
 - **Q3 — Stage/effect correctness:** data-only staging, declared inputs, dry-run and partial-failure results verified; no arbitrary Scheme evaluation.
 - **Q4 — Supervisor model:** state machine, readiness, dependency propagation, fake clock, bounded restarts and stale identity pass under an injected driver.
 - **Q5 — Native Linux process:** spawn, polling, deadlines, reaping, descendants, output bounds and crash behavior pass against actual OS processes, or the unsupported guarantees are explicitly excluded.
-- **Q6 — Independent review and isolation:** evidence reviewed by a second agent/reviewer; P02-A builds alone; no code/import into P01 or future Meta-Foundation by accident.
+- **Q6 — Independent review and isolation:** evidence reviewed by a second agent/reviewer; P02-D01-A builds alone; no code/import into P01-D01 or future Meta-Foundation by accident.
 
-**Release positioning:** `P02-A: PURE_CONTRACT_QUALIFIED` and `P02-B: SUPERVISOR_MODEL_QUALIFIED` are separately attainable. `P02-B: NATIVE_PROCESS_QUALIFIED` requires Q5; an unqualified real-process driver must remain opt-in experimental, not be silently enabled by default.
+**Release positioning:** `P02-D01-A: PURE_CONTRACT_QUALIFIED` and `P02-D01-B: SUPERVISOR_MODEL_QUALIFIED` are separately attainable. `P02-D01-B: NATIVE_PROCESS_QUALIFIED` requires Q5; an unqualified real-process driver must remain opt-in experimental, not be silently enabled by default.
 
 ## 10. Security, legality and dependency discipline
 
@@ -452,34 +454,34 @@ A test marked **design-specified** is not a test passed. Distinguish fake-clock/
 6. Keep secrets out of hashes/receipts/logs except non-reversible approved references with controlled disclosure. Hashing a secret does not automatically make it safe to publish.
 7. Status, receipts and logs may be reviewed read-only without launching or mutating anything.
 8. Mock tests never qualify native kernel behavior. Static source reviews never qualify compiled runtime behavior.
-9. GNU Guix deployed on a workstation may later be a *test host*, but its existence says nothing about P02's portability or required dependencies.
+9. GNU Guix deployed on a workstation may later be a *test host*, but its existence says nothing about P02-D01's portability or required dependencies.
 
 ## 11. Bounded proposed implementation sequence (no implementation authorization)
 
-**Only P02, one profile at a time:**
+**Only P02-D01, one profile at a time:**
 
-1. **P02-00:** freeze exact source-lineage and contract semantics; resolve ambiguity on graph types and stage results.
-2. **P02-01:** implement **P02-A only**, pure validators, graphs, composition, stage descriptors and dry-run fixtures.
-3. **P02-02:** qualify P02-A with property tests, adversarial graphs, deterministic serialization and input-closure checking.
-4. **P02-03:** implement P02-B's **mock driver** and independently test state, dependencies, restart windows, readiness and stop policy.
-5. **P02-04:** inspect concrete target Gerbil/Gambit/POSIX process capabilities before writing a Linux driver; explicitly mark anything unsupported.
-6. **P02-05:** qualify one Linux child-service vertical slice with controlled failure-injection and resource monitoring, if P02-04 evidence permits.
-7. **P02-06:** independent gate review and publication of qualified limits, not automatic promotion to the Meta-Foundation.
+1. **P02-D01-00:** freeze exact source-lineage and contract semantics; resolve ambiguity on graph types and stage results.
+2. **P02-D01-01:** implement **P02-D01-A only**, pure validators, graphs, composition, stage descriptors and dry-run fixtures.
+3. **P02-D01-02:** qualify P02-D01-A with property tests, adversarial graphs, deterministic serialization and input-closure checking.
+4. **P02-D01-03:** implement P02-D01-B's **mock driver** and independently test state, dependencies, restart windows, readiness and stop policy.
+5. **P02-D01-04:** inspect concrete target Gerbil/Gambit/POSIX process capabilities before writing a Linux driver; explicitly mark anything unsupported.
+6. **P02-D01-05:** qualify one Linux child-service vertical slice with controlled failure-injection and resource monitoring, if P02-D01-04 evidence permits.
+7. **P02-D01-06:** independent gate review and publication of qualified limits, not automatic promotion to the Meta-Foundation.
 
-**Do not proceed to P03 or detailed K0 foundation design as part of this P02 design artifact.** No deployment, system reconfigure, Shepherd edits, persistent service registration or new code push is authorized.
+**Do not proceed to P03-D01 or detailed K0 foundation design as part of this P02-D01 design artifact.** No deployment, system reconfigure, Shepherd edits, persistent service registration or new code push is authorized.
 
-## 12. Open decisions to carry into P02 qualification (not questions requiring immediate owner reply)
+## 12. Open decisions to carry into P02-D01 qualification (not questions requiring immediate owner reply)
 
 | Question | Provisional design position | Evidence that will decide |
 |---|---|---|
-| Is P02 one release or two? | One source edition, two independent package profiles and separate qualification | Independent P02-A import/test and optional P02-B isolation |
+| Is P02-D01 one release or two? | One source edition, two independent package profiles and separate qualification | Independent P02-D01-A import/test and optional P02-D01-B isolation |
 | How expressive should extension combiners be? | Finite explicit set of typed combiners first; no serialized closures | Real applications needing extensions not expressible with the finite set |
 | Do we need executable staged Scheme? | **No**; retain data-only normalized stages | Demonstrated domain requirement + security review, not analogy to Gexps |
 | When to add real process supervision? | After fake-driver Q4 and kernel capabilities audit | Spawn/reap/deadline/process-group tests |
 | What process platforms? | First candidate: GNU/Linux x86_64, Guix-managed host optional | Real toolchain, target kernel and CI evidence |
 | Is service state durable across supervisor crash? | **No guarantee initially**; preserve explicit UNKNOWN and require reconciliation | Verified recovery/re-adoption protocol with process identity |
-| Should P02 own global policy? | **No**; local adapter checks scoped permission, broader policy belongs to host | Independent cross-domain requirements |
-| Does a future cross-edition shared contract emerge? | **Undecided**; no K0 promotion during P02 design | Two dissimilar edition consumers passing compatibility tests |
+| Should P02-D01 own global policy? | **No**; local adapter checks scoped permission, broader policy belongs to host | Independent cross-domain requirements |
+| Does a future cross-edition shared contract emerge? | **Undecided**; no K0 promotion during P02-D01 design | Two dissimilar edition consumers passing compatibility tests |
 
 ## 13. Final disposition
 

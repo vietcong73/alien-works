@@ -1,27 +1,28 @@
-# LFR-P06-D01 — Branching Causal Reversibility
+# LFR-P03-D02 | Symbolic State Machines & Causal Histories / Reversible State, Causal Histories & Bounded Search
 
-**Document class:** Detailed design proposal for the P06 specialist edition  
+**Document class:** Detailed design proposal for the P03-D02 specialist edition  
 **Date:** 13 November 2026  
 **Programme:** Lisp Foundation Reserve, LFR-C02  
-**Edition:** P06 — Reversible State & Bounded Search  
+**Edition:** P03 — Symbolic State Machines & Causal Histories  
+**Design slice:** D02 — Reversible State, Causal Histories & Bounded Search  
 **Implementation target:** Independent Gerbil Scheme; no Guix, Guile, Shepherd, Git, Python, or external database runtime dependency in the in-memory core  
 **Design scope:** Reversible state and bounded search; immutable causal histories; multi-source synthesis; revision-pinned reconstruction; rule and meta-policy governance.  
-**Repository context:** `vietcong73/alien-works`, branch `audit/lisp-foundation-reserve`; concept `docs/concept/LFR-C02-source-lineage-gerbil-reserve-concept-2026-11-12.md`; P01–P05 remain unchanged.  
+**Repository context:** `vietcong73/alien-works`, branch `audit/lisp-foundation-reserve`; concept `docs/concept/LFR-C02-source-lineage-gerbil-reserve-concept-2026-11-12.md`; P01-D01–P04-D01 remain unchanged.  
 **Disposition:** `RESEARCH_GROUNDED / ARCHITECTURAL_DESIGN_PROPOSED / UNIMPLEMENTED / UNQUALIFIED / DOCUMENT_PUBLISHED_TO_GITHUB`  
 
 > **Core decision:** History is immutable; futures are plural; admissible convergence is constructive and non-destructive. A user may revisit retained ancestors, create branches under changed state or rules, or conditionally synthesize **two or more** histories into **one or more new candidate presents**. Synthesis never erases source heads and never occurs merely because the data structures can be combined. Rule specifications, reconciliation policies, and the rules governing those policies are first-class, versioned, inspectable data, with a bounded trusted kernel controlling admission.
 
-This design places **N-ary causal synthesis with meta-governance** at the center of P06-A. It preserves the P06-B bounded-search architecture and three distinct recovery mechanisms: scoped delta undo, immutable generation selection, and revision-pinned reconstruction. It specifies causal-topology behavior and qualification requirements without claiming that an implementation or any of the proposed tests has passed. Domain admission, search correctness, chess stress fixtures, delta unwind, budget semantics, and provenance remain independently testable obligations of the P06 specialist edition.
+This design places **N-ary causal synthesis with meta-governance** at the center of P03-D02-A. It preserves the P03-D02-B bounded-search architecture and three distinct recovery mechanisms: scoped delta undo, immutable generation selection, and revision-pinned reconstruction. It specifies causal-topology behavior and qualification requirements without claiming that an implementation or any of the proposed tests has passed. Domain admission, search correctness, chess stress fixtures, delta unwind, budget semantics, and provenance remain independently testable obligations of the P03-D02 specialist edition.
 
 ---
 
 ## 1. Research findings: what is actually transferred
 
-| Source | Source-grounded observation | Transfer to P06 | Nontransfer / failure to avoid |
+| Source | Source-grounded observation | Transfer to P03-D02 | Nontransfer / failure to avoid |
 |---|---|---|---|
 | Gerbil chess AI, reviewed `mark-watson/gerbil_scheme_book@1335cb2708926213ba62afd2998754358f655db1`, `engine.ss` and `ai.ss` | Mutable board and scoped make/unmake are efficient for exploring and unwinding candidate moves | Checked `DeltaToken`, local undo frames, bounded traversal | LIFO undo restores an execution frame; it is **not** a persistent independent history or proof that every arbitrary operation is invertible |
 | GNU Guix `guix time-machine`, reviewed `guix-mirror/guix@18f545c14eb36c7c588d2cf356e387e17e53cd51` | An older pinned channel revision can supply historical package/tool definitions | Historical `RevisionLock` and reconstructed evaluation environment | Running an old definition does **not** restore the application state or reverse service, database, filesystem, or network effects |
-| GNU Guix profile/system generations | Immutable store targets and selectable generation pointers provide practical retained versions | Immutable generation images plus independently validated active pointer changes | Ordinary Guix **profile generation history is linear**; installing after rollback overwrites future generations. P06 must not inherit this behavior |
+| GNU Guix profile/system generations | Immutable store targets and selectable generation pointers provide practical retained versions | Immutable generation images plus independently validated active pointer changes | Ordinary Guix **profile generation history is linear**; installing after rollback overwrites future generations. P03-D02 must not inherit this behavior |
 | Git commit DAG and branches | Commits identify snapshots and parents; branches are movable references to heads; merge tracks multiple parents | Immutable causal commits and branch-head map, compact sharing between histories | Git merge's three-way textual/file semantics do not prove domain-state semantic compatibility; do not import Git as a runtime requirement |
 | Gerbil Scheme hygienic macros, phases and custom preludes | Compile-time syntax transformations and language definitions can be represented explicitly | Generate typed state/rule/reconciliation policy IR with expander/compiler provenance, then validate before execution | Code-as-data and macros do not inherently enforce type safety, determinism, authorization, termination, or semantic correctness |
 
@@ -36,13 +37,13 @@ This design places **N-ary causal synthesis with meta-governance** at the center
 7. Gerbil custom languages: https://gerbil.scheme.org/tutorials/languages.html
 8. Direct source reviews: `docs/reviews/gerbil-projects/04-chess-ai-gerbil-source-code-review.md` and `docs/reviews/gnu-guix-system-and-package-manager-scheme-source-review.md` on the above repository/branch.
 
-**Research verdict:** The proposed P06 architecture is a synthesis, **not a feature already delivered by Guix, Git, or the chess AI**. N-ary synthesis, typed causal events, policy evolution, and meta-governance are **new design proposals** and must not be attributed to those upstream systems as implemented features. In particular, Guix's generation mechanism is an important *counterexample* to the requirement of retaining independent future heads after history divergence.
+**Research verdict:** The proposed P03-D02 architecture is a synthesis, **not a feature already delivered by Guix, Git, or the chess AI**. N-ary synthesis, typed causal events, policy evolution, and meta-governance are **new design proposals** and must not be attributed to those upstream systems as implemented features. In particular, Guix's generation mechanism is an important *counterexample* to the requirement of retaining independent future heads after history divergence.
 
 ---
 
 ## 2. System definition: a programmable causal topology
 
-P06's primary object is a **versioned transformation universe**:
+P03-D02's primary object is a **versioned transformation universe**:
 
 ```text
 U = (S, R, A, N, H, B, M, E, P)
@@ -206,7 +207,7 @@ The causal DAG, the rule-revision DAG, and the meta-policy DAG remain **logicall
 9. **I09 — Search-frame isolation:** Delta tokens are never valid across a changed session, active head, generation, or ruleset.
 10. **I10 — Semantic cache isolation:** Identity incorporates rules, policies where relevant, objective, history context, and canonicalization; hashes never suffice as equality proof.
 11. **I11 — Typed synthesis:** Comparability and pairwise compatibility are not proofs of N-ary admissibility.
-12. **I12 — No effect escalation:** P06 creates scenarios and receipts, not live-world actuation.
+12. **I12 — No effect escalation:** P03-D02 creates scenarios and receipts, not live-world actuation.
 13. **I13 — Source preservation:** Synthesizing never mutates, consumes, or silently advances the immutable source histories and their existing branch references.
 14. **I14 — Joint global validation:** All-source constraints and output invariants are checked together, not inferred from pairwise tests.
 15. **I15 — Plural outputs:** A multi-candidate synthesis is represented as separate identified outputs with distinct evidence and no unrequested implicit selection.
@@ -258,7 +259,7 @@ The causal DAG, the rule-revision DAG, and the meta-policy DAG remain **logicall
 - `fork_at`: construct a *new* descendant history from any retained ancestor.
 - `synthesis_*`: construct *new*, policy-relative candidates from multiple histories, which can fail or yield more than one candidate.
 
-None of these five operations unwinds arbitrary real-world side effects. If a consumer later deploys anything, authorization and effect compensation are separately owned responsibilities outside P06.
+None of these five operations unwinds arbitrary real-world side effects. If a consumer later deploys anything, authorization and effect compensation are separately owned responsibilities outside P03-D02.
 
 ## 5. Metaprogramming and code–data duality as management mechanisms
 
@@ -402,9 +403,9 @@ A bridge from `R1` into `R2` may exist while the reverse does not, for example w
 
 CRDT-style convergence or three-way Git merge may be used **only** as domain-specific qualified solvers. Neither provides general N-way semantic synthesis. Physical causal counterfactual validity is never inferred from simulated lineage alone.
 
-## 7. P06-B bounded search plus lifecycle and combinatorial governance
+## 7. P03-D02-B bounded search plus lifecycle and combinatorial governance
 
-Retain original P06-B DFS/BFS/IDDFS, Dijkstra/A* subject to objective/heuristic admission, and qualified adversarial search. These work on a committed read-only anchor plus **private ephemeral execution frames**. Speculative search steps are not automatically published as histories. A verified promotion step is required to turn a speculative outcome into a retained state or synthesis candidate.
+Retain original P03-D02-B DFS/BFS/IDDFS, Dijkstra/A* subject to objective/heuristic admission, and qualified adversarial search. These work on a committed read-only anchor plus **private ephemeral execution frames**. Speculative search steps are not automatically published as histories. A verified promotion step is required to turn a speculative outcome into a retained state or synthesis candidate.
 
 ### 7.1 Combinatorial explosion is a first-class failure mode
 
@@ -446,7 +447,7 @@ REGISTER -> INDEX -> ADMIT -> PLAN -> MATERIALIZE/EXPLORE
      -> PIN/RETAIN -> AUDIT -> RECLAIM_ELIGIBLE
 ```
 
-A `Meta-Control Plane` owns this lifecycle for P06's state/rule/policy topology, not application actuation or external agent authority. Its service boundaries are:
+A `Meta-Control Plane` owns this lifecycle for P03-D02's state/rule/policy topology, not application actuation or external agent authority. Its service boundaries are:
 
 | Service | Owned function |
 |---|---|
@@ -461,9 +462,9 @@ A `Meta-Control Plane` owns this lifecycle for P06's state/rule/policy topology,
 
 Only the minimal kernel has authority to publish committed records and change admitted policy references. The registry/planner cannot authorize its own new capabilities.
 
-## 8. Persistence and P05 integration: durable evidence, no ownership confusion
+## 8. Persistence and P04-D01 integration: durable evidence, no ownership confusion
 
-P06 owns **causal semantics**, including immutable identities, branch heads, multi-source synthesis events, policy and meta-policy locks, retained recovery roots, and admission receipts. It may initially retain these for one process lifetime; no crash-durable claim follows. P05-B (or another independently qualified adapter such as a transactional database/event store) may provide durable object storage, journal integrity, tamper detection, and recoverability. P06 has no compulsory dependency on P05 or a particular database vendor.
+P03-D02 owns **causal semantics**, including immutable identities, branch heads, multi-source synthesis events, policy and meta-policy locks, retained recovery roots, and admission receipts. It may initially retain these for one process lifetime; no crash-durable claim follows. P04-D01-B (or another independently qualified adapter such as a transactional database/event store) may provide durable object storage, journal integrity, tamper detection, and recoverability. P03-D02 has no compulsory dependency on P04-D01 or a particular database vendor.
 
 The minimal data-only interchange now includes `SynthesisEvent`, `SynthesisCandidate`, `ReconciliationPolicy`, `MetaPolicyRevision`, `GovernanceDecision`, and retention/authority receipts in addition to existing `StateImage`, `CommitBundle`, `BranchRef`, `RuleRevision`, and `RecoveryReceipt`. An independent storage adapter must protect the **entire dependency closure** of every committed synthesis output: all source heads, event records, required policies, semantic bridges, and reconstructed state anchors.
 
@@ -497,7 +498,7 @@ Every claim identifies exact input head set, policy, rules, qualifications, and 
 
 ## 10. Extended test corpus and qualification gates
 
-The P06 test register reserves **P06-T01–T80** and **Q0–Q10** for the reversible-state and bounded-search core. The following **32 proposed causal-branching tests (T81–T112)** specify additional obligations. No test or gate is recorded as passed:
+The P03-D02 test register reserves **P03-D02-T01–T80** and **Q0–Q10** for the reversible-state and bounded-search core. The following **32 proposed causal-branching tests (T81–T112)** specify additional obligations. No test or gate is recorded as passed:
 
 | ID | Falsification fixture | Pass condition |
 |---|---|---|
@@ -595,7 +596,7 @@ The P06 test register reserves **P06-T01–T80** and **Q0–Q10** for the revers
 
 **Test accounting:** 80 reversible-state/search core proposals + 32 causal-branching proposals + 40 N-ary synthesis/governance proposals = **152 proposed test cases (T01–T152)**. Gates Q0–Q18 total **19 proposed qualification gates**. None is marked passed by this design document.
 
-**Revised qualification statement:** P06-A (in-memory reversible-state/search companion) still requires Q0–Q3 and Q9. The stronger **P06-A causal-branching profile** additionally requires Q11. A **cross-rule replay and reinterpretation profile** requires Q12. Binary merge, if ever exposed independently, still needs Q13. N-ary synthesis adds Q15 and Q17, and any metaprogrammed reconciliation or self-evolving policy management adds Q16. Atomic multi-output publication adds Q18. Durable causal recovery separately adds Q14 and, for synthesis with multiple heads, Q18 under a qualified backend. P06-B retains algorithm-specific Q4–Q8. These gates are intentionally composable: a two-head reversible search engine does not claim all N-ary/meta-governance capabilities by association.
+**Revised qualification statement:** P03-D02-A (in-memory reversible-state/search companion) still requires Q0–Q3 and Q9. The stronger **P03-D02-A causal-branching profile** additionally requires Q11. A **cross-rule replay and reinterpretation profile** requires Q12. Binary merge, if ever exposed independently, still needs Q13. N-ary synthesis adds Q15 and Q17, and any metaprogrammed reconciliation or self-evolving policy management adds Q16. Atomic multi-output publication adds Q18. Durable causal recovery separately adds Q14 and, for synthesis with multiple heads, Q18 under a qualified backend. P03-D02-B retains algorithm-specific Q4–Q8. These gates are intentionally composable: a two-head reversible search engine does not claim all N-ary/meta-governance capabilities by association.
 
 ---
 
@@ -614,7 +615,7 @@ The release strategy separates usable core functionality from speculative metapr
 9. **C8 — Reconciliation DSL:** add narrow Gerbil macros over the checked declarative data interface, generated IR provenance, static capability analysis, and audited policy registry. Qualify Q16.
 10. **C9 — Meta-policy governance:** rule/policy branching, independent admission, CAS policy activation, no self-authorization; include bounded recursion and kernel-upgrade separation. Re-run Q16 adversarial tests.
 11. **C10 — Publication transaction:** staged event/candidate atomicity, per-output qualification, expected source version vector, namespace-safe caches and retention closure. Qualify Q18 before batch-publication claims.
-12. **C11 — Durable adapter:** integrate P05-B or another qualified storage backend without importing external runtime into the Gerbil core; inject crash/GC faults and qualify Q14 + Q18 as appropriate.
+12. **C11 — Durable adapter:** integrate P04-D01-B or another qualified storage backend without importing external runtime into the Gerbil core; inject crash/GC faults and qualify Q14 + Q18 as appropriate.
 13. **C12 — Independent audit:** reproduce reference oracles, policy-drift differential tests, nested fork/synthesis histories, bounded resource use, and incompatible-semantic refusals. Explicitly publish which profiles remain unqualified.
 
 ### Proposed source topology (not created)
@@ -652,7 +653,7 @@ editions/reversible-state-search/
   src/replay/reinterpret.ss
   src/compare/projection.ss
   src/compare/difference.ss
-  src/search/                      # original P06-B algorithm families
+  src/search/                      # original P03-D02-B algorithm families
   adapters/storage-protocol.ss
   tests/causal/
   tests/synthesis/
@@ -663,11 +664,11 @@ editions/reversible-state-search/
 
 ### Explicit exclusions and integration boundary
 
-- `Meta-Control Plane` here manages P06's causal topology only; it does not seize the responsibilities of P04 agent authority, P05 evidence/database, P03 temporal runtime, or the LFR minimal Meta-Foundation.
+- `Meta-Control Plane` here manages P03-D02's causal topology only; it does not seize the responsibilities of P02-D02 agent authority, P04-D01 evidence/database, P03-D01 temporal runtime, or the LFR minimal Meta-Foundation.
 - The trusted kernel's current capability ceiling is **not editable by the rules it evaluates**. A kernel upgrade has a distinct independent process.
 - No Git dependency, no Guix/Guile runtime bridge, no Python metacompiler, no arbitrary code execution, no assumed real-world time reversal.
 - Preservation and analysis of Alien-Works, Chess AI and Guix source remain separate from the new Gerbil edition and from any eventual optional application integration.
-- Existing P01–P05, reviews, C02 and upstream repositories are unchanged. This design document is published to the `audit/lisp-foundation-reserve` branch; documentation publication does not authorize runtime implementation.
+- Existing P01-D01–P04-D01, reviews, C02 and upstream repositories are unchanged. This design document is published to the `audit/lisp-foundation-reserve` branch; documentation publication does not authorize runtime implementation.
 
 ## 12. Consolidated design verdict
 

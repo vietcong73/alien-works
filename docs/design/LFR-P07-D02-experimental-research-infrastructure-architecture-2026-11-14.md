@@ -1,17 +1,17 @@
-# LFR-P10-D02 | Experimental & Research Infrastructure Architecture
+# LFR-P07-D02 | Scientific Simulation & Experimental Systems / Experimental & Research Infrastructure
 
 **Document class:** Source-grounded specialist detailed-design proposal  
 **Date:** 14 November 2026  
 **Programme:** Lisp Foundation Reserve (LFR-C02)  
 **Domain track:** `SCIENTIFIC RESEARCH` — Scientific Simulation & Experimental Systems  
-**Edition:** P10 — Scientific Simulation & Experimental Systems  
+**Edition:** P07 — Scientific Simulation & Experimental Systems  
 **Design slice:** D02 — Experimental & Research Infrastructure  
 **Primary design language:** Gerbil Scheme for study/run contracts, local execution, manifests, evaluators and evidence; qualified storage, statistics, telemetry and compute adapters by workload  
-**Repository context:** `vietcong73/alien-works`, branch `audit/lisp-foundation-reserve`; path `docs/design/LFR-P10-D02-experimental-research-infrastructure-architecture-2026-11-14.md`  
+**Repository context:** `vietcong73/alien-works`, branch `audit/lisp-foundation-reserve`; path `docs/design/LFR-P07-D02-experimental-research-infrastructure-architecture-2026-11-14.md`  
 **Status:** `SOURCE_GROUNDED_DESIGN_PROPOSED / 80_FUTURE_TESTS / 12_FUTURE_GATES / 30_INVARIANTS / UNIMPLEMENTED / RUNTIME_UNQUALIFIED / DOCUMENT_PUBLISHED_TO_GITHUB`  
 **Publication:** Owner-approved publication of this design document to `docs/design/` on `audit/lisp-foundation-reserve`. Experimental execution, external data acquisition and deployment require separate authorization.
 
-> **Design decision:** P10-D02 supplies a standalone, versioned experimental research infrastructure for planning studies, executing bounded trials, preserving run/artifact lineage, comparing candidates and issuing evidence-scoped qualification decisions. Its first release is a finite Gerbil experiment ledger with exact factorial and paired-comparison oracles. Domain solvers, learners, models, remote schedulers, databases and research-package exporters attach through qualified interfaces.
+> **Design decision:** P07-D02 supplies a standalone, versioned experimental research infrastructure for planning studies, executing bounded trials, preserving run/artifact lineage, comparing candidates and issuing evidence-scoped qualification decisions. Its first release is a finite Gerbil experiment ledger with exact factorial and paired-comparison oracles. Domain solvers, learners, models, remote schedulers, databases and research-package exporters attach through qualified interfaces.
 
 ## 0. Objectives, first capability and boundaries
 
@@ -27,7 +27,7 @@
 
 **System boundary:** The experiment owner defines task and acceptance; the domain adapter executes one job and returns domain evidence; D02 governs the study, trial, measurement, comparison, artifact and publication workflow; a separately authorized host performs external effects when requested.
 
-**Dependency rule:** The finite reference uses K0 boundary vocabulary and D02-owned Gerbil code/ports. K1 mechanisms, P10-D01 simulation, P09-D01 learning, P09-D03 control, P09-D04 distributed execution, P05 persistent evidence and other domains integrate through explicitly selected adapters. D02 can run its exact fixtures with none of those specialist runtimes.
+**Dependency rule:** The finite reference uses K0 boundary vocabulary and D02-owned Gerbil code/ports. K1 mechanisms, P07-D01 simulation, P06-D01 learning, P06-D03 control, P06-D04 distributed execution, P04-D01 persistent evidence and other domains integrate through explicitly selected adapters. D02 can run its exact fixtures with none of those specialist runtimes.
 
 ### 0.1 Independent scientific claims
 
@@ -57,9 +57,9 @@ Evidence classes: `STANDARD` normative published specification; `DOC` official m
 | [GNU Guix time-machine](https://guix-home.trop.in/Invoking-guix-time_002dmachine.html) | Pinned Guix revision/channel descriptions reconstruct package set | Environment closure manifest and optional Guix runner | Changing channel commit creates distinct environment identity |
 | [Reproducible Builds](https://reproducible-builds.org/docs/definition/) | Specified outputs can be reproduced bit for bit under pinned inputs | Separate build reproducibility from result equivalence | Hash equal specified outputs, not logs by implication |
 | [GitHub artifact attestations](https://docs.github.com/en/actions/concepts/security/artifact-attestations) | Signed build provenance binds workflow/commit/environment | Optional attestation import and verification | Do not treat self-declared digest as an attestation |
-| [LFR P10-D01](LFR-P10-D01-scientific-physical-simulation-architecture-2026-11-14.md) | Domain-owned simulation model/solver/time/oracles; current review design | Simulation-result adapter and scientific comparator | No transfer of simulation step authority |
+| [LFR P07-D01](LFR-P07-D01-scientific-physical-simulation-architecture-2026-11-14.md) | Domain-owned simulation model/solver/time/oracles; current review design | Simulation-result adapter and scientific comparator | No transfer of simulation step authority |
 | [LFR K0/K1](LFR-K0-D01-gerbil-meta-foundation-minimal-contract-kernel-2026-11-13.md) | K0 typed identity/effect/result vocabulary; K1 optional mechanisms | Minimal common contracts with selected K1 integration | Design-level interfaces await compiled qualification |
-| [LFR P05/P09-D04](LFR-P09-D04-distributed-systems-coordination-architecture-2026-11-14.md) | P05 durable research evidence and P09-D04 distributed coordination have distinct owners | Optional storage and distributed scheduler providers | Core ledger runs without their runtimes |
+| [LFR P04-D01/P06-D04](LFR-P06-D04-distributed-systems-coordination-architecture-2026-11-14.md) | P04-D01 durable research evidence and P06-D04 distributed coordination have distinct owners | Optional storage and distributed scheduler providers | Core ledger runs without their runtimes |
 
 **Research conclusion:** existing tools provide useful components but solve different layers. MLflow is a tracking comparator, DVC a versioned pipeline/experiment comparator, PROV a provenance vocabulary, Guix a software closure provider, SciPy a statistical oracle, OpenTelemetry an observability protocol and RO-Crate a preservation/export protocol. D02 composes their *contracts* as selected capabilities, not their runtime dependency trees.
 
@@ -94,7 +94,7 @@ Evidence classes: `STANDARD` normative published specification; `DOC` official m
 
   Shared K0: identity / validation / outcomes / receipts
   Selected K1: mechanisms composed per job
-  Domain integrations: P10-D01, P09, P08, P05, P09-D04, others
+  Domain integrations: P07-D01, P06, P05, P04-D01, P06-D04, others
 ```
 
 **Ownership:** D02 owns the identity and governance of experiment runs, statistical comparators, result catalogs and publication decisions. Each domain supplies its own model truth, execution outcome and task-specific validity evidence. Storage providers implement declared durability; schedulers transport bounded tasks; an experiment report is a derived artifact from immutable records.
@@ -105,14 +105,14 @@ Evidence classes: `STANDARD` normative published specification; `DOC` official m
 | D02 core | Plan, run ledger, local scheduler, statistics, artifacts and oracles | Yes | Locally compiled Gerbil reference |
 | Local capability ports | RunPort, RecordStorePort, ArtifactPort, ClockPort, RNGPort | Yes as interfaces | Deterministic fake/atomic file implementation |
 | Qualified extensions | K1 M12/M13/M14/M16/M17; optional telemetry | No | Selected mechanism contract and evidence |
-| Domain integrations | D01 simulation, P09 learning/control, P08 or other software | No | Inputs/results remain domain-owned |
-| External infrastructure | P09-D04, MLflow, DVC, SQL/object storage, Guix, RO-Crate | No | Individually qualified adapters |
+| Domain integrations | D01 simulation, P06 learning/control, P05 or other software | No | Inputs/results remain domain-owned |
+| External infrastructure | P06-D04, MLflow, DVC, SQL/object storage, Guix, RO-Crate | No | Individually qualified adapters |
 
 ### 2.1 Separation of experiment state and domain state
 
 D02 may request a run, observe a result, freeze a dataset reference and compare metrics. A scientific model's state trajectory, an RL policy update, a physical control command and a game's causal publication are committed by their respective domain host. D02 records their receipts and associated experimental conditions. This prevents a study retry from silently executing a second real-world effect.
 
-D02 creates and owns its **experiment metadata ledger**. It can store immutable local run records independently of P05. P05 may provide a durable evidence collection, and D04 may provide remote scheduling, if those adapters are selected. A read-only data provenance edge does not create a dependency on either runtime.
+D02 creates and owns its **experiment metadata ledger**. It can store immutable local run records independently of P04-D01. P04-D01 may provide a durable evidence collection, and D04 may provide remote scheduling, if those adapters are selected. A read-only data provenance edge does not create a dependency on either runtime.
 
 **Authority boundary:** an experiment plan may include effect requests as metadata, but a `RunPort` capability must explicitly define effect scope, authorization, retry/idempotency and host receipts. The finite reference runs only synthetic pure tasks. Real instruments, financial systems and robots require their own host profiles.
 
@@ -217,7 +217,7 @@ The baseline record store is a small transactional local adapter. Its authority 
 
 **CAS and immutability:** a submitted `AttemptId` is unique; committed artifact digest and metric values cannot be rewritten under that ID. Corrections use a new derived artifact/revision with a linked supersession record. A store's at-least-once notification is distinct from exactly-once logical publication through idempotent transactions.
 
-**Storage profiles:** A = local atomic filesystem + small index/ledger; B = transactional database plus qualified artifact files/object store; C = external experiment tracking/archive service. Evaluation and claim semantics remain D02-owned. P05 and D04 are optional integrations, useful for storage/remote delivery but unnecessary to run the finite fixtures.
+**Storage profiles:** A = local atomic filesystem + small index/ledger; B = transactional database plus qualified artifact files/object store; C = external experiment tracking/archive service. Evaluation and claim semantics remain D02-owned. P04-D01 and D04 are optional integrations, useful for storage/remote delivery but unnecessary to run the finite fixtures.
 
 ## 7. Experimental design, sampling and candidate selection
 
@@ -299,11 +299,11 @@ A four-event protocol tests commit truth: `PLAN_SEALED`, `ARTIFACT_STAGED`, `MAN
 
 **Invariants:** one terminal manifest per attempt ID; exact byte digest; no duplicate committed outcome; orphan staging detectability; replay from committed ledger yields equivalent study catalog; stale attempt cannot commit; `UNKNOWN` persists when storage cannot determine the outcome.
 
-### 11.2 P10-D01 `OscillatorLab` integration
+### 11.2 P07-D01 `OscillatorLab` integration
 
-A D02 trial sends `(model_ref, solver_ref, tolerance, seed_stream, time_grid)` through a qualified `RunPort`. P10-D01 returns a domain-owned `SimulationReceipt` containing trajectory digest, analytic-error comparator and budget usage. D02 records these as typed metrics and compares repeated solver configurations only after the D01 scientific validity gates and the D02 fairness protocol have both passed.
+A D02 trial sends `(model_ref, solver_ref, tolerance, seed_stream, time_grid)` through a qualified `RunPort`. P07-D01 returns a domain-owned `SimulationReceipt` containing trajectory digest, analytic-error comparator and budget usage. D02 records these as typed metrics and compares repeated solver configurations only after the D01 scientific validity gates and the D02 fairness protocol have both passed.
 
-The domain retains numerical state/time, event localization and physics claims; D02 owns plan revision, trial assignment, cross-run analysis and portable evidence packet. Reference fixtures A–C run without D01 installed. Similar adapters may later bind P09-D01 learners, P09-D03 controllers or independent software benchmarks.
+The domain retains numerical state/time, event localization and physics claims; D02 owns plan revision, trial assignment, cross-run analysis and portable evidence packet. Reference fixtures A–C run without D01 installed. Similar adapters may later bind P06-D01 learners, P06-D03 controllers or independent software benchmarks.
 
 ### 11.3 Evidence portability fixture
 
@@ -322,7 +322,7 @@ Export a minimal bundle containing sealed protocol, dataset/closure manifest, fo
 ### 12.1 Proposed namespace
 
 ```text
-lfr/p10/experiments/
+lfr/p07/experiments/
   contracts/{study,protocol,trial,attempt,metric,artifact,claim}.ss
   design/{factorial,paired,block,randomization,search-plan}.ss
   execution/{state-machine,local-runner,budgets,checkpoint}.ss
@@ -425,121 +425,121 @@ Each test has an independently specified expected result. The matrix is divided 
 
 | Test ID | Fixture/action | Expected comparator |
 | --- | --- | --- |
-| **P10-D02-T01** | Study creation | Valid study receives unique revisioned ID |
-| **P10-D02-T02** | Malformed study | Invalid schema rejected with field-specific error |
-| **P10-D02-T03** | Protocol seal | Digest preserved after seal |
-| **P10-D02-T04** | Post-seal mutation | Protocol modification creates new revision or denial |
-| **P10-D02-T05** | Trial matrix complete | Factorial four cells exactly once |
-| **P10-D02-T06** | Factor label inversion | Wrong sign-coded factor detected |
-| **P10-D02-T07** | Duplicate trial ID | Collision rejected |
-| **P10-D02-T08** | Sampling unit schema | Unit type and strata validated |
-| **P10-D02-T09** | Candidate registry drift | Late candidate addition recorded as revision |
-| **P10-D02-T10** | Exact factorial rank | Four-cell design rank equals four |
+| **P07-D02-T01** | Study creation | Valid study receives unique revisioned ID |
+| **P07-D02-T02** | Malformed study | Invalid schema rejected with field-specific error |
+| **P07-D02-T03** | Protocol seal | Digest preserved after seal |
+| **P07-D02-T04** | Post-seal mutation | Protocol modification creates new revision or denial |
+| **P07-D02-T05** | Trial matrix complete | Factorial four cells exactly once |
+| **P07-D02-T06** | Factor label inversion | Wrong sign-coded factor detected |
+| **P07-D02-T07** | Duplicate trial ID | Collision rejected |
+| **P07-D02-T08** | Sampling unit schema | Unit type and strata validated |
+| **P07-D02-T09** | Candidate registry drift | Late candidate addition recorded as revision |
+| **P07-D02-T10** | Exact factorial rank | Four-cell design rank equals four |
 
 #### Run lifecycle
 
 | Test ID | Fixture/action | Expected comparator |
 | --- | --- | --- |
-| **P10-D02-T11** | Trial scheduling | Bounded schedule contains all eligible trials |
-| **P10-D02-T12** | Claim attempt | Unique generation-bound attempt issued |
-| **P10-D02-T13** | Duplicate claim | Conflicting worker receives stale/conflict |
-| **P10-D02-T14** | Run start state | State transition and actual environment recorded |
-| **P10-D02-T15** | Run terminal state | Success requires terminal receipt |
-| **P10-D02-T16** | Run timeout | Timeout included in denominator and budget |
-| **P10-D02-T17** | Run cancellation | Cancellation cannot masquerade as zero score |
-| **P10-D02-T18** | Retry linkage | New attempt attached to original trial |
-| **P10-D02-T19** | Stale worker finish | Old generation rejected |
-| **P10-D02-T20** | Budget exhaustion | Typed exhausted receipt and partial evidence |
+| **P07-D02-T11** | Trial scheduling | Bounded schedule contains all eligible trials |
+| **P07-D02-T12** | Claim attempt | Unique generation-bound attempt issued |
+| **P07-D02-T13** | Duplicate claim | Conflicting worker receives stale/conflict |
+| **P07-D02-T14** | Run start state | State transition and actual environment recorded |
+| **P07-D02-T15** | Run terminal state | Success requires terminal receipt |
+| **P07-D02-T16** | Run timeout | Timeout included in denominator and budget |
+| **P07-D02-T17** | Run cancellation | Cancellation cannot masquerade as zero score |
+| **P07-D02-T18** | Retry linkage | New attempt attached to original trial |
+| **P07-D02-T19** | Stale worker finish | Old generation rejected |
+| **P07-D02-T20** | Budget exhaustion | Typed exhausted receipt and partial evidence |
 
 #### Data and provenance
 
 | Test ID | Fixture/action | Expected comparator |
 | --- | --- | --- |
-| **P10-D02-T21** | Dataset digest | Input content lock checked |
-| **P10-D02-T22** | Dataset version drift | Changed source produces new identity |
-| **P10-D02-T23** | Untracked data input | Input closure fails |
-| **P10-D02-T24** | Split leakage | Same unit across train/test detected |
-| **P10-D02-T25** | Derived-row leakage | Duplicate lineage carries split conflict |
-| **P10-D02-T26** | Actual environment drift | Unexpected backend/toolchain revision flagged |
-| **P10-D02-T27** | RNG stream identity | Trial stream distinct from sampler stream |
-| **P10-D02-T28** | Provenance derivation | Entity/Activity relation preserved |
-| **P10-D02-T29** | Fabricated provenance | Unknown artifact parent rejected |
-| **P10-D02-T30** | Redacted export lineage | Derived/redacted artifact trace retained |
+| **P07-D02-T21** | Dataset digest | Input content lock checked |
+| **P07-D02-T22** | Dataset version drift | Changed source produces new identity |
+| **P07-D02-T23** | Untracked data input | Input closure fails |
+| **P07-D02-T24** | Split leakage | Same unit across train/test detected |
+| **P07-D02-T25** | Derived-row leakage | Duplicate lineage carries split conflict |
+| **P07-D02-T26** | Actual environment drift | Unexpected backend/toolchain revision flagged |
+| **P07-D02-T27** | RNG stream identity | Trial stream distinct from sampler stream |
+| **P07-D02-T28** | Provenance derivation | Entity/Activity relation preserved |
+| **P07-D02-T29** | Fabricated provenance | Unknown artifact parent rejected |
+| **P07-D02-T30** | Redacted export lineage | Derived/redacted artifact trace retained |
 
 #### Artifacts and recovery
 
 | Test ID | Fixture/action | Expected comparator |
 | --- | --- | --- |
-| **P10-D02-T31** | Stage artifact | Byte digest and length verified |
-| **P10-D02-T32** | Commit artifact | Manifest published under declared atomicity |
-| **P10-D02-T33** | Staged orphan | Uncommitted artifact excluded from catalog |
-| **P10-D02-T34** | Crash before bytes flush | No durable output claimed |
-| **P10-D02-T35** | Crash before manifest | Recovery retains staging status |
-| **P10-D02-T36** | Crash after manifest before ACK | Retry returns original committed receipt |
-| **P10-D02-T37** | Divergent duplicate commit | Same attempt conflicting digest rejected |
-| **P10-D02-T38** | Corrupt artifact | Readback digest failure surfaced |
-| **P10-D02-T39** | Atomic journal replay | Committed catalog reconstructed |
-| **P10-D02-T40** | Storage unavailable | Unknown durability recorded without success |
+| **P07-D02-T31** | Stage artifact | Byte digest and length verified |
+| **P07-D02-T32** | Commit artifact | Manifest published under declared atomicity |
+| **P07-D02-T33** | Staged orphan | Uncommitted artifact excluded from catalog |
+| **P07-D02-T34** | Crash before bytes flush | No durable output claimed |
+| **P07-D02-T35** | Crash before manifest | Recovery retains staging status |
+| **P07-D02-T36** | Crash after manifest before ACK | Retry returns original committed receipt |
+| **P07-D02-T37** | Divergent duplicate commit | Same attempt conflicting digest rejected |
+| **P07-D02-T38** | Corrupt artifact | Readback digest failure surfaced |
+| **P07-D02-T39** | Atomic journal replay | Committed catalog reconstructed |
+| **P07-D02-T40** | Storage unavailable | Unknown durability recorded without success |
 
 #### Reproducibility and replay
 
 | Test ID | Fixture/action | Expected comparator |
 | --- | --- | --- |
-| **P10-D02-T41** | Environment rebuild | Pinned environment restored or typed unavailable |
-| **P10-D02-T42** | Bitwise exact repeat | Specified bytes match under defined closure |
-| **P10-D02-T43** | Numeric tolerance replay | Unit-aware comparator passes within tolerance |
-| **P10-D02-T44** | Numeric mismatch | Beyond-tolerance result rejected |
-| **P10-D02-T45** | Seed-only mismatch | Unpinned scheduling prevents exact claim |
-| **P10-D02-T46** | Guix channel drift | Changed channel commit changes lock |
-| **P10-D02-T47** | Thread-order change | Reduction/ordering difference reflected |
-| **P10-D02-T48** | Replay dataset missing | Missing input creates unresolved |
-| **P10-D02-T49** | Independent reconstruction | New host reads portable closed manifest |
-| **P10-D02-T50** | External replication claim | Requires separate independent evidence |
+| **P07-D02-T41** | Environment rebuild | Pinned environment restored or typed unavailable |
+| **P07-D02-T42** | Bitwise exact repeat | Specified bytes match under defined closure |
+| **P07-D02-T43** | Numeric tolerance replay | Unit-aware comparator passes within tolerance |
+| **P07-D02-T44** | Numeric mismatch | Beyond-tolerance result rejected |
+| **P07-D02-T45** | Seed-only mismatch | Unpinned scheduling prevents exact claim |
+| **P07-D02-T46** | Guix channel drift | Changed channel commit changes lock |
+| **P07-D02-T47** | Thread-order change | Reduction/ordering difference reflected |
+| **P07-D02-T48** | Replay dataset missing | Missing input creates unresolved |
+| **P07-D02-T49** | Independent reconstruction | New host reads portable closed manifest |
+| **P07-D02-T50** | External replication claim | Requires separate independent evidence |
 
 #### Statistics and selection
 
 | Test ID | Fixture/action | Expected comparator |
 | --- | --- | --- |
-| **P10-D02-T51** | Factorial effects | Coefficients [3,2,1,1] exact |
-| **P10-D02-T52** | Factorial main contrasts | Effects A=4 and B=2 |
-| **P10-D02-T53** | Factorial interaction | Difference-in-differences=4 |
-| **P10-D02-T54** | Missing factorial cell | Rank/coverage failure |
-| **P10-D02-T55** | Paired mean difference | Mean A-B equals 2 |
-| **P10-D02-T56** | Exact paired permutation | Two-sided p-value equals 0.125 |
-| **P10-D02-T57** | Broken pair mapping | Block mismatch rejected |
-| **P10-D02-T58** | Multiplicity policy | Unregistered multiple comparison detected |
-| **P10-D02-T59** | Holdout contamination | Selection/evaluation overlap flagged |
-| **P10-D02-T60** | Post-hoc exclusion | Changed denominator disclosed and scoped |
+| **P07-D02-T51** | Factorial effects | Coefficients [3,2,1,1] exact |
+| **P07-D02-T52** | Factorial main contrasts | Effects A=4 and B=2 |
+| **P07-D02-T53** | Factorial interaction | Difference-in-differences=4 |
+| **P07-D02-T54** | Missing factorial cell | Rank/coverage failure |
+| **P07-D02-T55** | Paired mean difference | Mean A-B equals 2 |
+| **P07-D02-T56** | Exact paired permutation | Two-sided p-value equals 0.125 |
+| **P07-D02-T57** | Broken pair mapping | Block mismatch rejected |
+| **P07-D02-T58** | Multiplicity policy | Unregistered multiple comparison detected |
+| **P07-D02-T59** | Holdout contamination | Selection/evaluation overlap flagged |
+| **P07-D02-T60** | Post-hoc exclusion | Changed denominator disclosed and scoped |
 
 #### Benchmark and budget
 
 | Test ID | Fixture/action | Expected comparator |
 | --- | --- | --- |
-| **P10-D02-T61** | Equal workload | Shared workload IDs required |
-| **P10-D02-T62** | Accuracy gate | Fast inaccurate candidate excluded from speed claim |
-| **P10-D02-T63** | Warm-up protocol | Measured and warm-up samples distinct |
-| **P10-D02-T64** | Clock mismatch | Timing source labels and calibration checked |
-| **P10-D02-T65** | Tail latency | p50/p95/p99 reflect defined valid sample set |
-| **P10-D02-T66** | Censored timeout | Timeout retained with censor status |
-| **P10-D02-T67** | Resource limit | Memory/CPU/storage receipt checked |
-| **P10-D02-T68** | Sequential/randomized order | Order assignment recorded |
-| **P10-D02-T69** | Pareto comparison | Error-versus-cost frontier correct |
-| **P10-D02-T70** | Performance platform scope | Claim binds named host and version |
+| **P07-D02-T61** | Equal workload | Shared workload IDs required |
+| **P07-D02-T62** | Accuracy gate | Fast inaccurate candidate excluded from speed claim |
+| **P07-D02-T63** | Warm-up protocol | Measured and warm-up samples distinct |
+| **P07-D02-T64** | Clock mismatch | Timing source labels and calibration checked |
+| **P07-D02-T65** | Tail latency | p50/p95/p99 reflect defined valid sample set |
+| **P07-D02-T66** | Censored timeout | Timeout retained with censor status |
+| **P07-D02-T67** | Resource limit | Memory/CPU/storage receipt checked |
+| **P07-D02-T68** | Sequential/randomized order | Order assignment recorded |
+| **P07-D02-T69** | Pareto comparison | Error-versus-cost frontier correct |
+| **P07-D02-T70** | Performance platform scope | Claim binds named host and version |
 
 #### Integration and audit
 
 | Test ID | Fixture/action | Expected comparator |
 | --- | --- | --- |
-| **P10-D02-T71** | D01 adapter | Oscillator receipt remains domain-authoritative |
-| **P10-D02-T72** | P09 learning adapter | Study ledger records policy/dataset refs without mutation |
-| **P10-D02-T73** | D04 scheduler adapter | Duplicate delivery returns one logical attempt commit |
-| **P10-D02-T74** | P05 storage adapter | Selected provider durability matches declaration |
-| **P10-D02-T75** | Local standalone | No specialist imports required for reference fixtures |
-| **P10-D02-T76** | Research bundle export | Manifest/digests/reference closure validated |
-| **P10-D02-T77** | Research bundle import | Readback reproduces canonical study index |
-| **P10-D02-T78** | Unknown host effect | No auto-retry without reconciliation policy |
-| **P10-D02-T79** | Claim gate omissions | Omitted mandatory gate blocks promotion |
-| **P10-D02-T80** | Independent report regeneration | Frozen ledger reproduces same metrics and exclusions |
+| **P07-D02-T71** | D01 adapter | Oscillator receipt remains domain-authoritative |
+| **P07-D02-T72** | P06 learning adapter | Study ledger records policy/dataset refs without mutation |
+| **P07-D02-T73** | D04 scheduler adapter | Duplicate delivery returns one logical attempt commit |
+| **P07-D02-T74** | P04-D01 storage adapter | Selected provider durability matches declaration |
+| **P07-D02-T75** | Local standalone | No specialist imports required for reference fixtures |
+| **P07-D02-T76** | Research bundle export | Manifest/digests/reference closure validated |
+| **P07-D02-T77** | Research bundle import | Readback reproduces canonical study index |
+| **P07-D02-T78** | Unknown host effect | No auto-retry without reconciliation policy |
+| **P07-D02-T79** | Claim gate omissions | Omitted mandatory gate blocks promotion |
+| **P07-D02-T80** | Independent report regeneration | Frozen ledger reproduces same metrics and exclusions |
 
 ### 14.3 Claim and release matrix
 
@@ -562,7 +562,7 @@ Each test has an independently specified expected result. The matrix is divided 
 4. **D02-03 — `PairedBenchmarkLab`:** matched-block comparator, exact sign-flip oracle, failure/eligibility accounting and report tables.
 5. **D02-04 — `CrashReplayLedger`:** atomic local commit, fault schedule, checksum readback, correction events and recovery trace.
 6. **D02-05 — Guix/reproducibility:** exact channels/toolchain/data closure, bitwise/numeric equivalence profiles, external rerun fixtures.
-7. **D02-06 — Optional domain adapters:** P10-D01 oscillator campaign first; additional P09/P05/D04/MLflow/DVC/RO-Crate integrations by named user workload.
+7. **D02-06 — Optional domain adapters:** P07-D01 oscillator campaign first; additional P06/P04-D01/D04/MLflow/DVC/RO-Crate integrations by named user workload.
 8. **D02-07 — Independent audit:** execute applicable Q0–Q11, publish qualification matrix, determine task-specific evidence ceilings and lock a migration-ready portable archive.
 
 **Task allocation:** the initial Gerbil standalone reference is prioritized over constructing a web dashboard or distributed service. A dashboard is justified after the run ledger and query/report contracts have passed their tests; scheduling services are justified by measured throughput/fault requirements.
@@ -577,7 +577,7 @@ Each test has an independently specified expected result. The matrix is divided 
 | Statistical kernel | Gerbil exact arithmetic for finite fixtures | Finite oracles before scalable native statistics |
 | Adaptive optimization | Separate sampler-state interface | Search replay, holdout and selection bias tests |
 | Distributed runs | D04 adapter only under chosen workload | Idempotency and remote recovery evidence |
-| Durable evidence exchange | P05 or external store if selected | Storage ownership and transaction semantics |
+| Durable evidence exchange | P04-D01 or external store if selected | Storage ownership and transaction semantics |
 | Research packaging | Portable D02 manifest, optional RO-Crate 1.2/1.3 | Archive validation and rights/access audit |
 | Physical/scientific claims | Domain owner supplies validation evidence | Model and measurement comparison by domain |
 | Statistical multiplicity | Preregistered comparison family and correction | Exact finite selection and coverage tests |
